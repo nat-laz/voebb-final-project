@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.5/dist/zephyr/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<main class="container mt-5">
+    <h2 class="text-center">Search products</h2>
+
+    <form action="/products/search-results" method="GET">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="productTitle" name="productTitle" th:field="*{title}"
+                   placeholder="">
+            <label for="productTitle" class="form-label">Enter title of the product</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</main>
+
+</body>
+</html>

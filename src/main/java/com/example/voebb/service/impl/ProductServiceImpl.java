@@ -5,7 +5,9 @@ import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;

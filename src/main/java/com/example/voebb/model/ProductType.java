@@ -16,7 +16,8 @@ public class ProductType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String typeName;
+    @Column(name = "name")
+    private String name;
 
     private Boolean isDigital;
 }
