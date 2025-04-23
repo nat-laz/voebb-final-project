@@ -9,11 +9,10 @@
 <main class="container mt-5">
     <h2 class="text-center">Search products</h2>
 
-    <form action="/products/search-results" method="GET">
+    <form th:action="@{/products/search-results}" method="GET">
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="productTitle" name="productTitle" th:field="*{title}"
-                   placeholder="">
-            <label for="productTitle" class="form-label">Enter title of the product</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="">
+            <label for="title" class="form-label">Enter title of the product</label>
         </div>
 
         <button type="submit" class="btn btn-primary">Search</button>
