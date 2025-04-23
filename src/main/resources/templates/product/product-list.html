@@ -29,13 +29,9 @@
     </ul>
 </div>
 
-<div class="container mt-4">
-
-    <div th:each="product : ${products}" class="d-flex justify-content-center mb-4">
-        <div class="card" style="width: 18rem;" th:insert="~{fragments/product-card :: card(${product})}"></div>
-    </div>
+<div th:each="product : ${products}" class="d-flex justify-content-center mb-4">
+    <div class="card" style="width: 18rem;" th:insert="~{fragments/product-card :: card(${product})}"></div>
 </div>
-
 
 </body>
 </html>
