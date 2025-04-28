@@ -9,20 +9,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "products")
-public class Product {
+@Table(name = "creators")
+public class Creator {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
+    @Column(name = "creator_id")
     private Long id;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "creator_first_name", nullable = false, length = 60)
+    private String firstName;
 
-    // TODO: TBD: add more fields => img, description, publication_year
+    @Column(name = "creator_last_name",  nullable = false, length = 60)
+    private String lastName;
 
-    @ManyToOne
-    @JoinColumn(name = "product_type_id")
-    private ProductType type;
 }

@@ -1,5 +1,6 @@
 package com.example.voebb.model.entity;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,20 +10,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "products")
-public class Product {
+@Table(name = "creator_roles")
+public class CreatorRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
+    @Column(name = "creator_role_id")
     private Long id;
 
-    @Column(name = "title")
-    private String title;
-
-    // TODO: TBD: add more fields => img, description, publication_year
-
-    @ManyToOne
-    @JoinColumn(name = "product_type_id")
-    private ProductType type;
+    @Column(name = "creator_role", nullable = false, unique = true, length = 30)
+    private String creatorRole;          // [AUTHOR, DIRECTOR, CO_AUTHOR etc. ]
 }

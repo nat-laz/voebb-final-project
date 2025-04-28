@@ -2,8 +2,6 @@ package com.example.voebb.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,6 +43,8 @@ public class Client {
     @Column(name = "borrowed_books_count", nullable = false)
     @Max(5)
     private Integer borrowedBooksCount = 0;
+
+    // TODO: TBD add more fields => created_at(register_date), updated_at, expired_membership_date
 
     @ManyToMany
     @JoinTable(

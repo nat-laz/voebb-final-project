@@ -1,0 +1,8 @@
+-- TEST: creator × product × creator_role
+SELECT p.title,
+       c.creator_first_name || ' ' || c.creator_last_name AS creator,
+       r.creator_role
+FROM   creator_product_relation cpr
+           JOIN   creators c  ON c.creator_id  = cpr.creator_id
+           JOIN   products p ON p.product_id  = cpr.product_id
+           JOIN   creator_roles r     ON r.creator_role_id     = cpr.creator_role_id;

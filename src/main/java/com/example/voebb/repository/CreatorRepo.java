@@ -1,0 +1,9 @@
+package com.example.voebb.repository;
+
+import com.example.voebb.model.entity.Creator;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CreatorRepo extends JpaRepository<Creator, Long> {
+}
