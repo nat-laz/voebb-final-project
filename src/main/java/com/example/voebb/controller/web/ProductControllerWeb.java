@@ -1,6 +1,6 @@
 package com.example.voebb.controller.web;
 
-import com.example.voebb.model.Product;
+import com.example.voebb.model.entity.Product;
 import com.example.voebb.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

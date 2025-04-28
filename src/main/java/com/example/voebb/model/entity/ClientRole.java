@@ -1,23 +1,24 @@
-package com.example.voebb.model;
+package com.example.voebb.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product_types")
-public class ProductType {
+@Table(name = "client_roles")
+public class ClientRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "client_role_id")
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(nullable = false, name = "client_role", unique = true)
+    private String clientRole; // [ADMIN, CLIENT]
 
-    private Boolean isDigital;
 }
