@@ -34,3 +34,20 @@ FROM product_items pi
          JOIN item_location il ON il.item_id = pi.item_id
          JOIN libraries l ON l.library_id = il.library_id
 WHERE pi.item_id = 1001;
+
+-- TEST: update status after borrowing
+UPDATE product_items
+SET    status_id = 3
+WHERE  item_id   = 1001;
+
+SELECT  c.client_id,
+        p.title,
+        b.borrow_start_date,
+        b.borrow_due_date,
+        s.item_status_name      AS current_status
+FROM    borrows         b
+            JOIN    clients         c  ON c.client_id       = b.client_id
+            JOIN    product_items   pi ON pi.item_id        = b.item_id
+            JOIN    products        p  ON p.product_id      = pi.product_id
+            JOIN    item_status     s  ON s.item_status_id  = pi.status_id
+WHERE   b.borrow_id = 1;

@@ -41,7 +41,13 @@ ON CONFLICT (product_id) DO NOTHING;
 --  Clients ─────────────────────────────────────────────────
 INSERT INTO clients (client_id, first_name, last_name, email, password,
                      is_enabled, borrowed_books_count)
-VALUES (1, 'Test', 'User', 'test@gmail.com', '1234', true, 0);
+VALUES (1, 'User 1', 'One', 'test@gmail.com', '1234', true, 0)
+ON CONFLICT (client_id) DO NOTHING;
+INSERT INTO clients (client_id, first_name, last_name, email, password,
+                     is_enabled, borrowed_books_count)
+VALUES (2, 'User 2 ', 'Two', 'test@example.com', '1234', true, 0)
+ON CONFLICT (client_id) DO NOTHING;
+
 
 -- Client Roles
 INSERT INTO client_roles (client_role_id, client_role)
@@ -122,10 +128,23 @@ VALUES (1, 'available'),
        (2, 'reserved'),
        (3, 'borrowed');
 
-/* ─────────── mock: copy #1001 of product 1, available  ─────────── */
+-- ─────────── mock: copy #1001 of product 1, available  ───────────
 INSERT INTO product_items (item_id, product_id, status_id)
 VALUES (1001, 1, 1);
 
-/* ─────────── mock: locate above copy in the library ─────────── */
+-- ─────────── mock: locate above copy in the library ───────────
 INSERT INTO item_location (item_location_id, item_id, library_id, location_in_library)
 VALUES (501, 1001, 1, 'Shelf A-12');
+
+--  ─────────── mock: client_id = 1 borrows item_id = 1001 ───────────
+INSERT INTO borrows (borrow_id, client_id, item_id,
+                     borrow_start_date, borrow_due_date,
+                     return_date, extends_count)
+VALUES (1, 1, 1001,
+        CURRENT_DATE, CURRENT_DATE + INTERVAL '14 day',
+        NULL, 0);
+
+--  ─────────── mock: client_id = 1 reserves item_id = 1001 ───────────
+INSERT INTO reservations (reservation_id, client_id, item_id, reservation_start, reservation_due)
+VALUES (1, 2, 1001, CURRENT_DATE, CURRENT_DATE + INTERVAL '7 day')
+ON CONFLICT DO NOTHING;
