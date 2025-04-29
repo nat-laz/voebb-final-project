@@ -6,3 +6,10 @@ FROM   creator_product_relation cpr
            JOIN   creators c  ON c.creator_id  = cpr.creator_id
            JOIN   products p ON p.product_id  = cpr.product_id
            JOIN   creator_roles r     ON r.creator_role_id     = cpr.creator_role_id;
+
+-- -- TEST:  product × country
+SELECT p.title, c.country_name
+FROM   country_relation cr
+           JOIN   products p ON p.product_id  = cr.product_id
+           JOIN   countries  c ON c.country_id  = cr.country_id
+ORDER  BY p.product_id;

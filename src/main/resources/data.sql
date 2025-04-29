@@ -38,7 +38,7 @@ VALUES (1, 'ADMIN'),
        (2, 'CLIENT');
 
 -- Join table (same Client -> multiple Roles)
-INSERT INTO client_roles_relationship (client_id, client_role_id)
+INSERT INTO client_roles_relation (client_id, client_role_id)
 VALUES (1, 1),
        (1, 2);
 
@@ -60,10 +60,25 @@ VALUES (1, 'author'),
 INSERT INTO creator_product_relation (creator_id, product_id, creator_role_id)
 VALUES
     -- Rowling on both books, different roles
-    (1, 10, 1),   -- AUTHOR on Cursed Child   (already there)
-    (1, 11, 2),   -- CO_AUTHOR on Fantastic Beasts
+    (1, 10, 1), -- AUTHOR on Cursed Child   (already there)
+    (1, 11, 2), -- CO_AUTHOR on Fantastic Beasts
 
     -- Cursed Child still has two co-authors
-    (2, 10, 2),   -- Tiffany  CO_AUTHOR
-    (3, 10, 2);   -- Thorne   CO_AUTHOR
+    (2, 10, 2), -- Tiffany  CO_AUTHOR
+    (3, 10, 2);
+-- Thorne   CO_AUTHOR
 
+-- Countries ─────────────────────────────────────────────────
+INSERT INTO countries (country_id, country_name)
+VALUES (1, 'United Kingdom') ON CONFLICT (country_id) DO NOTHING;
+
+INSERT INTO countries (country_id, country_name)
+VALUES (2, 'United States') ON CONFLICT (country_id) DO NOTHING;
+
+-- Join table (product linked to countries)
+INSERT INTO country_relation (product_id, country_id)
+VALUES (1, 1),  -- Philosopher's Stone published in the UK
+       (1, 2),  -- ... and in the US
+       (10, 1), -- Cursed Child in the UK
+       (11, 2)  -- Fantastic Beasts in the US
+    ON CONFLICT (product_id, country_id) DO NOTHING;

@@ -48,7 +48,7 @@ public class Client {
 
     @ManyToMany
     @JoinTable(
-            name = "client_roles_relationship",
+            name = "client_roles_relation",
             joinColumns = @JoinColumn(name = "client_id"),
             inverseJoinColumns = @JoinColumn(name = "client_role_id")
     )
