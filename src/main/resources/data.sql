@@ -1,31 +1,42 @@
 -- Product types
 INSERT INTO product_types (product_type_id, name, is_digital)
-VALUES (1, 'book', false) ON CONFLICT (product_type_id) DO NOTHING;
+VALUES (1, 'book', false)
+ON CONFLICT (product_type_id) DO NOTHING;
 INSERT INTO product_types (product_type_id, name, is_digital)
-VALUES (2, 'ebook', true) ON CONFLICT (product_type_id) DO NOTHING;
+VALUES (2, 'ebook', true)
+ON CONFLICT (product_type_id) DO NOTHING;
 
 
 -- Products ─────────────────────────────────────────────────
 INSERT INTO products (product_id, title, product_type_id)
-VALUES (1, 'Harry Potter and the Philosopher''s Stone', 1) ON CONFLICT (product_id) DO NOTHING;
+VALUES (1, 'Harry Potter and the Philosopher''s Stone', 1)
+ON CONFLICT (product_id) DO NOTHING;
 INSERT INTO products (product_id, title, product_type_id)
-VALUES (2, 'Harry Potter and the Chamber of Secrets', 2) ON CONFLICT (product_id) DO NOTHING;
+VALUES (2, 'Harry Potter and the Chamber of Secrets', 2)
+ON CONFLICT (product_id) DO NOTHING;
 INSERT INTO products (product_id, title, product_type_id)
-VALUES (3, 'Harry Potter and the Prisoner of Azkaban', 1) ON CONFLICT (product_id) DO NOTHING;
+VALUES (3, 'Harry Potter and the Prisoner of Azkaban', 1)
+ON CONFLICT (product_id) DO NOTHING;
 INSERT INTO products (product_id, title, product_type_id)
-VALUES (4, 'Harry Potter and the Goblet of Fire', 2) ON CONFLICT (product_id) DO NOTHING;
+VALUES (4, 'Harry Potter and the Goblet of Fire', 2)
+ON CONFLICT (product_id) DO NOTHING;
 INSERT INTO products (product_id, title, product_type_id)
-VALUES (5, 'Harry Potter and the Order of the Phoenix', 1) ON CONFLICT (product_id) DO NOTHING;
+VALUES (5, 'Harry Potter and the Order of the Phoenix', 1)
+ON CONFLICT (product_id) DO NOTHING;
 INSERT INTO products (product_id, title, product_type_id)
-VALUES (6, 'Harry Potter and the Half-Blood Prince', 2) ON CONFLICT (product_id) DO NOTHING;
+VALUES (6, 'Harry Potter and the Half-Blood Prince', 2)
+ON CONFLICT (product_id) DO NOTHING;
 INSERT INTO products (product_id, title, product_type_id)
-VALUES (7, 'Harry Potter and the Deathly Hallows', 1) ON CONFLICT (product_id) DO NOTHING;
+VALUES (7, 'Harry Potter and the Deathly Hallows', 1)
+ON CONFLICT (product_id) DO NOTHING;
 
 -- Test different creator roles
 INSERT INTO products (product_id, title, product_type_id)
-VALUES (10, 'Harry Potter and the Cursed Child', 1) ON CONFLICT (product_id) DO NOTHING;
+VALUES (10, 'Harry Potter and the Cursed Child', 1)
+ON CONFLICT (product_id) DO NOTHING;
 INSERT INTO products (product_id, title, product_type_id)
-VALUES (11, 'Fantastic Beasts and Where to Find Them', 1) ON CONFLICT (product_id) DO NOTHING;
+VALUES (11, 'Fantastic Beasts and Where to Find Them', 1)
+ON CONFLICT (product_id) DO NOTHING;
 
 --  Clients ─────────────────────────────────────────────────
 INSERT INTO clients (client_id, first_name, last_name, email, password,
@@ -70,10 +81,12 @@ VALUES
 
 -- Countries ─────────────────────────────────────────────────
 INSERT INTO countries (country_id, country_name)
-VALUES (1, 'United Kingdom') ON CONFLICT (country_id) DO NOTHING;
+VALUES (1, 'United Kingdom')
+ON CONFLICT (country_id) DO NOTHING;
 
 INSERT INTO countries (country_id, country_name)
-VALUES (2, 'United States') ON CONFLICT (country_id) DO NOTHING;
+VALUES (2, 'United States')
+ON CONFLICT (country_id) DO NOTHING;
 
 -- Join table (product linked to countries)
 INSERT INTO country_relation (product_id, country_id)
@@ -81,4 +94,16 @@ VALUES (1, 1),  -- Philosopher's Stone published in the UK
        (1, 2),  -- ... and in the US
        (10, 1), -- Cursed Child in the UK
        (11, 2)  -- Fantastic Beasts in the US
-    ON CONFLICT (product_id, country_id) DO NOTHING;
+ON CONFLICT (product_id, country_id) DO NOTHING;
+
+-- Languages  ─────────────────────────────────────────────────
+INSERT INTO languages (language_id, language)
+VALUES (1, 'English'),
+       (2, 'German')
+ON CONFLICT (language_id) DO NOTHING;
+
+-- Join table (product linked to languages)
+INSERT INTO language_relation (product_id, language_id)
+VALUES (1, 1),
+       (1, 2)
+ON CONFLICT (product_id, language_id) DO NOTHING;

@@ -37,4 +37,12 @@ public class Product {
     )
     private Set<Country> countries = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "language_relation",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "language_id")
+    )
+    private Set<Language> languages = new HashSet<>();
+
 }

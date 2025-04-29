@@ -13,3 +13,10 @@ FROM   country_relation cr
            JOIN   products p ON p.product_id  = cr.product_id
            JOIN   countries  c ON c.country_id  = cr.country_id
 ORDER  BY p.product_id;
+
+-- -- TEST:  product × language
+SELECT p.title, l.language
+FROM   language_relation lr
+           JOIN   products  p ON p.product_id  = lr.product_id
+           JOIN   languages l ON l.language_id = lr.language_id
+ORDER  BY p.product_id;
