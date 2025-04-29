@@ -20,7 +20,8 @@ public class Language {
     @Column(name = "language_id")
     private Long id;
 
-    private String language;
+    @Column(name = "language_name", nullable = false, length = 80, unique = true)
+    private String name;
 
     @ManyToMany(mappedBy = "languages", fetch = FetchType.LAZY)
     private Set<Product> products = new HashSet<>();

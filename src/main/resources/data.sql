@@ -97,7 +97,7 @@ VALUES (1, 1),  -- Philosopher's Stone published in the UK
 ON CONFLICT (product_id, country_id) DO NOTHING;
 
 -- Languages  ─────────────────────────────────────────────────
-INSERT INTO languages (language_id, language)
+INSERT INTO languages (language_id, language_name)
 VALUES (1, 'English'),
        (2, 'German')
 ON CONFLICT (language_id) DO NOTHING;
@@ -107,3 +107,25 @@ INSERT INTO language_relation (product_id, language_id)
 VALUES (1, 1),
        (1, 2)
 ON CONFLICT (product_id, language_id) DO NOTHING;
+
+-- Libraries ─────────────────────────────────────────────────
+INSERT INTO libraries (library_id,
+                       library_name, library_description,
+                       address_city, address_postcode, address_street, address_house_nr, address_osm_link)
+VALUES (1,
+        'Central Library', 'Main city branch',
+        'Berlin', '10961', 'Alexanderplatz', '1A',
+        'https://osm.org/go/0MBK8W');
+
+INSERT INTO item_status (item_status_id, item_status_name)
+VALUES (1, 'available'),
+       (2, 'reserved'),
+       (3, 'borrowed');
+
+/* ─────────── mock: copy #1001 of product 1, available  ─────────── */
+INSERT INTO product_items (item_id, product_id, status_id)
+VALUES (1001, 1, 1);
+
+/* ─────────── mock: locate above copy in the library ─────────── */
+INSERT INTO item_location (item_location_id, item_id, library_id, location_in_library)
+VALUES (501, 1001, 1, 'Shelf A-12');
