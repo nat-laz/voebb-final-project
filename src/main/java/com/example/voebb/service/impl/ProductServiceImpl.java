@@ -18,6 +18,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> getAllByTitle(String title, Pageable pageable) {
-        return productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
+        return productRepo.findByWork_TitleContainingIgnoreCase(title, pageable);
     }
+
 }

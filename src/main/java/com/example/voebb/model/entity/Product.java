@@ -12,6 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "products")
 public class Product {
 
@@ -20,22 +21,25 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
-    @Column(name = "title")
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "work_id", nullable = false)
+    private Work work;
 
-    // TODO: TBD: add more fields => img, description, publication_year
-
-    @ManyToOne
-    @JoinColumn(name = "product_type_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_type_id", nullable = false)
     private ProductType type;
 
-    @ManyToMany
-    @JoinTable(
-            name = "country_relation",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "country_id")
-    )
-    private Set<Country> countries = new HashSet<>();
+    /**
+     * Non-NULL for digital products (ebook)
+     * NULL for physical ones (book, dvd, board-game)
+     */
+    @Column(name = "product_link_to_emedia")
+    private String productLinkToEmedia;
+
+
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private BookDetails bookDetails;
+
 
     @ManyToMany
     @JoinTable(
@@ -45,4 +49,12 @@ public class Product {
     )
     private Set<Language> languages = new HashSet<>();
 
+
+    @ManyToMany
+    @JoinTable(
+            name = "country_relation",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "country_id")
+    )
+    private Set<Country> countries = new HashSet<>();
 }

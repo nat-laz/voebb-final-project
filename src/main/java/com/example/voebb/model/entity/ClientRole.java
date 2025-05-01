@@ -19,6 +19,7 @@ public class ClientRole {
     private Long id;
 
     @Column(nullable = false, name = "client_role", unique = true)
-    private String clientRole; // [ADMIN, CLIENT]
+    private String clientRole; // [ADMIN, CLIENT, GUEST]
+
 
 }
