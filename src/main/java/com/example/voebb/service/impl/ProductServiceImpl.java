@@ -1,6 +1,6 @@
 package com.example.voebb.service.impl;
 
-import com.example.voebb.model.Product;
+import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.ProductService;
 import org.springframework.data.domain.Page;
@@ -18,6 +18,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> getAllByTitle(String title, Pageable pageable) {
-        return productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
+        return productRepo.findByWork_TitleContainingIgnoreCase(title, pageable);
     }
+
 }
