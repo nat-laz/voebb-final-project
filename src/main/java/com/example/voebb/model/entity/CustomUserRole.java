@@ -10,16 +10,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "client_roles")
-public class ClientRole {
+@Table(name = "user_roles")
+public class CustomUserRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "client_role_id")
+    @Column(name = "role_id")
     private Long id;
 
-    @Column(nullable = false, name = "client_role", unique = true)
-    private String clientRole; // [ADMIN, CLIENT, GUEST]
+    @Column(nullable = false, name = "role_name", unique = true)
+    private String name; // [ADMIN, CLIENT, GUEST]
 
 
 }

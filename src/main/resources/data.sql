@@ -76,24 +76,25 @@ VALUES
     (3, 10, 2); -- Thorne   CO_AUTHOR
 
 --  Clients ─────────────────────────────────────────────────
-INSERT INTO clients (client_id, first_name, last_name, email, password,
+INSERT INTO custom_users (custom_user_id, first_name, last_name, email, password,
                      is_enabled, borrowed_books_count)
 VALUES (1, 'User 1', 'One', 'test@gmail.com', '1234', true, 0)
-ON CONFLICT (client_id) DO NOTHING;
-INSERT INTO clients (client_id, first_name, last_name, email, password,
+ON CONFLICT (custom_user_id) DO NOTHING;
+
+INSERT INTO custom_users (custom_user_id, first_name, last_name, email, password,
                      is_enabled, borrowed_books_count)
 VALUES (2, 'User 2 ', 'Two', 'test@example.com', '1234', true, 0)
-ON CONFLICT (client_id) DO NOTHING;
+ON CONFLICT (custom_user_id) DO NOTHING;
 
 
 -- Client Roles
-INSERT INTO client_roles (client_role_id, client_role)
+INSERT INTO user_roles (role_id, role_name)
 VALUES (1, 'ADMIN'),
        (2, 'CLIENT'),
        (3, 'GUEST');
 
 -- Join table (same Client -> multiple Roles)
-INSERT INTO client_roles_relation (client_id, client_role_id)
+INSERT INTO users_roles_relation (custom_user_id, role_id)
 VALUES (1, 1),
        (1, 2);
 
@@ -150,7 +151,7 @@ INSERT INTO item_location (item_location_id, item_id, library_id, location_in_li
 VALUES (501, 1001, 1, 'Shelf A-12');
 
 --  ─────────── mock: client_id = 1 borrows item_id = 1001 ───────────
-INSERT INTO borrows (borrow_id, client_id, item_id,
+INSERT INTO borrows (borrow_id, custom_user_id, item_id,
                      borrow_start_date, borrow_due_date,
                      return_date, extends_count)
 VALUES (1, 1, 1001,
@@ -158,6 +159,6 @@ VALUES (1, 1, 1001,
         NULL, 0);
 
 --  ─────────── mock: client_id = 1 reserves item_id = 1001 ───────────
-INSERT INTO reservations (reservation_id, client_id, item_id, reservation_start, reservation_due)
+INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
 VALUES (1, 2, 1001, CURRENT_DATE, CURRENT_DATE + INTERVAL '7 day')
 ON CONFLICT DO NOTHING;

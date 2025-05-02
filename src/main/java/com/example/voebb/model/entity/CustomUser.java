@@ -13,13 +13,13 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "clients")
-public class Client {
+@Table(name = "custom_users")
+public class CustomUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     //TODO: TBD => migrate to UUID type
-    @Column(name = "client_id")
+    @Column(name = "custom_user_id")
     private Long id;
 
     @Column(name = "first_name", nullable = false, length = 60)
@@ -48,10 +48,10 @@ public class Client {
 
     @ManyToMany
     @JoinTable(
-            name = "client_roles_relation",
-            joinColumns = @JoinColumn(name = "client_id"),
-            inverseJoinColumns = @JoinColumn(name = "client_role_id")
+            name = "users_roles_relation",
+            joinColumns = @JoinColumn(name = "custom_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<ClientRole> clientRoles = new HashSet<>();
+    private Set<CustomUserRole> userRoles = new HashSet<>();
 
 }

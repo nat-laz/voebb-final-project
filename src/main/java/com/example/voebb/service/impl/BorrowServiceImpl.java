@@ -1,10 +1,10 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.model.entity.Borrow;
-import com.example.voebb.model.entity.Client;
+import com.example.voebb.model.entity.CustomUser;
 import com.example.voebb.model.entity.ProductItem;
 import com.example.voebb.repository.BorrowRepo;
-import com.example.voebb.repository.ClientRepo;
+import com.example.voebb.repository.CustomUserRepo;
 import com.example.voebb.repository.ProductItemRepo;
 import com.example.voebb.service.BorrowService;
 import jakarta.transaction.Transactional;
@@ -17,24 +17,24 @@ import java.time.LocalDate;
 public class BorrowServiceImpl implements BorrowService {
 
     private final BorrowRepo borrowRepo;
-    private final ClientRepo clientRepo;
+    private final CustomUserRepo customUserRepo;
     private final ProductItemRepo productItemRepo;
 
     @Autowired
-    public BorrowServiceImpl(BorrowRepo borrowRepo, ClientRepo clientRepo, ProductItemRepo productItemRepo) {
+    public BorrowServiceImpl(BorrowRepo borrowRepo, CustomUserRepo customUserRepo, ProductItemRepo productItemRepo) {
         this.borrowRepo = borrowRepo;
-        this.clientRepo = clientRepo;
+        this.customUserRepo = customUserRepo;
         this.productItemRepo = productItemRepo;
     }
 
     @Transactional
     @Override
     public Borrow createBorrow(Long clientId, Long itemId) {
-        Client client = clientRepo.findById(clientId).orElseThrow();
+        CustomUser customUser = customUserRepo.findById(clientId).orElseThrow();
         ProductItem item = productItemRepo.findById(itemId).orElseThrow();
 
         Borrow b = new Borrow();
-        b.setClient(client);
+        b.setCustomUser(customUser);
         b.setItem(item);
         b.setStartDate(LocalDate.now());
         b.setDueDate(LocalDate.now().plusWeeks(2));
