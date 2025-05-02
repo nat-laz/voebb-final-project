@@ -32,7 +32,7 @@ public class CustomUser {
     private String email;
 
     @Column(nullable = false)
-    private String password; // TODO: encrypted
+    private String password;
 
     /**
      * Boolean wrapper lets Hibernate store null
