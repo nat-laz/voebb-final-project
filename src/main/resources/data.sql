@@ -76,22 +76,18 @@ VALUES
     (3, 10, 2); -- Thorne   CO_AUTHOR
 
 --  Clients ─────────────────────────────────────────────────
-INSERT INTO custom_users (custom_user_id, first_name, last_name, email, password,
+INSERT INTO custom_users (first_name, last_name, email, password,
                      is_enabled, borrowed_books_count)
-VALUES (1, 'User 1', 'One', 'test@gmail.com', '1234', true, 0)
+VALUES
+    ('User 1', 'One', 'test@gmail.com', '1234', true, 0),
+    ('User 2 ', 'Two', 'test@example.com', '1234', true, 0)
 ON CONFLICT (custom_user_id) DO NOTHING;
-
-INSERT INTO custom_users (custom_user_id, first_name, last_name, email, password,
-                     is_enabled, borrowed_books_count)
-VALUES (2, 'User 2 ', 'Two', 'test@example.com', '1234', true, 0)
-ON CONFLICT (custom_user_id) DO NOTHING;
-
 
 -- Client Roles
 INSERT INTO user_roles (role_id, role_name)
-VALUES (1, 'ADMIN'),
-       (2, 'CLIENT'),
-       (3, 'GUEST');
+VALUES (1, 'ROLE_ADMIN'),
+       (2, 'ROLE_CLIENT'),
+       (3, 'ROLE_GUEST');
 
 -- Join table (same Client -> multiple Roles)
 INSERT INTO users_roles_relation (custom_user_id, role_id)

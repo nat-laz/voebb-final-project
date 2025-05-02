@@ -22,10 +22,10 @@ public class CustomUser {
     @Column(name = "custom_user_id")
     private Long id;
 
-    @Column(name = "first_name", nullable = false, length = 60)
+    @Column(name = "first_name")//, nullable = false, length = 60)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 60)
+    @Column(name = "last_name")//, nullable = false, length = 60)
     private String lastName;
 
     @Column(nullable = false, unique = true, length = 120)
@@ -52,6 +52,6 @@ public class CustomUser {
             joinColumns = @JoinColumn(name = "custom_user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<CustomUserRole> userRoles = new HashSet<>();
+    private Set<CustomUserRole> roles = new HashSet<>();
 
 }
