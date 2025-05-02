@@ -16,9 +16,10 @@ public class ProductServiceImpl implements ProductService {
         this.productRepo = productRepo;
     }
 
+
     @Override
     public Page<Product> getAllByTitle(String title, Pageable pageable) {
-        return productRepo.findByWork_TitleContainingIgnoreCase(title, pageable);
+        return productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
     }
 
 }

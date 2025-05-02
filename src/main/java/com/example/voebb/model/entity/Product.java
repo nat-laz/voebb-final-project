@@ -21,13 +21,22 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "work_id", nullable = false)
-    private Work work;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_type_id", nullable = false)
     private ProductType type;
+
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(name = "release_year")
+    private String releaseYear;
+
+    private String photo;
+
+    @Column(columnDefinition = "text")
+    private String description; // summary of the product based on media_type
 
     /**
      * Non-NULL for digital products (ebook)
@@ -35,7 +44,6 @@ public class Product {
      */
     @Column(name = "product_link_to_emedia")
     private String productLinkToEmedia;
-
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private BookDetails bookDetails;

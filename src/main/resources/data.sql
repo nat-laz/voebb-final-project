@@ -6,34 +6,34 @@ INSERT INTO product_types (product_type_id, name, is_digital)
 VALUES (2, 'ebook', true)
 ON CONFLICT (product_type_id) DO NOTHING;
 
--- Works
-INSERT INTO works (work_id, title, release_year, photo, description)
-VALUES (1, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1', 'First book of Harry Potter series'),
-       (2, 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'Second book in the series'),
-       (3, 'Harry Potter and the Prisoner of Azkaban', '1999', 'photo_url_3', 'Third book in the series'),
-       (4, 'Harry Potter and the Goblet of Fire', '2000', 'photo_url_4', 'Fourth book in the series'),
-       (5, 'Harry Potter and the Order of the Phoenix', '2003', 'photo_url_5', 'Fifth book in the series'),
-       (6, 'Harry Potter and the Half-Blood Prince', '2005', 'photo_url_6', 'Sixth book in the series'),
-       (7, 'Harry Potter and the Deathly Hallows', '2007', 'photo_url_7', 'Final book in the series'),
-       (8, 'Harry Potter and the Cursed Child', '2016', 'photo_url_8', 'Play based on Harry Potter universe'),
-       (9, 'Fantastic Beasts and Where to Find Them', '2001', 'photo_url_9', 'A companion book to Harry Potter')
-ON CONFLICT DO NOTHING;
-
 
 -- Products
-INSERT INTO products (product_id, work_id, product_type_id, product_link_to_emedia)
-VALUES (1, 1, 1, NULL),
-       (2, 1, 2, 'https://ebooks.voebb.de/hp1'),
-       (3, 2, 1, NULL),
-       (4, 2, 2, 'https://ebooks.voebb.de/hp2'),
-       (5, 3, 1, NULL),
-       (6, 4, 2, 'https://ebooks.voebb.de/hp3'),
-       (7, 5, 1, NULL),
-       (8, 6, 2, 'https://ebooks.voebb.de/hp4'),
-       (9, 7, 1, NULL),
-       (10, 8, 1, NULL),
-       (11, 9, 1, NULL)
-ON CONFLICT DO NOTHING;
+INSERT INTO products (product_id, product_type_id, product_link_to_emedia, title, release_year, photo, description)
+VALUES (1, 1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1',
+        'First book of Harry Potter series'),
+       (2, 2, 'https://ebooks.voebb.de/hp1', 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1',
+        'First book of Harry Potter series'),
+
+       (3, 1, NULL, 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'Second book in the series'),
+       (4, 2, 'https://ebooks.voebb.de/hp2', 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2',
+        'Second book in the series'),
+
+       (5, 1, NULL, 'Harry Potter and the Prisoner of Azkaban', '1999', 'photo_url_3', 'Third book in the series'),
+       (6, 2, 'https://ebooks.voebb.de/hp3', 'Harry Potter and the Goblet of Fire', '2000', 'photo_url_4',
+        'Fourth book in the series'),
+
+       (7, 1, NULL, 'Harry Potter and the Order of the Phoenix', '2003', 'photo_url_5', 'Fifth book in the series'),
+       (8, 2, 'https://ebooks.voebb.de/hp4', 'Harry Potter and the Half-Blood Prince', '2005', 'photo_url_6',
+        'Sixth book in the series'),
+
+       (9, 1, NULL, 'Harry Potter and the Deathly Hallows', '2007', 'photo_url_7', 'Final book in the series'),
+
+       (10, 1, NULL, 'Harry Potter and the Cursed Child', '2016', 'photo_url_8', 'Play based on Harry Potter universe'),
+
+       (11, 1, NULL, 'Fantastic Beasts and Where to Find Them', '2001', 'photo_url_9',
+        'A companion book to Harry Potter')
+ON CONFLICT (product_id) DO NOTHING;
+
 
 -- Book Details (for both physical books and e-books)
 INSERT INTO book_details (product_id, book_isbn, book_edition, book_pages)
@@ -73,8 +73,7 @@ VALUES
 
     -- Cursed Child still has two co-authors
     (2, 10, 2), -- Tiffany  CO_AUTHOR
-    (3, 10, 2);
--- Thorne   CO_AUTHOR
+    (3, 10, 2); -- Thorne   CO_AUTHOR
 
 --  Clients ─────────────────────────────────────────────────
 INSERT INTO clients (client_id, first_name, last_name, email, password,
