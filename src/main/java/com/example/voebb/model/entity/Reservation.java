@@ -20,8 +20,8 @@ public class Reservation {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "client_id")
-    private Client client;
+    @JoinColumn(name = "custom_user_id")
+    private CustomUser customUser;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "item_id")
