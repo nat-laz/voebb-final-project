@@ -49,20 +49,12 @@ public class Product {
     private BookDetails bookDetails;
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "language_relation",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "language_id")
-    )
-    private Set<Language> languages = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "language_id", nullable = false)
+    private Language language;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
 
-    @ManyToMany
-    @JoinTable(
-            name = "country_relation",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "country_id")
-    )
-    private Set<Country> countries = new HashSet<>();
 }

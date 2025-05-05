@@ -23,6 +23,7 @@ public class Language {
     @Column(name = "language_name", nullable = false, length = 80, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "languages", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "language", fetch = FetchType.LAZY)
     private Set<Product> products = new HashSet<>();
+
 }

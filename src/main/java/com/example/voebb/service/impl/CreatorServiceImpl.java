@@ -2,10 +2,17 @@ package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.creator.CreatorRequestDTO;
 import com.example.voebb.model.dto.creator.CreatorResponseDTO;
+import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
+import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Creator;
+import com.example.voebb.model.entity.CreatorRole;
+import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.CreatorRepo;
+import com.example.voebb.repository.CreatorRoleRepo;
+import com.example.voebb.service.CreatorProductRelationService;
 import com.example.voebb.service.CreatorService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +21,49 @@ import java.util.List;
 public class CreatorServiceImpl implements CreatorService {
 
     private final CreatorRepo creatorRepo;
+    private final CreatorRoleRepo creatorRoleRepo;
+    private final CreatorProductRelationService creatorProductRelationService;
 
-    public CreatorServiceImpl(CreatorRepo creatorRepo) {
+    public CreatorServiceImpl(CreatorRepo creatorRepo, CreatorRoleRepo creatorRoleRepo, CreatorProductRelationService creatorProductRelationService) {
         this.creatorRepo = creatorRepo;
+        this.creatorRoleRepo = creatorRoleRepo;
+        this.creatorProductRelationService = creatorProductRelationService;
+    }
+
+
+
+
+    @Override
+    public void assignCreatorsToProduct(List<CreatorWithRoleDTO> creatorDTOs, Product product) {
+        if (creatorDTOs == null || creatorDTOs.isEmpty()) return;
+
+        for (CreatorWithRoleDTO creatorDTO : creatorDTOs) {
+
+            // 1. Find or create the creator
+            Creator creator = creatorRepo
+                    .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(
+                            creatorDTO.firstName().trim(),
+                            creatorDTO.lastName().trim()
+                    )
+                    .orElseGet(() -> {
+                        Creator newCreator = new Creator();
+                        newCreator.setFirstName(creatorDTO.firstName().trim());
+                        newCreator.setLastName(creatorDTO.lastName().trim());
+                        return creatorRepo.save(newCreator);
+                    });
+
+            // 2. Find the role
+            CreatorRole role = creatorRoleRepo
+                    .findByCreatorRoleIgnoreCase(creatorDTO.role().trim())
+                    .orElseThrow(() -> new EntityNotFoundException("Role not found: " + creatorDTO.role()));
+
+            // 3. Create relation
+            creatorProductRelationService.distributeInTheirTables(
+                    creator.getId(),
+                    product.getId(),
+                    role.getId()
+            );
+        }
     }
 
 
