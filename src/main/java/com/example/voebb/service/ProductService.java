@@ -1,9 +1,9 @@
 package com.example.voebb.service;
 
-import com.example.voebb.model.entity.Product;
+import com.example.voebb.model.dto.product.ProductDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
-    Page<Product> getAllByTitle(String title, Pageable pageable);
+    Page<ProductDTO> getAllByTitle(String title, Pageable pageable);
 }

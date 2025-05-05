@@ -1,5 +1,6 @@
 package com.example.voebb.controller.web;
 
+import com.example.voebb.model.dto.product.ProductDTO;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.service.ProductService;
 import org.springframework.data.domain.Page;
@@ -29,10 +30,10 @@ public class ProductControllerWeb {
     public String getSearchResultPage(@PageableDefault(size = 5) Pageable pageable,
                                       @RequestParam String title,
                                       Model model) {
-        Page<Product> resultProducts = productService.getAllByTitle(title, pageable);
+        Page<ProductDTO> resultProducts = productService.getAllByTitle(title, pageable);
         model.addAttribute("title", title);
         model.addAttribute("page", resultProducts);
-        model.addAttribute("products", resultProducts.getContent());
+        model.addAttribute("productDTOs", resultProducts.getContent());
 
         return "product/product-list";
     }
