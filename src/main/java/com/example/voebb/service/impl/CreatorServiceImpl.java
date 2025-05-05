@@ -1,6 +1,7 @@
 package com.example.voebb.service.impl;
 
-import com.example.voebb.model.dto.CreatorDTO;
+import com.example.voebb.model.dto.creator.CreatorRequestDTO;
+import com.example.voebb.model.dto.creator.CreatorResponseDTO;
 import com.example.voebb.model.entity.Creator;
 import com.example.voebb.repository.CreatorRepo;
 import com.example.voebb.service.CreatorService;
@@ -20,40 +21,43 @@ public class CreatorServiceImpl implements CreatorService {
 
 
     @Override
-    public List<CreatorDTO> findAll() {
+    public List<CreatorResponseDTO> getAllCreators() {
         return creatorRepo.findAll().stream()
-                .map(c -> new CreatorDTO(c.getFirstName(), c.getLastName()))
+                .map(c -> new CreatorResponseDTO(c.getId(), c.getFirstName(), c.getLastName()))
                 .toList();
     }
 
     @Override
-    public CreatorDTO findById(Long id) {
+    public CreatorResponseDTO getCreatorById(Long id) {
         return creatorRepo.findById(id)
-                .map(c -> new CreatorDTO(c.getFirstName(), c.getLastName()))
+                .map(c -> new CreatorResponseDTO(c.getId(), c.getFirstName(), c.getLastName()))
                 .orElseThrow(() -> new EntityNotFoundException("Creator not found"));
     }
 
     @Override
-    public CreatorDTO create(CreatorDTO dto) {
+    public CreatorResponseDTO saveCreator(CreatorRequestDTO dto) {
         Creator newCreator = new Creator(null, dto.firstName(), dto.lastName());
         Creator savedCreator = creatorRepo.save(newCreator);
-        return new CreatorDTO(savedCreator.getFirstName(), savedCreator.getLastName());
+        return new CreatorResponseDTO(savedCreator.getId(), savedCreator.getFirstName(), savedCreator.getLastName());
     }
 
     @Override
-    public CreatorDTO update(Long id, CreatorDTO dto) {
-
+    public CreatorResponseDTO updateCreator(Long id, CreatorRequestDTO dto) {
         Creator existingCreator = creatorRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Creator not found"));
+
         existingCreator.setFirstName(dto.firstName());
         existingCreator.setLastName(dto.lastName());
 
         Creator updated = creatorRepo.save(existingCreator);
-        return new CreatorDTO(updated.getFirstName(), updated.getLastName());
+        return new CreatorResponseDTO(updated.getId(), updated.getFirstName(), updated.getLastName());
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteCreator(Long id) {
+        if (!creatorRepo.existsById(id)) {
+            throw new EntityNotFoundException("Creator not found");
+        }
         creatorRepo.deleteById(id);
     }
 }
