@@ -1,49 +1,31 @@
--- Countries ─────────────────────────────────────────────────
-INSERT INTO countries (country_id, country_name)
-VALUES (1, 'United Kingdom'),
-       (2, 'Germany')
-ON CONFLICT (country_id) DO NOTHING;
-
-
--- Languages  ─────────────────────────────────────────────────
-INSERT INTO languages (language_id, language_name)
-VALUES (1, 'English'),
-       (2, 'German')
-ON CONFLICT (language_id) DO NOTHING;
-
 -- Product types
-INSERT INTO product_types (product_type_id, name, is_digital)
-VALUES (1, 'book', false)
-ON CONFLICT (product_type_id) DO NOTHING;
-INSERT INTO product_types (product_type_id, name, is_digital)
-VALUES (2, 'ebook', true)
-ON CONFLICT (product_type_id) DO NOTHING;
+INSERT INTO product_types ( name, is_digital)
+VALUES ('book', false)
+ON CONFLICT DO NOTHING;
+INSERT INTO product_types ( name, is_digital)
+VALUES ('ebook', true)
+ON CONFLICT DO NOTHING;
 
 
--- Product
-INSERT INTO products (
-    product_type_id, product_link_to_emedia,
-    title, release_year, photo, description,
-    language_id, country_id)
-VALUES
--- English edition from UK
-(1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997',
- 'photo_hp1_en.jpg', 'First book of Harry Potter series (English Edition)', 1, 1),
+-- Products
+INSERT INTO products (product_type_id, product_link_to_emedia, title, release_year, photo, description)
+VALUES (1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1',
+        'First book of Harry Potter series'),
+       (2, 'https://ebooks.voebb.de/hp1', 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1',
+        'First book of Harry Potter series'),
 
--- German edition from Germany
-(1, NULL, 'Harry Potter und der Stein der Weisen', '1998',
- 'photo_hp1_de.jpg', 'Erstes Buch der Harry-Potter-Reihe (Deutsch)', 2, 2),
+       (1, NULL, 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'Second book in the series'),
+       (2, 'https://ebooks.voebb.de/hp2', 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2',
+        'Second book in the series'),
 
--- English ebook
-(2, 'https://ebooks.voebb.de/hp2',
- 'Harry Potter and the Chamber of Secrets', '1999',
- 'photo_hp2_en.jpg', 'Second book in the Harry Potter series (Ebook – English)', 1, 1),
+       (1, NULL, 'Harry Potter and the Prisoner of Azkaban', '1999', 'photo_url_3', 'Third book in the series'),
+       (2, 'https://ebooks.voebb.de/hp3', 'Harry Potter and the Goblet of Fire', '2000', 'photo_url_4',
+        'Fourth book in the series'),
 
--- German ebook
-(2, 'https://ebooks.voebb.de/hp2-de',
- 'Harry Potter und die Kammer des Schreckens', '2000',
- 'photo_hp2_de.jpg', 'Zweites Buch der Harry-Potter-Reihe (Ebook – Deutsch)', 2, 2);
-
+       (1, NULL, 'Harry Potter and the Order of the Phoenix', '2003', 'photo_url_5', 'Fifth book in the series'),
+       (2, 'https://ebooks.voebb.de/hp4', 'Harry Potter and the Half-Blood Prince', '2005', 'photo_url_6',
+        'Sixth book in the series')
+ON CONFLICT (product_id) DO NOTHING;
 
 
 -- Book Details (for both physical books and e-books)
@@ -56,17 +38,17 @@ ON CONFLICT DO NOTHING;
 
 -- Creators ─────────────────────────────────────────────────
 INSERT INTO creators (creator_first_name, creator_last_name)
-VALUES ( 'J. K.', 'Rowling'),
-       ( 'John', 'Tiffany'),
-       ( 'Jack', 'Thorne');
+VALUES ('J. K.', 'Rowling'),
+       ('John', 'Tiffany'),
+       ('Jack', 'Thorne');
 
 
 --  Creator Roles
-INSERT INTO creator_roles ( creator_role)
-VALUES ( 'author'),
-       ( 'co-author'),
+INSERT INTO creator_roles (creator_role)
+VALUES ('author'),
+       ('co-author'),
        ('editor'),
-       ( 'director');
+       ('director');
 
 -- Join table (same Creator ->  multiple  Roles; same Product -> multiple Creators)
 INSERT INTO creator_product_relation (creator_id, product_id, creator_role_id)
@@ -97,6 +79,35 @@ VALUES (1, 'ROLE_ADMIN'),
 INSERT INTO users_roles_relation (custom_user_id, role_id)
 VALUES (1, 1),
        (1, 2);
+
+-- Countries ─────────────────────────────────────────────────
+INSERT INTO countries (country_name)
+VALUES ('United Kingdom')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO countries (country_name)
+VALUES ('United States')
+ON CONFLICT DO NOTHING;
+
+-- Join table (product linked to countries)
+INSERT INTO country_relation (product_id, country_id)
+VALUES (1, 1), -- Philosopher's Stone published in the UK
+       (1, 2), -- ... and in the US
+       (2, 1), -- Cursed Child in the UK
+       (3, 2)  -- Fantastic Beasts in the US
+ON CONFLICT (product_id, country_id) DO NOTHING;
+
+-- Languages  ─────────────────────────────────────────────────
+INSERT INTO languages (language_name)
+VALUES ('English'),
+       ('German')
+ON CONFLICT DO NOTHING;
+
+-- Join table (product linked to languages)
+INSERT INTO language_relation (product_id, language_id)
+VALUES (1, 1),
+       (1, 2)
+ON CONFLICT (product_id, language_id) DO NOTHING;
 
 
 -- Libraries ─────────────────────────────────────────────────

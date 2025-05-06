@@ -5,6 +5,7 @@ import com.example.voebb.model.entity.ProductType;
 import com.example.voebb.repository.ProductTypeRepo;
 import com.example.voebb.service.ProductTypeService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 
@@ -17,6 +18,22 @@ public class ProductTypeServiceImpl implements ProductTypeService {
         this.productTypeRepo = productTypeRepo;
     }
 
+    @Transactional
+    @Override
+    public ProductType findOrCreate(String productTypeName) {
+        if (productTypeName == null || productTypeName.isBlank()) {
+            throw new IllegalArgumentException("ProductTypeName name must be non-empty");
+        }
+
+        String sanitizedName = productTypeName.trim();
+
+        return productTypeRepo.findByNameIgnoreCase(sanitizedName)
+                .orElseGet(() -> {
+                    ProductType pt = new ProductType();
+                    pt.setName(sanitizedName);
+                    return productTypeRepo.save(pt);
+                });
+    }
 
     @Override
     public ProductType findByName(String name) {

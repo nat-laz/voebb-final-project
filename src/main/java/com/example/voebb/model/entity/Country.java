@@ -24,6 +24,6 @@ public class Country {
     @Column(name = "country_name", nullable = false, length = 80, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "countries", fetch = FetchType.LAZY)
     private Set<Product> products = new HashSet<>();
 }

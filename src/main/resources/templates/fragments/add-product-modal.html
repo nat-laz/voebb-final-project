@@ -12,9 +12,14 @@
                     <div class="modal-body">
                         <div class="row g-3">
 
-                            <div class="col-md-6">
-                                <label class="form-label">Product Type</label>
-                                <input name="productType" class="form-control" required>
+                            <div class="mb-3">
+                                <label>Product Type</label>
+                                <select id="productType" name="productType" class="form-select" required>
+                                    <option value="">-- select --</option>
+                                    <option value="book">Book</option>
+                                    <option value="ebook">e-Book</option>
+                                    <option value="movie">Movie(DVD)</option>
+                                </select>
                             </div>
 
                             <div class="col-md-6">
@@ -28,24 +33,25 @@
                             </div>
 
                             <div class="col-md-8">
-                                <label class="form-label">Photo URL</label>
+                                <label class="form-label">Cover photo</label>
                                 <input name="photo" class="form-control">
                             </div>
 
-                            <h5>Creator</h5>
+                            <!-- TODO: UI for adding more creators -->
+                            <div class="col-12">
+                                <h5>Creator</h5>
+                            </div>
                             <div class="col-md-4">
                                 <label class="form-label">First name</label>
-                                <input name="creators[0].firstName" class="form-control">
+                                <input name="creators[0].firstName" class="form-control" required>
                             </div>
-
                             <div class="col-md-4">
                                 <label class="form-label">Last name</label>
-                                <input name="creators[0].lastName" class="form-control">
+                                <input name="creators[0].lastName" class="form-control" required>
                             </div>
-
                             <div class="col-md-4">
                                 <label class="form-label">Role</label>
-                                <input name="creators[0].role" class="form-control">
+                                <input name="creators[0].role" class="form-control" required>
                             </div>
 
                             <div class="col-12">
@@ -53,37 +59,30 @@
                                 <textarea name="description" class="form-control" rows="3"></textarea>
                             </div>
 
-                            <div class="col-12">
+                            <div id="emediaBlock" class="col-12 d-none">
                                 <label class="form-label">eMedia Link</label>
-                                <input name="productLinkToEmedia" class="form-control">
+                                <input id="productLinkToEmedia"
+                                       name="productLinkToEmedia"
+                                       class="form-control"/>
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label">Language</label>
-                                <input name="language" class="form-control" required>
+                            <!-- Conditional: book details visible just if the product_type = 'book' || 'e-book'  -->
+                            <div id="bookDetailsBlock" class="border rounded p-2 mb-4 d-none">
+                                <h5>Book details</h5>
+                                <div class="mb-2">
+                                    <label>ISBN</label>
+                                    <input name="bookDetails.isbn" class="form-control"/>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Edition</label>
+                                    <input name="bookDetails.edition" class="form-control"/>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Pages</label>
+                                    <input name="bookDetails.pages" type="number" class="form-control"/>
+                                </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label">Country</label>
-                                <input name="country" class="form-control" required>
-                            </div>
-
-                            <!-- TODO: conditional: make visible book details just if the product_type = 'book' || 'e-book'  -->
-                            <hr class="mt-3 mb-1">
-                            <div class="col-md-4">
-                                <label class="form-label">ISBN</label>
-                                <input name="isbn" class="form-control">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">Edition</label>
-                                <input name="edition" class="form-control">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">Pages</label>
-                                <input name="pages" type="number" class="form-control">
-                            </div>
                         </div>
                     </div>
 
@@ -97,3 +96,4 @@
         </div>
     </div>
 </div>
+

@@ -26,10 +26,55 @@
         <i class="bi bi-plus-circle"></i> Add Product
     </button>
 
+    <div th:replace="fragments/product-table :: productTable(${page})"></div>
+
     <!-- modal fragment -->
     <div th:replace="fragments/add-product-modal :: addProductModal"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    /**
+     * Dynamically toggles visibility and validation of form fields based on selected product type.
+     *
+     * - Shows the "Book Details" section only when type is 'book' or 'ebook'.
+     * - Enables the "eMedia Link" field only when type is 'ebook'.
+     * - Adds/removes 'required' and 'disabled' attributes accordingly.
+     */
+    const selectedProductType = document.getElementById('productType');
+    const bookBlock      = document.getElementById('bookDetailsBlock');
+    const emediaBlock    = document.getElementById('emediaBlock');
+    const emediaInput    = document.getElementById('productLinkToEmedia');
+
+    if (selectedProductType) {
+        const toggleFields = () => {
+            const type = selectedProductType.value;
+
+            // show bookDetails fields only for book/ebook
+            const showBook = type === 'book' || type === 'ebook';
+            bookBlock.classList.toggle('d-none', !showBook);
+            bookBlock.querySelectorAll('input')
+                .forEach(i => {
+                    i.disabled = !showBook;
+                    i.required = showBook;
+                });
+
+            // show e-Media Link only for ebook
+            const showEbookOnly = type === 'ebook';
+            emediaBlock.classList.toggle('d-none', !showEbookOnly);
+            emediaInput.disabled = !showEbookOnly;
+            if (showEbookOnly) {
+                emediaInput.setAttribute('required','required');
+            } else {
+                emediaInput.removeAttribute('required');
+                emediaInput.value = '';
+            }
+        };
+
+        selectedProductType.addEventListener('change', toggleFields);
+        toggleFields();
+    }
+</script>
+
 </body>
 </html>
