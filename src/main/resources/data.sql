@@ -21,26 +21,29 @@ ON CONFLICT (product_type_id) DO NOTHING;
 
 
 -- Product
-INSERT INTO products (product_id, product_type_id, product_link_to_emedia,
-                      title, release_year, photo, description,
-                      language_id, country_id)
+INSERT INTO products (
+    product_type_id, product_link_to_emedia,
+    title, release_year, photo, description,
+    language_id, country_id)
 VALUES
 -- English edition from UK
-(1, 1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_hp1_en.jpg',
- 'First book of Harry Potter series (English Edition)', 1, 1),
+(1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997',
+ 'photo_hp1_en.jpg', 'First book of Harry Potter series (English Edition)', 1, 1),
 
 -- German edition from Germany
-(2, 1, NULL, 'Harry Potter und der Stein der Weisen', '1998', 'photo_hp1_de.jpg',
- 'Erstes Buch der Harry-Potter-Reihe (Deutsch)', 2, 2),
+(1, NULL, 'Harry Potter und der Stein der Weisen', '1998',
+ 'photo_hp1_de.jpg', 'Erstes Buch der Harry-Potter-Reihe (Deutsch)', 2, 2),
 
--- English edition from UK
-(3, 2, 'https://ebooks.voebb.de/hp2', 'Harry Potter and the Chamber of Secrets', '1999', 'photo_hp2_en.jpg',
- 'Second book in the Harry Potter series (Ebook - English)', 1, 1),
+-- English ebook
+(2, 'https://ebooks.voebb.de/hp2',
+ 'Harry Potter and the Chamber of Secrets', '1999',
+ 'photo_hp2_en.jpg', 'Second book in the Harry Potter series (Ebook – English)', 1, 1),
 
--- German edition from Germany
-(4, 2, 'https://ebooks.voebb.de/hp2-de', 'Harry Potter und die Kammer des Schreckens', '2000', 'photo_hp2_de.jpg',
- 'Zweites Buch der Harry-Potter-Reihe (Ebook - Deutsch)', 2, 2)
-ON CONFLICT (product_id) DO NOTHING;
+-- German ebook
+(2, 'https://ebooks.voebb.de/hp2-de',
+ 'Harry Potter und die Kammer des Schreckens', '2000',
+ 'photo_hp2_de.jpg', 'Zweites Buch der Harry-Potter-Reihe (Ebook – Deutsch)', 2, 2);
+
 
 
 -- Book Details (for both physical books and e-books)
@@ -52,18 +55,18 @@ VALUES (1, '9780747532699', '1st Edition', 223),
 ON CONFLICT DO NOTHING;
 
 -- Creators ─────────────────────────────────────────────────
-INSERT INTO creators (creator_id, creator_first_name, creator_last_name)
-VALUES (1, 'J. K.', 'Rowling'),
-       (2, 'John', 'Tiffany'),
-       (3, 'Jack', 'Thorne');
+INSERT INTO creators (creator_first_name, creator_last_name)
+VALUES ( 'J. K.', 'Rowling'),
+       ( 'John', 'Tiffany'),
+       ( 'Jack', 'Thorne');
 
 
 --  Creator Roles
-INSERT INTO creator_roles (creator_role_id, creator_role)
-VALUES (1, 'author'),
-       (2, 'co-author'),
-       (3, 'editor'),
-       (4, 'director');
+INSERT INTO creator_roles ( creator_role)
+VALUES ( 'author'),
+       ( 'co-author'),
+       ('editor'),
+       ( 'director');
 
 -- Join table (same Creator ->  multiple  Roles; same Product -> multiple Creators)
 INSERT INTO creator_product_relation (creator_id, product_id, creator_role_id)

@@ -10,9 +10,11 @@ import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.CreatorRepo;
 import com.example.voebb.repository.CreatorRoleRepo;
 import com.example.voebb.service.CreatorProductRelationService;
+import com.example.voebb.service.CreatorRoleService;
 import com.example.voebb.service.CreatorService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,50 +23,58 @@ import java.util.List;
 public class CreatorServiceImpl implements CreatorService {
 
     private final CreatorRepo creatorRepo;
-    private final CreatorRoleRepo creatorRoleRepo;
     private final CreatorProductRelationService creatorProductRelationService;
+    private final CreatorRoleService creatorRoleService;
 
-    public CreatorServiceImpl(CreatorRepo creatorRepo, CreatorRoleRepo creatorRoleRepo, CreatorProductRelationService creatorProductRelationService) {
+    @Autowired
+    public CreatorServiceImpl(
+            CreatorRepo creatorRepo,
+            CreatorProductRelationService creatorProductRelationService, CreatorRoleService creatorRoleService) {
         this.creatorRepo = creatorRepo;
-        this.creatorRoleRepo = creatorRoleRepo;
         this.creatorProductRelationService = creatorProductRelationService;
+        this.creatorRoleService = creatorRoleService;
+
     }
-
-
 
 
     @Override
-    public void assignCreatorsToProduct(List<CreatorWithRoleDTO> creatorDTOs, Product product) {
+    @Transactional
+    public void assignCreatorsToProduct(List<CreatorWithRoleDTO> creatorDTOs,
+                                        Product product) {
+
         if (creatorDTOs == null || creatorDTOs.isEmpty()) return;
 
-        for (CreatorWithRoleDTO creatorDTO : creatorDTOs) {
+        for (CreatorWithRoleDTO dto : creatorDTOs) {
+
+            // TODO: proper validation & sanitization
+            if ((dto.getFirstName() == null || dto.getFirstName().isBlank())
+                    && (dto.getLastName() == null || dto.getLastName().isBlank())) {
+                continue;
+            }
+
+            String first = dto.getFirstName() == null ? "" : dto.getFirstName().trim();
+            String last  = dto.getLastName()  == null ? "" : dto.getLastName().trim();
+            String roleName = dto.getRole()   == null ? "" : dto.getRole().trim();
 
             // 1. Find or create the creator
             Creator creator = creatorRepo
-                    .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(
-                            creatorDTO.firstName().trim(),
-                            creatorDTO.lastName().trim()
-                    )
+                    .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(first, last)
                     .orElseGet(() -> {
-                        Creator newCreator = new Creator();
-                        newCreator.setFirstName(creatorDTO.firstName().trim());
-                        newCreator.setLastName(creatorDTO.lastName().trim());
-                        return creatorRepo.save(newCreator);
+                        Creator c = new Creator();
+                        c.setFirstName(first);
+                        c.setLastName(last);
+                        return creatorRepo.save(c);
                     });
 
-            // 2. Find the role
-            CreatorRole role = creatorRoleRepo
-                    .findByCreatorRoleIgnoreCase(creatorDTO.role().trim())
-                    .orElseThrow(() -> new EntityNotFoundException("Role not found: " + creatorDTO.role()));
+            // 2. Find or create the role
+            CreatorRole role = creatorRoleService.findOrCreate(roleName);
 
             // 3. Create relation
             creatorProductRelationService.distributeInTheirTables(
-                    creator.getId(),
-                    product.getId(),
-                    role.getId()
-            );
+                    creator.getId(), product.getId(), role.getId());
         }
     }
+
 
 
     @Override

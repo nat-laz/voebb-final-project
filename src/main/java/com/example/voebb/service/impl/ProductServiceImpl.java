@@ -51,7 +51,11 @@ public class ProductServiceImpl implements ProductService {
         // 1. Link with existing media_type
         ProductType productType = productTypeService.findByName(requestDTO.productType());
 
-        // 2. Save to Product table
+        // 2. Link with existing OR create language and country
+        Language language = languageService.findOrCreate(requestDTO.language());
+        Country country = countryService.findOrCreate(requestDTO.country());
+
+        // 3. Save to Product table
         Product product = new Product();
         product.setTitle(requestDTO.title());
         product.setReleaseYear(requestDTO.releaseYear());
@@ -59,10 +63,12 @@ public class ProductServiceImpl implements ProductService {
         product.setDescription(requestDTO.description());
         product.setProductLinkToEmedia(requestDTO.productLinkToEmedia());
         product.setType(productType);
+        product.setLanguage(language);
+        product.setCountry(country);
 
         Product savedProduct = productRepo.save(product);
 
-        // 2. If 'book' || 'e-book' add book details
+        // 4. If 'book' || 'e-book' add book details
         if (requestDTO.bookDetails() != null) {
             BookDetails details = new BookDetails();
             details.setIsbn(requestDTO.bookDetails().isbn());
@@ -73,14 +79,10 @@ public class ProductServiceImpl implements ProductService {
             bookDetailsService.saveDetails(details); // delegate to service
         }
 
-        // 3. Link creator with the product
+        // 5. Link creator with the product
         if (requestDTO.creators() != null && !requestDTO.creators().isEmpty()) {
             creatorService.assignCreatorsToProduct(requestDTO.creators(), savedProduct);
         }
-
-        // 4. Link with existing OR create language and country
-        Language language = languageService.findOrCreate(requestDTO.language());
-        Country country = countryService.findOrCreate(requestDTO.country());
 
         return new ProductResponseDTO(savedProduct.getId(), savedProduct.getTitle(), productType.getName());
 

@@ -18,7 +18,12 @@ public class LanguageServiceImpl implements LanguageService {
     @Transactional
     @Override
     public Language findOrCreate(String name) {
-        String sanitizedName = name == null ? "" : name.trim();
+
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Language name must be non-empty");
+        }
+
+        String sanitizedName = name.trim();
 
         return languageRepo.findByNameIgnoreCase(sanitizedName)
                 .orElseGet(() -> {

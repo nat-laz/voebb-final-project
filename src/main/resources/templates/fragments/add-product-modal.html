@@ -1,0 +1,99 @@
+<div th:fragment="addProductModal">
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form th:action="@{/admin/products}" method="post">
+                    <div class="modal-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label">Product Type</label>
+                                <input name="productType" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Title</label>
+                                <input name="title" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Release Year</label>
+                                <input name="releaseYear" class="form-control">
+                            </div>
+
+                            <div class="col-md-8">
+                                <label class="form-label">Photo URL</label>
+                                <input name="photo" class="form-control">
+                            </div>
+
+                            <h5>Creator</h5>
+                            <div class="col-md-4">
+                                <label class="form-label">First name</label>
+                                <input name="creators[0].firstName" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Last name</label>
+                                <input name="creators[0].lastName" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Role</label>
+                                <input name="creators[0].role" class="form-control">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Description</label>
+                                <textarea name="description" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">eMedia Link</label>
+                                <input name="productLinkToEmedia" class="form-control">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Language</label>
+                                <input name="language" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Country</label>
+                                <input name="country" class="form-control" required>
+                            </div>
+
+                            <!-- TODO: conditional: make visible book details just if the product_type = 'book' || 'e-book'  -->
+                            <hr class="mt-3 mb-1">
+                            <div class="col-md-4">
+                                <label class="form-label">ISBN</label>
+                                <input name="isbn" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Edition</label>
+                                <input name="edition" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Pages</label>
+                                <input name="pages" type="number" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-success" type="submit">Save</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -20,22 +20,38 @@ public class SecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return http.authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .anyRequest().permitAll())
+//                .formLogin(form -> form
+//                        .defaultSuccessUrl("/")
+//                        .permitAll()
+//                )
+//                .logout(logout -> logout
+//                        .logoutSuccessUrl("/")
+//                        .permitAll())
+//                .rememberMe(auth -> auth
+//                        .key("secret")
+//                        .tokenValiditySeconds(60 * 60 * 6)) // remember login for 6 hours
+//                .build();
+//    }
+
+    // DISABLE MANDATORY LOGIN : keep it once we get back to security
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll())
-                .formLogin(form -> form
-                        .defaultSuccessUrl("/")
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/")
-                        .permitAll())
-                .rememberMe(auth -> auth
-                        .key("secret")
-                        .tokenValiditySeconds(60 * 60 * 6)) // remember login for 6 hours
-                .build();
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+
+        httpSecurity.csrf(csrfConfigurer ->
+                csrfConfigurer.ignoringRequestMatchers("**")
+        );
+
+        httpSecurity.authorizeHttpRequests(auth ->
+                auth.anyRequest().permitAll()
+        );
+
+        return httpSecurity.build();
+
     }
 
     @Bean

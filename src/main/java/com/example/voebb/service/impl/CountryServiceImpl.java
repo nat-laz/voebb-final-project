@@ -20,15 +20,20 @@ public class CountryServiceImpl implements CountryService {
     }
 
 
-    @Transactional
     @Override
+    @Transactional
     public Country findOrCreate(String name) {
-        String sanitizedName = name == null ? "" : name.trim();
 
-        return countryRepo.findByNameIgnoreCase(name)
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Country name must be non-empty");
+        }
+
+        String sanitizedName = name.trim();
+
+        return countryRepo.findByNameIgnoreCase(sanitizedName)
                 .orElseGet(() -> {
                     Country c = new Country();
-                    c.setName(name);
+                    c.setName(sanitizedName);
                     return countryRepo.save(c);
                 });
     }
