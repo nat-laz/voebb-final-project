@@ -1,7 +1,9 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.creator.CreatorRequestDTO;
-import com.example.voebb.model.dto.product.ProductDTO;
+import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
+import com.example.voebb.model.dto.product.ProductInfoDTO;
+import com.example.voebb.model.dto.product.SearchResultProductDTO;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.CreatorProductRelationService;
@@ -23,7 +25,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public Page<ProductDTO> getAllByTitle(String title, Pageable pageable) {
+    public Page<SearchResultProductDTO> getAllByTitle(String title, Pageable pageable) {
         Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
 
         return page.map(product -> {
@@ -37,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
                     ))
                     .orElse(null);
 
-            return new ProductDTO(
+            return new SearchResultProductDTO(
                     product.getId(),
                     product.getType().getName(),
                     product.getTitle(),
@@ -48,5 +50,32 @@ public class ProductServiceImpl implements ProductService {
                     mainCreator);
         });
     }
+
+    @Override
+    public ProductInfoDTO findById(Long id) {
+        Product product = productRepo.getProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+
+        return new ProductInfoDTO(
+                product.getId(),
+                product.getType().getName(),
+                product.getTitle(),
+                product.getReleaseYear(),
+                product.getPhoto(),
+                product.getDescription(),
+                product.getProductLinkToEmedia()
+//                creatorService.getCreatorsByProductId(product.getId()).stream()
+//                        .map(creatorWithRoleDTO -> new CreatorWithRoleDTO(
+//                                creatorWithRoleDTO.creatorId(),
+//                                creatorWithRoleDTO.firstName(),
+//                                creatorWithRoleDTO.lastName(),
+//                                creatorWithRoleDTO.roleId(),
+//                                creatorWithRoleDTO.roleName()
+//                        ))
+//                        .toList()
+        );
+    }
+
 
 }

@@ -3,7 +3,11 @@
 <div class="card mb-3" th:fragment="card(productDTO)" style="width: 50rem;">
     <div class="card-header" th:text="'id: ' + ${productDTO.id}"></div>
     <div class="card-body">
-        <h4 class="card-title" th:text="${productDTO.title}"></h4>
+        <a th:href="@{/products/{id}(id=${productDTO.id})}"
+           style="text-decoration: none; color: inherit;">
+            <h4 class="card-title" th:text="${productDTO.title}"></h4>
+        </a>
+
         <p class="card-text" th:text="'productType: ' + ${productDTO.productType}"></p>
         <p class="card-text"
            th:text="${productDTO.mainCreator != null} ?

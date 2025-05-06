@@ -1,9 +1,12 @@
 package com.example.voebb.service;
 
-import com.example.voebb.model.dto.product.ProductDTO;
+import com.example.voebb.model.dto.product.ProductInfoDTO;
+import com.example.voebb.model.dto.product.SearchResultProductDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
-    Page<ProductDTO> getAllByTitle(String title, Pageable pageable);
+    Page<SearchResultProductDTO> getAllByTitle(String title, Pageable pageable);
+
+    ProductInfoDTO findById(Long id);
 }

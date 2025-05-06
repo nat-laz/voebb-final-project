@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- General Product Info -->
+    <h4>General info</h4>
+    <p th:text="'Title: ' + ${productInfo.title}"></p>
+    <p th:text="'Id: ' + ${productInfo.id}"></p>
+    <p th:text="'Type: ' + ${productInfo.productType}"></p>
+    <p th:text="'Release: ' + ${productInfo.releaseYear}"></p>
+    <p th:text="'Photo: ' + ${productInfo.photo}"></p>
+    <p th:text="'Description: ' + ${productInfo.description}"></p>
+    <p th:text="'Link: ' + ${productInfo.productLinkToEmedia}"></p>
+
+    <!-- Book details section -->
+    <div th:if="${bookDetails != null}">
+        <h4>Book Details</h4>
+        <p th:text="'ISBN: ' + ${bookDetails.isbn}"></p>
+        <p th:text="'Edition: ' + ${bookDetails.edition}"></p>
+        <p th:text="'Pages: ' + ${bookDetails.pages}"></p>
+    </div>
+
+    <!-- Creators section -->
+    <div th:if="${creators.size() > 0}">
+        <h4>Creators</h4>
+        <ul th:each="creator : ${creators}" >
+            <li th:text="'Id: ' + ${creator.creatorId}
+        + ', Role: ' + ${creator.roleName}
+        + ', Name: ' + ${creator.firstName}
+        + ' ' + ${creator.lastName}"></li>
+        </ul>
+    </div>
+
+
+</body>
+</html>
