@@ -25,4 +25,5 @@ public class Language {
 
     @ManyToMany(mappedBy = "languages", fetch = FetchType.LAZY)
     private Set<Product> products = new HashSet<>();
+
 }

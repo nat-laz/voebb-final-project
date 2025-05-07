@@ -5,10 +5,16 @@ import com.example.voebb.model.entity.Country;
 import java.util.List;
 
 public interface CountryService {
+
+    Country findOrCreate(String name);
+
     Country createCountry(Country country);
 
     Country getCountryById(Long id);
+
     List<Country> getAllCountries();
+
     Country updateCountry(Long id, Country updatedCountry);
+
     void deleteCountryById(Long id);
 }

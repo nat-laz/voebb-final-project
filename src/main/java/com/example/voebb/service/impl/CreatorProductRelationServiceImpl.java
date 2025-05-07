@@ -32,7 +32,7 @@ public class CreatorProductRelationServiceImpl implements CreatorProductRelation
 
 
     @Override
-    public void assignCreatorToProduct(Long creatorId, Long productId, Long roleId) {
+    public void distributeInTheirTables(Long creatorId, Long productId, Long roleId) {
 
 
         Product product = productRepo.findById(productId)
@@ -51,16 +51,5 @@ public class CreatorProductRelationServiceImpl implements CreatorProductRelation
         relationRepo.save(relation);
     }
 
-    @Override
-    public List<CreatorWithRoleDTO> getCreatorsByProductId(Long productId) {
-        return relationRepo.findByProductId(productId).stream()
-                .map(relation -> new CreatorWithRoleDTO(
-                        relation.getCreator().getId(),
-                        relation.getCreator().getFirstName(),
-                        relation.getCreator().getLastName(),
-                        relation.getCreatorRole().getId(),
-                        relation.getCreatorRole().getCreatorRole()
-                ))
-                .toList();
-    }
+
 }

@@ -6,9 +6,12 @@ import com.example.voebb.model.entity.CreatorRole;
 import com.example.voebb.repository.CreatorRoleRepo;
 import com.example.voebb.service.CreatorRoleService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class CreatorRoleServiceImpl implements CreatorRoleService {
 
     public final CreatorRoleRepo creatorRoleRepo;
@@ -17,6 +20,24 @@ public class CreatorRoleServiceImpl implements CreatorRoleService {
         this.creatorRoleRepo = creatorRoleRepo;
     }
 
+    @Override
+    @Transactional
+    public CreatorRole findOrCreate(String roleName) {
+
+
+        if (roleName == null || roleName.isBlank()) {
+            throw new IllegalArgumentException("Creator role must be non-empty");
+        }
+
+        String sanitizedName = roleName.trim();
+
+        return creatorRoleRepo.findByCreatorRoleIgnoreCase(sanitizedName)
+                .orElseGet(() -> {
+                    CreatorRole role = new CreatorRole();
+                    role.setCreatorRole(sanitizedName);
+                    return creatorRoleRepo.save(role);
+                });
+    }
 
     @Override
     public List<CreatorRoleResponseDTO> getAllCreatorRoles() {

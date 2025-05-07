@@ -3,6 +3,7 @@ package com.example.voebb.service.impl;
 import com.example.voebb.model.entity.Country;
 import com.example.voebb.repository.CountryRepo;
 import com.example.voebb.service.CountryService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,28 @@ public class CountryServiceImpl implements CountryService {
         this.countryRepo = countryRepo;
     }
 
+
     @Override
-    public Country createCountry (Country country) {
-        if(countryRepo.existsByName(country.getName())){
+    @Transactional
+    public Country findOrCreate(String name) {
+
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Country name must be non-empty");
+        }
+
+        String sanitizedName = name.trim();
+
+        return countryRepo.findByNameIgnoreCase(sanitizedName)
+                .orElseGet(() -> {
+                    Country c = new Country();
+                    c.setName(sanitizedName);
+                    return countryRepo.save(c);
+                });
+    }
+
+    @Override
+    public Country createCountry(Country country) {
+        if (countryRepo.existsByName(country.getName())) {
             throw new RuntimeException("Country with name " + country.getName() + " already exists");
         }
         return countryRepo.save(country);
@@ -28,7 +48,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public Country getCountryById(Long id) {
-        return countryRepo.findById(id).orElseThrow(()->new RuntimeException("Country with Id" + id +  "not found"));
+        return countryRepo.findById(id).orElseThrow(() -> new RuntimeException("Country with Id" + id + "not found"));
     }
 
     @Override
@@ -41,7 +61,7 @@ public class CountryServiceImpl implements CountryService {
         Country existingCountry = getCountryById(id);
         existingCountry.setName(updatedCountry.getName());
 
-        return  countryRepo.save(existingCountry);
+        return countryRepo.save(existingCountry);
     }
 
     @Override
