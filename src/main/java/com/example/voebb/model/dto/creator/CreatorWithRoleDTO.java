@@ -1,9 +1,15 @@
 package com.example.voebb.model.dto.creator;
 
-public record CreatorWithRoleDTO(
-        Long creatorId,
-        String firstName,
-        String lastName,
-        Long roleId,
-        String roleName
-) {}
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreatorWithRoleDTO {
+
+    private String firstName;
+    private String lastName;
+    private String role;
+}

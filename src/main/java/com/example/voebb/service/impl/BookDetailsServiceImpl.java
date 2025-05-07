@@ -1,6 +1,7 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.product.BookDetailsDTO;
+import com.example.voebb.model.dto.product.NewBookDetailsDTO;
 import com.example.voebb.model.entity.BookDetails;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.BookDetailsRepo;
@@ -20,9 +21,16 @@ public class BookDetailsServiceImpl implements BookDetailsService {
     }
 
     @Override
-    public void saveDetails(BookDetails bookDetails) {
-        bookDetailsRepo.save(bookDetails);
+    public void saveBookDetails(NewBookDetailsDTO dto, Product product) {
+        BookDetails details = new BookDetails();
+        details.setIsbn(dto.getIsbn());
+        details.setEdition(dto.getEdition());
+        details.setPages(dto.getPages());
+        details.setProduct(product);
+
+        bookDetailsRepo.save(details);
     }
+
 
     @Override
     public BookDetails getDetailsByProductId(Long productId) {
@@ -66,4 +74,6 @@ public class BookDetailsServiceImpl implements BookDetailsService {
         getDetailsByProductId(productId);
         bookDetailsRepo.deleteById(productId);
     }
+
+
 }

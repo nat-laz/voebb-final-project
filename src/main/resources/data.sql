@@ -65,11 +65,12 @@ VALUES (1, '9780747532699', '1st Edition', 223),
        (11, '9781408880715', '1st Edition', 128)
 ON CONFLICT DO NOTHING;
 
--- Creators ─────────────────────────────────────────────────
+-- Creators
 INSERT INTO creators (creator_id, creator_first_name, creator_last_name)
 VALUES (1, 'J. K.', 'Rowling'),
        (2, 'John', 'Tiffany'),
-       (3, 'Jack', 'Thorne');
+       (3, 'Jack', 'Thorne')
+ON CONFLICT (creator_id) DO NOTHING;
 SELECT setval('creators_creator_id_seq', (SELECT MAX(creator_id) FROM creators));
 
 -- Join table (same Creator ->  multiple  Roles; same Product -> multiple Creators)
@@ -220,7 +221,6 @@ INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (38,
 INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (39, 3, 'Lower Shelf-1') ON CONFLICT (item_id) DO NOTHING;
 INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (40, 4, 'Room 1-18') ON CONFLICT (item_id) DO NOTHING;
 INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (41, 5, 'Top Rack-9') ON CONFLICT (item_id) DO NOTHING;
-
 
 --  ─────────── mock: client_id = 1 borrows item_id = 1 ───────────
 INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)

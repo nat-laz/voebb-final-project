@@ -22,7 +22,7 @@ public class BookDetails {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(name = "book_isbn", nullable = false, unique = true)
+    @Column(name = "book_isbn", nullable = false)
     private String isbn;
 
     @Column(name = "book_edition")
