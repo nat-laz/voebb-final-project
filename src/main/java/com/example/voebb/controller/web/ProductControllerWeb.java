@@ -4,6 +4,7 @@ import com.example.voebb.model.dto.product.ProductInfoDTO;
 import com.example.voebb.model.dto.product.SearchResultProductDTO;
 import com.example.voebb.service.BookDetailsService;
 import com.example.voebb.service.CreatorProductRelationService;
+import com.example.voebb.service.ProductItemService;
 import com.example.voebb.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +22,13 @@ public class ProductControllerWeb {
     private final ProductService productService;
     private final CreatorProductRelationService creatorService;
     private final BookDetailsService bookDetailsService;
+    private final ProductItemService productItemService;
 
-    public ProductControllerWeb(ProductService productService, CreatorProductRelationService creatorService, BookDetailsService bookDetailsService) {
+    public ProductControllerWeb(ProductService productService, CreatorProductRelationService creatorService, BookDetailsService bookDetailsService, ProductItemService productItemService) {
         this.productService = productService;
         this.creatorService = creatorService;
         this.bookDetailsService = bookDetailsService;
+        this.productItemService = productItemService;
     }
 
     @GetMapping("/search")
@@ -41,7 +44,6 @@ public class ProductControllerWeb {
         model.addAttribute("title", title);
         model.addAttribute("page", resultProducts);
         model.addAttribute("productDTOs", resultProducts.getContent());
-
         return "product/product-list";
     }
 
@@ -49,9 +51,11 @@ public class ProductControllerWeb {
     public String getDetailsPage(@PathVariable Long id,
                                  Model model) {
         ProductInfoDTO productInfoDTO = productService.findById(id);
+
         model.addAttribute("productInfo", productInfoDTO);
         model.addAttribute("creators", creatorService.getCreatorsByProductId(id));
         model.addAttribute("bookDetails", bookDetailsService.getDetailsDTOByProductId(id));
+        model.addAttribute("locations", productItemService.getAllLocationsForProduct(id));
         return "product/product-full-details";
     }
 }

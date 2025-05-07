@@ -1,12 +1,12 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.creator.CreatorRequestDTO;
-import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
 import com.example.voebb.model.dto.product.ProductInfoDTO;
 import com.example.voebb.model.dto.product.SearchResultProductDTO;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.CreatorProductRelationService;
+import com.example.voebb.service.ProductItemService;
 import com.example.voebb.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +17,12 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;
     private final CreatorProductRelationService creatorService;
+    private final ProductItemService productItemService;
 
-    public ProductServiceImpl(ProductRepo productRepo, CreatorProductRelationService creatorService) {
+    public ProductServiceImpl(ProductRepo productRepo, CreatorProductRelationService creatorService, ProductItemService productItemService) {
         this.productRepo = productRepo;
         this.creatorService = creatorService;
+        this.productItemService = productItemService;
     }
 
 
@@ -47,7 +49,8 @@ public class ProductServiceImpl implements ProductService {
                     product.getPhoto(),
                     product.getDescription(),
                     product.getProductLinkToEmedia(),
-                    mainCreator);
+                    mainCreator,
+                    productItemService.getLocationsForAvailableItemsByProductId(product.getId()));
         });
     }
 
@@ -55,7 +58,6 @@ public class ProductServiceImpl implements ProductService {
     public ProductInfoDTO findById(Long id) {
         Product product = productRepo.getProductById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-
 
         return new ProductInfoDTO(
                 product.getId(),
@@ -65,15 +67,6 @@ public class ProductServiceImpl implements ProductService {
                 product.getPhoto(),
                 product.getDescription(),
                 product.getProductLinkToEmedia()
-//                creatorService.getCreatorsByProductId(product.getId()).stream()
-//                        .map(creatorWithRoleDTO -> new CreatorWithRoleDTO(
-//                                creatorWithRoleDTO.creatorId(),
-//                                creatorWithRoleDTO.firstName(),
-//                                creatorWithRoleDTO.lastName(),
-//                                creatorWithRoleDTO.roleId(),
-//                                creatorWithRoleDTO.roleName()
-//                        ))
-//                        .toList()
         );
     }
 

@@ -21,7 +21,8 @@
                             type="button"
                             data-bs-toggle="collapse"
                             th:data-bs-target="'#collapseLibrary__' + ${productDTO.id}"
-                            th:aria-controls="'collapseLibrary__' + ${productDTO.id}">
+                            th:aria-controls="'collapseLibrary__' + ${productDTO.id}"
+                        th:text="'Available in ' + ${productDTO.locations.size()} + ' ' + (${productDTO.locations.size() == 1} ? 'library' : libraries)">
                         Locations
                     </button>
                 </h2>
@@ -29,7 +30,9 @@
                      th:id="'collapseLibrary__' + ${productDTO.id}"
                      th:attr="aria-labelledby='headerLibrary__' + ${productDTO.id}">
                     <div class="accordion-body">
-                        <p>TODO: Add libraries</p>
+                        <div th:each="location : ${productDTO.locations}">
+                            <p th:text="'Location: ' + ${location.district} + ', ' + ${location.libraryName} + ', available items: ' + ${location.itemsCount}"></p>
+                        </div>
                     </div>
                 </div>
             </div>
