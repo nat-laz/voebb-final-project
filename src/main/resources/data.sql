@@ -125,13 +125,12 @@ VALUES (1, 1),
 ON CONFLICT (product_id, language_id) DO NOTHING;
 
 -- Libraries ─────────────────────────────────────────────────
-INSERT INTO libraries (library_id,
-                       library_name, library_description,
-                       address_city, address_postcode, address_street, address_house_nr, address_osm_link)
-VALUES (1,
-        'Central Library', 'Main city branch',
-        'Berlin', '10961', 'Alexanderplatz', '1A',
-        'https://osm.org/go/0MBK8W');
+INSERT INTO libraries (library_id, library_name, library_description, address_city, address_district, address_postcode, address_street, address_house_nr, address_osm_link) VALUES (1, 'Central City Library', 'Main public library in the heart of Berlin.', 'Berlin', 'Mitte', '10115', 'Hauptstraße', '123', 'https://www.openstreetmap.org/?mlat=52.5300&mlon=13.3847#map=16/52.5300/13.3847') ON CONFLICT (library_id) DO NOTHING;
+INSERT INTO libraries (library_id, library_name, library_description, address_city, address_district, address_postcode, address_street, address_house_nr, address_osm_link) VALUES (2, 'West End Library', 'A cozy library located in the Charlottenburg district.', 'Berlin', 'Charlottenburg-Wilmersdorf', '10623', 'Kaiser-Wilhelm-Straße', '45', 'https://www.openstreetmap.org/?mlat=52.5150&mlon=13.2900#map=16/52.5150/13.2900') ON CONFLICT (library_id) DO NOTHING;
+INSERT INTO libraries (library_id, library_name, library_description, address_city, address_district, address_postcode, address_street, address_house_nr, address_osm_link) VALUES (3, 'East Side Library', 'Library near the East Side Gallery, offering a variety of books.', 'Berlin', 'Friedrichshain-Kreuzberg', '10243', 'Mühlenstraße', '10', 'https://www.openstreetmap.org/?mlat=52.5074&mlon=13.4396#map=16/52.5074/13.4396') ON CONFLICT (library_id) DO NOTHING;
+INSERT INTO libraries (library_id, library_name, library_description, address_city, address_district, address_postcode, address_street, address_house_nr, address_osm_link) VALUES (4, 'North Gate Library', 'A library situated in the Reinickendorf district, known for its quiet reading rooms.', 'Berlin', 'Reinickendorf', '13407', 'Wilhelmsruher Damm', '23', 'https://www.openstreetmap.org/?mlat=52.5960&mlon=13.2905#map=16/52.5960/13.2905') ON CONFLICT (library_id) DO NOTHING;
+INSERT INTO libraries (library_id, library_name, library_description, address_city, address_district, address_postcode, address_street, address_house_nr, address_osm_link) VALUES (5, 'South Park Library', 'Located near the Tempelhofer Feld, offering a peaceful environment for reading.', 'Berlin', 'Tempelhof-Schöneberg', '12103', 'Tempelhofer Damm', '89', 'https://www.openstreetmap.org/?mlat=52.4706&mlon=13.3989#map=16/52.4706/13.3989') ON CONFLICT (library_id) DO NOTHING;
+
 
 INSERT INTO item_status (item_status_id, item_status_name)
 VALUES (1, 'available'),
@@ -139,12 +138,104 @@ VALUES (1, 'available'),
        (3, 'borrowed');
 
 -- ─────────── mock: copy #1001 of product 1, available  ───────────
-INSERT INTO product_items (item_id, product_id, status_id)
-VALUES (1001, 1, 1);
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1001, 1, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1002, 1, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1003, 1, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1004, 1, 3) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1005, 2, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1006, 2, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1007, 2, 2) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1008, 3, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1009, 3, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1010, 3, 3) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1011, 3, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1012, 3, 3) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1013, 4, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1014, 4, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1015, 4, 2) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1016, 5, 3) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1017, 5, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1018, 5, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1019, 5, 1) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1020, 6, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1021, 6, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1022, 6, 1) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1023, 7, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1024, 7, 3) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1025, 7, 3) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1026, 7, 2) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1027, 8, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1028, 8, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1029, 8, 2) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1030, 9, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1031, 9, 3) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1032, 9, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1033, 9, 2) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1034, 10, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1035, 10, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1036, 10, 3) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1037, 10, 1) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1038, 10, 2) ON CONFLICT (item_id) DO NOTHING;
+
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1039, 11, 3) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1040, 11, 2) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (1041, 11, 1) ON CONFLICT (item_id) DO NOTHING;
+
 
 -- ─────────── mock: locate above copy in the library ───────────
-INSERT INTO item_location (item_location_id, item_id, library_id, location_in_library)
-VALUES (501, 1001, 1, 'Shelf A-12');
+-- ItemLocation Insert Statements
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1001, 1, 'Shelf A-12') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1002, 3, 'Room 2-17') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1003, 5, 'Shelf B-23') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1004, 2, 'Top Rack-8') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1005, 4, 'Shelf C-4') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1006, 1, 'Room 1-19') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1007, 2, 'Lower Shelf-5') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1008, 5, 'Shelf A-3') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1009, 3, 'Room 1-22') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1010, 4, 'Shelf B-10') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1011, 1, 'Shelf C-14') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1012, 2, 'Top Rack-7') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1013, 5, 'Room 2-25') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1014, 3, 'Shelf A-9') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1015, 4, 'Shelf C-16') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1016, 1, 'Room 1-5') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1017, 2, 'Shelf B-20') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1018, 5, 'Lower Shelf-12') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1019, 3, 'Top Rack-2') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1020, 4, 'Room 2-28') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1021, 1, 'Shelf C-6') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1022, 2, 'Room 1-13') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1023, 5, 'Room 2-10') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1024, 3, 'Shelf A-4') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1025, 4, 'Shelf B-19') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1026, 1, 'Room 1-9') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1027, 2, 'Shelf C-11') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1028, 5, 'Top Rack-1') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1029, 3, 'Room 2-7') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1030, 4, 'Lower Shelf-20') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1031, 1, 'Shelf B-15') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1032, 2, 'Room 1-6') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1033, 5, 'Shelf A-22') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1034, 3, 'Room 2-19') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1035, 4, 'Shelf C-9') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1036, 1, 'Shelf A-2') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1037, 2, 'Room 2-14') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1038, 5, 'Shelf B-17') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1039, 3, 'Lower Shelf-1') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1040, 4, 'Room 1-18') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (1041, 5, 'Top Rack-9') ON CONFLICT (item_id) DO NOTHING;
+
+
 
 --  ─────────── mock: client_id = 1 borrows item_id = 1001 ───────────
 INSERT INTO borrows (borrow_id, custom_user_id, item_id,

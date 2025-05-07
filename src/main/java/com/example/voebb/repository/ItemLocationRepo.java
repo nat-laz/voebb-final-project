@@ -37,7 +37,6 @@ public interface ItemLocationRepo extends JpaRepository<ItemLocation, Long> {
     FROM ProductItem i
     JOIN i.location l
     WHERE i.product.id = :productId
-      AND i.status.id = 1
     GROUP BY l.library.address.district, l.library.name, l.item.status.name
     """)
     List<LocationAndItemStatusDTO> getItemLocationsFullInfo(@Param("productId") Long productId);
