@@ -52,7 +52,7 @@
         </thead>
         <tbody>
         <tr th:each="location, stat : ${locations}">
-            <td th:text="${stat.index}">1</td>
+            <td th:text="${stat.index} + 1">1</td>
             <td th:text="${location.district}">District</td>
             <td th:text="${location.libraryName}">Library name</td>
             <td th:text="${location.itemStatus}">Status</td>
