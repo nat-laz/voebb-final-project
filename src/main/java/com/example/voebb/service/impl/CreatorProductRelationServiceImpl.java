@@ -1,6 +1,7 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
+import com.example.voebb.model.dto.creator.CreatorWithRoleDTO2;
 import com.example.voebb.model.entity.*;
 import com.example.voebb.repository.CreatorProductRelationRepo;
 import com.example.voebb.repository.CreatorRepo;
@@ -51,5 +52,16 @@ public class CreatorProductRelationServiceImpl implements CreatorProductRelation
         relationRepo.save(relation);
     }
 
-
+    @Override
+    public List<CreatorWithRoleDTO2> getCreatorsByProductId(Long productId) {
+        return relationRepo.findByProductId(productId).stream()
+                .map(relation -> new CreatorWithRoleDTO2(
+                        relation.getCreator().getId(),
+                        relation.getCreator().getFirstName(),
+                        relation.getCreator().getLastName(),
+                        relation.getCreatorRole().getId(),
+                        relation.getCreatorRole().getCreatorRole()
+                ))
+                .toList();
+    }
 }

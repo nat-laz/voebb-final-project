@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;
-    private final CreatorProductRelationService creatorService;
+    private final CreatorProductRelationService creatorProductRelationService;
     private final ProductItemService productItemService;
     private final BookDetailsService bookDetailsService;
     private final CreatorService creatorService;
@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductServiceImpl(
             ProductRepo productRepo,
             BookDetailsService bookDetailsService,
-            CreatorProductRelationService creatorService,
+            CreatorProductRelationService creatorProductRelationService,
             CreatorService creatorService,
             ProductTypeService productTypeService,
             ProductItemService productItemService) {
@@ -41,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
         this.bookDetailsService = bookDetailsService;
         this.creatorService = creatorService;
         this.productTypeService = productTypeService;
-        this.creatorService = creatorService;
+        this.creatorProductRelationService = creatorProductRelationService;
         this.productItemService = productItemService;
     }
 
@@ -50,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
 
         return page.map(product -> {
-            CreatorRequestDTO mainCreator = creatorService.getCreatorsByProductId(product.getId())
+            CreatorRequestDTO mainCreator = creatorProductRelationService.getCreatorsByProductId(product.getId())
                     .stream()
                     .filter(creator -> creator.roleId() == 1)
                     .findFirst()
