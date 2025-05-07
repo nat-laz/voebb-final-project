@@ -54,7 +54,8 @@ ON CONFLICT DO NOTHING;
 INSERT INTO creators (creator_id, creator_first_name, creator_last_name)
 VALUES (1, 'J. K.', 'Rowling'),
        (2, 'John', 'Tiffany'),
-       (3, 'Jack', 'Thorne');
+       (3, 'Jack', 'Thorne')
+ON CONFLICT (creator_id) DO NOTHING;
 
 
 --  Creator Roles
