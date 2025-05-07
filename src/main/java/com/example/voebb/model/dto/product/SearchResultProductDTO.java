@@ -13,7 +13,6 @@ public record SearchResultProductDTO(
         String title,
         String releaseYear,
         String photo,
-        String description, // summary of the product based on media_type
         String productLinkToEmedia,
         CreatorRequestDTO mainCreator, // TODO: Decide which creators to show on product-card
         List<LocationAndItemsCountDTO> locations //TODO: Add locations

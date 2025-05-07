@@ -47,7 +47,6 @@ public class ProductServiceImpl implements ProductService {
                     product.getTitle(),
                     product.getReleaseYear(),
                     product.getPhoto(),
-                    product.getDescription(),
                     product.getProductLinkToEmedia(),
                     mainCreator,
                     productItemService.getLocationsForAvailableItemsByProductId(product.getId()));
