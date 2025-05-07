@@ -222,12 +222,12 @@ INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (40,
 INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (41, 5, 'Top Rack-9') ON CONFLICT (item_id) DO NOTHING;
 
 
---  ─────────── mock: client_id = 1 borrows item_id = 1001 ───────────
+--  ─────────── mock: client_id = 1 borrows item_id = 1 ───────────
 INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 1, 1001,CURRENT_DATE, CURRENT_DATE + INTERVAL '14 day',NULL, 0) ON CONFLICT DO NOTHING;
+VALUES (1, 1, 1,CURRENT_DATE, CURRENT_DATE + INTERVAL '14 day',NULL, 0) ON CONFLICT DO NOTHING;
 SELECT setval('borrows_borrow_id_seq', (SELECT MAX(borrow_id) FROM borrows));
 
---  ─────────── mock: client_id = 1 reserves item_id = 1001 ───────────
+--  ─────────── mock: client_id = 1 reserves item_id = 1 ───────────
 INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
-VALUES (1, 2, 1001, CURRENT_DATE, CURRENT_DATE + INTERVAL '7 day') ON CONFLICT DO NOTHING;
+VALUES (1, 2, 1, CURRENT_DATE, CURRENT_DATE + INTERVAL '7 day') ON CONFLICT DO NOTHING;
 SELECT setval('reservations_reservation_id_seq', (SELECT MAX(item_id) FROM reservations));
