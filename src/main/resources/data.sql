@@ -65,12 +65,20 @@ VALUES (1, '9780747532699', '1st Edition', 223),
        (11, '9781408880715', '1st Edition', 128)
 ON CONFLICT DO NOTHING;
 
--- Creators ─────────────────────────────────────────────────
+-- Creators
 INSERT INTO creators (creator_id, creator_first_name, creator_last_name)
 VALUES (1, 'J. K.', 'Rowling'),
        (2, 'John', 'Tiffany'),
-       (3, 'Jack', 'Thorne');
+       (3, 'Jack', 'Thorne')
+ON CONFLICT (creator_id) DO NOTHING;
 SELECT setval('creators_creator_id_seq', (SELECT MAX(creator_id) FROM creators));
+
+-- Creator Roles
+INSERT INTO creator_roles (creator_role_id, creator_role)
+VALUES (1, 'author'),
+       (2, 'co-author'),
+       (3, 'editor'),
+       (4, 'director');
 
 -- Join table (same Creator ->  multiple  Roles; same Product -> multiple Creators)
 INSERT INTO creator_product_relation (creator_id, product_id, creator_role_id)
