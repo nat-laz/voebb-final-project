@@ -13,8 +13,6 @@ public interface ProductService {
 
     ProductInfoDTO findById(Long id);
 
-    Page<Product> getAllByTitle(String title, Pageable pageable);
-
     AdminProductDTO createProduct(NewProductDTO dto);
 
     Page<Product> getAllProducts(Pageable pageable);
