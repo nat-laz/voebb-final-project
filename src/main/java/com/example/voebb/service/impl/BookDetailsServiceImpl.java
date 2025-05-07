@@ -1,5 +1,6 @@
 package com.example.voebb.service.impl;
 
+import com.example.voebb.model.dto.product.BookDetailsDTO;
 import com.example.voebb.model.dto.product.NewBookDetailsDTO;
 import com.example.voebb.model.entity.BookDetails;
 import com.example.voebb.model.entity.Product;
@@ -36,11 +37,24 @@ public class BookDetailsServiceImpl implements BookDetailsService {
         Product product = productRepo.getProductById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
         String productType = product.getType().getName();
 
-        if (!productType.equals("book") || !productType.equals("ebook")) {
-            throw new RuntimeException("Product is not a book");
+        if (productType.equals("book") || productType.equals("ebook")) {
+            return product.getBookDetails();
         }
 
-        return product.getBookDetails();
+        throw new RuntimeException("Product is not a book");
+    }
+
+    @Override
+    public BookDetailsDTO getDetailsDTOByProductId(Long productId) {
+        BookDetails details = productRepo.getProductById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"))
+                .getBookDetails();
+
+        return new BookDetailsDTO(
+                details.getIsbn(),
+                details.getEdition(),
+                details.getPages()
+        );
     }
 
     @Override

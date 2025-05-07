@@ -1,5 +1,13 @@
 package com.example.voebb.service.impl;
 
+import com.example.voebb.model.dto.creator.CreatorRequestDTO;
+import com.example.voebb.model.dto.product.ProductInfoDTO;
+import com.example.voebb.model.dto.product.SearchResultProductDTO;
+import com.example.voebb.model.entity.Product;
+import com.example.voebb.repository.ProductRepo;
+import com.example.voebb.service.CreatorProductRelationService;
+import com.example.voebb.service.ProductItemService;
+import com.example.voebb.service.ProductService;
 import com.example.voebb.model.dto.product.NewBookDetailsDTO;
 import com.example.voebb.model.dto.product.NewProductDTO;
 import com.example.voebb.model.dto.product.AdminProductDTO;
@@ -15,6 +23,8 @@ import org.springframework.stereotype.Service;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;
+    private final CreatorProductRelationService creatorService;
+    private final ProductItemService productItemService;
     private final BookDetailsService bookDetailsService;
     private final CreatorService creatorService;
     private final ProductTypeService productTypeService;
@@ -23,21 +33,62 @@ public class ProductServiceImpl implements ProductService {
     public ProductServiceImpl(
             ProductRepo productRepo,
             BookDetailsService bookDetailsService,
+            CreatorProductRelationService creatorService,
             CreatorService creatorService,
-            ProductTypeService productTypeService) {
+            ProductTypeService productTypeService,
+            ProductItemService productItemService) {
         this.productRepo = productRepo;
         this.bookDetailsService = bookDetailsService;
         this.creatorService = creatorService;
         this.productTypeService = productTypeService;
-
+        this.creatorService = creatorService;
+        this.productItemService = productItemService;
     }
 
     @Override
-    public Page<Product> getAllByTitle(String title, Pageable pageable) {
-        return productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
+    public Page<SearchResultProductDTO> getAllByTitle(String title, Pageable pageable) {
+        Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
+
+        return page.map(product -> {
+            CreatorRequestDTO mainCreator = creatorService.getCreatorsByProductId(product.getId())
+                    .stream()
+                    .filter(creator -> creator.roleId() == 1)
+                    .findFirst()
+                    .map(creatorWithRoleDTO -> new CreatorRequestDTO(
+                            creatorWithRoleDTO.firstName(),
+                            creatorWithRoleDTO.lastName()
+                    ))
+                    .orElse(null);
+
+            return new SearchResultProductDTO(
+                    product.getId(),
+                    product.getType().getName(),
+                    product.getTitle(),
+                    product.getReleaseYear(),
+                    product.getPhoto(),
+                    product.getProductLinkToEmedia(),
+                    mainCreator,
+                    productItemService.getLocationsForAvailableItemsByProductId(product.getId()));
+        });
     }
 
     @Override
+
+    public ProductInfoDTO findById(Long id) {
+        Product product = productRepo.getProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        return new ProductInfoDTO(
+                product.getId(),
+                product.getType().getName(),
+                product.getTitle(),
+                product.getReleaseYear(),
+                product.getPhoto(),
+                product.getDescription(),
+                product.getProductLinkToEmedia()
+        );
+    }
+
     public AdminProductDTO createProduct(NewProductDTO dto) {
 
         // 1. Link with existing media_type
@@ -95,7 +146,6 @@ public class ProductServiceImpl implements ProductService {
 
         return productRepo.save(product);
     }
-
 
 
 }
