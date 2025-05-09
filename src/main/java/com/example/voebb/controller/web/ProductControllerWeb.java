@@ -45,7 +45,7 @@ public class ProductControllerWeb {
         return "user/product/product-list";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/products/{id}")
     public String getDetailsPage(@PathVariable Long id,
                                  Model model) {
         ProductInfoDTO productInfoDTO = productService.findById(id);
