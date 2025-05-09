@@ -1,7 +1,6 @@
-package com.example.voebb.controller.web;
+package com.example.voebb.controller.web.admin_panel;
 
 import com.example.voebb.model.dto.user.UserDTO;
-import com.example.voebb.model.entity.CustomUser;
 import com.example.voebb.service.CustomUserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,11 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/users")
-public class CustomUserController {
+public class UserControllerAdmin {
 
     private final CustomUserService customUserService;
 
-    public CustomUserController(CustomUserService customUserService) {
+    public UserControllerAdmin(CustomUserService customUserService) {
         this.customUserService = customUserService;
     }
 
