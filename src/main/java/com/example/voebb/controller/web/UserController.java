@@ -17,12 +17,12 @@ public class UserController {
 
     @GetMapping("/register")
     public String getRegisterPage() {
-        return "register-page";
+        return "user/register-page";
     }
 
     @PostMapping("/register")
     public String postRegisterPage(@ModelAttribute UserRegistrationDTO userRegistrationDTO) {
-        customUserDetailsService.createUser(userRegistrationDTO.email(), userRegistrationDTO.password());
-        return "redirect:/register";
+        customUserDetailsService.createUser(userRegistrationDTO);
+        return "redirect:/";
     }
 }

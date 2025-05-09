@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/admin/users")
 public class UserControllerAdmin {
 
     private final CustomUserService customUserService;
@@ -19,19 +19,19 @@ public class UserControllerAdmin {
     @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("users", customUserService.getAllUsers());
-        return "user/user-management";
+        return "admin/user/user-management";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("user", new UserDTO(null, "", "", "", true, 0, ""));
-        return "user/create-user";
+        return "admin/user/create-user";
     }
 
     @PostMapping("/new")
     public String createUser(@ModelAttribute("user") UserDTO userDto) {
         customUserService.createUser(userDto);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
     @PostMapping("/toggle/{id}")
@@ -42,7 +42,7 @@ public class UserControllerAdmin {
         } else {
             customUserService.enableUser(id);
         }
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
    /* @PostMapping("/delete/{id}")
@@ -57,12 +57,12 @@ public class UserControllerAdmin {
     public String editUser(@PathVariable Long id, Model model) {
         UserDTO user = customUserService.getUserById(id);
         model.addAttribute("user", user);
-        return "user/edit-user";
+        return "admin/user/edit-user";
     }
 
     @PostMapping("/edit/{id}")
     public String updateUser(@PathVariable Long id, @ModelAttribute("user") UserDTO userDto) {
         customUserService.updateUser(id, userDto);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 }
