@@ -1,5 +1,7 @@
 package com.example.voebb.model.dto.product;
 
+import java.util.Set;
+
 /**
     DTO with all info from Product
  */
@@ -11,6 +13,6 @@ public record ProductInfoDTO(
         String photo,
         String description, // summary of the product based on media_type
         String productLinkToEmedia,
-        java.util.Set<com.example.voebb.model.entity.Country> countries
+        Set<String> countries
 ) {
 }

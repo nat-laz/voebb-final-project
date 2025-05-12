@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -85,6 +86,12 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepo.getProductById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        Set<String> countryNames = product.getCountries()
+                .stream()
+                .map(Country::getName)
+                .collect(Collectors.toSet());
+
+
         return new ProductInfoDTO(
                 product.getId(),
                 product.getType().getName(),
@@ -93,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getPhoto(),
                 product.getDescription(),
                 product.getProductLinkToEmedia(),
-                product.getCountries()
+                countryNames
         );
     }
 
