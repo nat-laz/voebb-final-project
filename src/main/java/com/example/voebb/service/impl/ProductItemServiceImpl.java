@@ -1,11 +1,17 @@
 package com.example.voebb.service.impl;
 
+import com.example.voebb.model.dto.item.ItemAdminDTO;
 import com.example.voebb.model.dto.product.LocationAndItemStatusDTO;
 import com.example.voebb.model.dto.product.LocationAndItemsCountDTO;
+
 import com.example.voebb.model.entity.ProductItem;
 import com.example.voebb.repository.ItemLocationRepo;
 import com.example.voebb.repository.ProductItemRepo;
 import com.example.voebb.service.ProductItemService;
+
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,4 +40,11 @@ public class ProductItemServiceImpl implements ProductItemService {
     public List<LocationAndItemStatusDTO> getAllLocationsForProduct(Long productId){
         return itemLocationRepo.getItemLocationsFullInfo(productId);
     }
+
+    @Override
+    public Page<ItemAdminDTO> getAllItems(Pageable pageable) {
+        return productItemRepo.findAllItemsForAdmin(pageable);
+    }
+
+
 }

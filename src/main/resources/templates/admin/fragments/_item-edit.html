@@ -1,0 +1,18 @@
+<div class="modal fade"
+     th:id="'editItemModal__' + ${item.itemId}"
+     tabindex="-1"
+     aria-labelledby="editItemModalLabel"
+     aria-hidden="true"
+     th:fragment="editItemModal(item)">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editItemModalLabel">Edit Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p th:text="'Test content for editing item #' + ${item.itemId}">Test Edit Modal</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -18,5 +18,5 @@ public class ItemStatus {
     private Long id;
 
     @Column(name = "item_status_name", nullable = false, unique = true)
-    private String name; // ['borrowed, reserved, available']
+    private String name; // ['borrowed, reserved, available, lost, damaged' ]
 }
