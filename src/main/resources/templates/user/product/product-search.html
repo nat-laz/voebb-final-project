@@ -6,6 +6,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.5/dist/zephyr/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
+<!-- Navbar -->
+<div th:replace="~{user/fragments/user-navbar.html :: user-navbar}"></div>
+
 <main class="container mt-5">
     <h2 class="text-center">Search products</h2>
 
@@ -19,5 +23,10 @@
     </form>
 </main>
 
+<!-- Modals -->
+<div th:replace="~{user/fragments/user-login-modal :: #loginModal}"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
