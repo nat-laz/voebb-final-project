@@ -160,11 +160,10 @@ public class ProductServiceImpl implements ProductService {
         product.setType(productType);
 
         // ✅ Add this block to handle countries
-        if (dto.getCountryIds() != null && !dto.getCountryIds().isEmpty()) {
-            Set<Country> countries = new HashSet<>(countryRepo.findAllById(dto.getCountryIds()));
+        if (dto.getCountryNames() != null && !dto.getCountryNames().isEmpty()) {
+            Set<Country> countries = new HashSet<>(countryRepo.findByNameIn(dto.getCountryNames()));
             product.setCountries(countries);
         }
-
         return productRepo.save(product);
     }
 
