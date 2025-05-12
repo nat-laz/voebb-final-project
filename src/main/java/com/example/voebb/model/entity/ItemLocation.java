@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class ItemLocation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_location_id")
     private Long id;
 
@@ -24,6 +24,7 @@ public class ItemLocation {
     @Column(name = "location_in_library", columnDefinition = "text")
     private String note; //  note about location in library: e.g: shelf / room info
 
+    @MapsId
     /* bidirectional one-to-one relationship owning side: FK to ProductItem */
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "item_id")

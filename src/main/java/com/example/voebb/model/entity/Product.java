@@ -65,4 +65,5 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "country_id")
     )
     private Set<Country> countries = new HashSet<>();
+
 }

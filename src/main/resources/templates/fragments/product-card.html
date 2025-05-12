@@ -1,9 +1,0 @@
-<!--TODO: Change appearance with css-->
-<div class="card" th:fragment="card(product)" style="width: 18rem;">
-    <div class="card-header" th:text="${product.title}"></div>
-    <div class="card-body">
-        <p class="card-id" th:text="'id: ' + ${product.id}"></p>
-        <p class="card-text" th:text="'productType: ' + ${product.type.name}"></p>
-        <p class="card-text" th:text="'Digital: ' + ${product.type.isDigital}"></p>
-    </div>
-</div>

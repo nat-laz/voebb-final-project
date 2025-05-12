@@ -1,0 +1,99 @@
+<div th:fragment="addProductModal">
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form th:action="@{/templates/admin/products}" method="post">
+                    <div class="modal-body">
+                        <div class="row g-3">
+
+                            <div class="mb-3">
+                                <label>Product Type</label>
+                                <select id="productType" name="productType" class="form-select" required>
+                                    <option value="">-- select --</option>
+                                    <option value="book">Book</option>
+                                    <option value="ebook">e-Book</option>
+                                    <option value="movie">Movie(DVD)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Title</label>
+                                <input name="title" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Release Year</label>
+                                <input name="releaseYear" class="form-control">
+                            </div>
+
+                            <div class="col-md-8">
+                                <label class="form-label">Cover photo</label>
+                                <input name="photo" class="form-control">
+                            </div>
+
+                            <!-- TODO: UI for adding more creators -->
+                            <div class="col-12">
+                                <h5>Creator</h5>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">First name</label>
+                                <input name="creators[0].firstName" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Last name</label>
+                                <input name="creators[0].lastName" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Role</label>
+                                <input name="creators[0].role" class="form-control" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Description</label>
+                                <textarea name="description" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <div id="emediaBlock" class="col-12 d-none">
+                                <label class="form-label">eMedia Link</label>
+                                <input id="productLinkToEmedia"
+                                       name="productLinkToEmedia"
+                                       class="form-control"/>
+                            </div>
+
+                            <!-- Conditional: book details visible just if the product_type = 'book' || 'e-book'  -->
+                            <div id="bookDetailsBlock" class="border rounded p-2 mb-4 d-none">
+                                <h5>Book details</h5>
+                                <div class="mb-2">
+                                    <label>ISBN</label>
+                                    <input name="bookDetails.isbn" class="form-control"/>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Edition</label>
+                                    <input name="bookDetails.edition" class="form-control"/>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Pages</label>
+                                    <input name="bookDetails.pages" type="number" class="form-control"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-success" type="submit">Save</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+

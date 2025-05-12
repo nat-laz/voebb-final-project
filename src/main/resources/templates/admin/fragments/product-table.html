@@ -1,0 +1,58 @@
+<div th:fragment="productTable(page)">
+    <table class="table table-striped">
+        <thead class="table-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Type</th>
+            <th scope="col" class="text-end">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="prod, stat : ${page.content}">
+            <td th:text="${stat.index + 1 + page.number * page.size}">1</td>
+            <td th:text="${prod.title}">Example Title</td>
+            <td th:text="${prod.type.name}">book</td>
+            <td class="text-end">
+
+                <!-- Edit Button-->
+                 <!-- TODO: Add edit functionality -->
+                <a th:href="@{/admin/products/edit/{id}(id=${prod.id})}"
+                   class="btn btn-sm btn-outline-primary me-1">Edit</a>
+
+                <!-- Delete button -->
+                <form th:action="@{/admin/products/deleteProduct/{id}(id=${prod.id})}"
+                      method="post" style="display:inline">
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-danger"
+                            onclick="return confirm('Are you sure you want to delete this product?');">
+                        Delete
+                    </button>
+                </form>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- pagination  TODO: Maybe combine somehow with the one from product-list -->
+    <nav th:if="${page.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link" th:href="@{|/templates/admin/products?page=${page.number - 1}|}">Previous</a>
+            </li>
+
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${i == page.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{|/templates/admin/products?page=${i}|}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link" th:href="@{|/templates/admin/products?page=${page.number + 1}|}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
