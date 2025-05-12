@@ -1,11 +1,17 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.item.ItemAdminDTO;
+import com.example.voebb.model.dto.item.UpdateItemDTO;
 import com.example.voebb.model.dto.product.LocationAndItemStatusDTO;
 import com.example.voebb.model.dto.product.LocationAndItemsCountDTO;
 
+import com.example.voebb.model.entity.ItemLocation;
+import com.example.voebb.model.entity.ItemStatus;
+import com.example.voebb.model.entity.Library;
 import com.example.voebb.model.entity.ProductItem;
 import com.example.voebb.repository.ItemLocationRepo;
+import com.example.voebb.repository.ItemStatusRepo;
+import com.example.voebb.repository.LibraryRepo;
 import com.example.voebb.repository.ProductItemRepo;
 import com.example.voebb.service.ProductItemService;
 
@@ -20,12 +26,21 @@ import java.util.List;
 
 @Service
 public class ProductItemServiceImpl implements ProductItemService {
+
     private final ProductItemRepo productItemRepo;
     private final ItemLocationRepo itemLocationRepo;
+    private final ItemStatusRepo itemStatusRepo;
+    private final LibraryRepo libraryRepo;
 
-    public ProductItemServiceImpl(ProductItemRepo productItemRepo, ItemLocationRepo itemLocationRepo) {
+    public ProductItemServiceImpl(
+            ProductItemRepo productItemRepo,
+            ItemLocationRepo itemLocationRepo,
+            ItemStatusRepo itemStatusRepo,
+            LibraryRepo libraryRepo) {
         this.productItemRepo = productItemRepo;
         this.itemLocationRepo = itemLocationRepo;
+        this.itemStatusRepo = itemStatusRepo;
+        this.libraryRepo = libraryRepo;
     }
 
     @Override
@@ -39,7 +54,7 @@ public class ProductItemServiceImpl implements ProductItemService {
     }
 
     @Override
-    public List<LocationAndItemStatusDTO> getAllLocationsForProduct(Long productId){
+    public List<LocationAndItemStatusDTO> getAllLocationsForProduct(Long productId) {
         return itemLocationRepo.getItemLocationsFullInfo(productId);
     }
 
@@ -47,6 +62,33 @@ public class ProductItemServiceImpl implements ProductItemService {
     public Page<ItemAdminDTO> getAllItems(Pageable pageable) {
         return productItemRepo.findAllItemsForAdmin(pageable);
     }
+
+    @Override
+    @Transactional
+    public void editItem(UpdateItemDTO dto) {
+        ProductItem item = productItemRepo.findById(dto.itemId())
+                .orElseThrow(() -> new EntityNotFoundException("Item not found with ID: " + dto.itemId()));
+
+        ItemStatus newStatus = itemStatusRepo.findById(dto.statusId())
+                .orElseThrow(() -> new EntityNotFoundException("Item status not found with ID: " + dto.statusId()));
+
+        Library newLibrary = libraryRepo.findById(dto.libraryId())
+                .orElseThrow(() -> new EntityNotFoundException("Library not found with ID: " + dto.libraryId()));
+
+        item.setStatus(newStatus);
+
+        if (item.getLocation() == null) {
+            ItemLocation newLocation = new ItemLocation();
+            newLocation.setItem(item);
+            item.setLocation(newLocation);
+        }
+
+        item.getLocation().setLibrary(newLibrary);
+        item.getLocation().setNote(dto.locationNote());
+
+        productItemRepo.save(item);
+    }
+
 
     @Transactional
     @Override

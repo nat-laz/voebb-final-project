@@ -107,9 +107,8 @@
 
     <!-- Edit Modals -->
     <th:block th:each="item : ${page.content}">
-        <div th:replace="admin/fragments/_item-edit :: editItemModal(${item})"></div>
+        <div th:replace="admin/fragments/_item-edit :: editItemModal(item=${item}, statuses=${statuses}, libraries=${libraries})"></div>
     </th:block>
-
 </main>
 </html>
 

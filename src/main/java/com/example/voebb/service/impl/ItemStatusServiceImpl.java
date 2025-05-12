@@ -21,7 +21,7 @@ public class ItemStatusServiceImpl implements ItemStatusService {
 
     @Override
     public ItemStatus getStatusById(Long id) {
-        return itemStatusRepo.findById(id).orElseThrow(()->new RuntimeException("Status with Id" + id +  "not found"));
+        return itemStatusRepo.findById(id).orElseThrow(() -> new RuntimeException("Status with Id" + id + "not found"));
     }
 
     @Override
@@ -33,5 +33,10 @@ public class ItemStatusServiceImpl implements ItemStatusService {
     public void deleteStatus(Long id) {
         itemStatusRepo.deleteById(id);
 
+    }
+
+    @Override
+    public List<ItemStatus> filterEditableStatusesForItemManagement() {
+        return itemStatusRepo.filterEditableStatusesForItemManagement();
     }
 }

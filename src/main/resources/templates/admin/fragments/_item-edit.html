@@ -1,18 +1,60 @@
 <div class="modal fade"
      th:id="'editItemModal__' + ${item.itemId}"
      tabindex="-1"
-     aria-labelledby="editItemModalLabel"
+     aria-labelledby="editItemModalLabel__[[${item.itemId}]]"
      aria-hidden="true"
-     th:fragment="editItemModal(item)">
+     th:fragment="editItemModal(item, statuses, libraries)">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editItemModalLabel">Edit Item</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p th:text="'Test content for editing item #' + ${item.itemId}">Test Edit Modal</p>
-            </div>
+            <form th:action="@{/admin/items/{id}/edit(id=${item.itemId})}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:id="'editItemModalLabel__' + ${item.itemId}">
+                        Edit Item #<span th:text="${item.itemId}"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" name="itemId" th:value="${item.itemId}"/>
+
+                    <!-- Status Dropdown -->
+                    <div class="mb-3">
+                        <label for="statusId" class="form-label">Status</label>
+                        <select class="form-select" name="statusId" required>
+                            <option th:each="status : ${statuses}"
+                                    th:value="${status.id}"
+                                    th:text="${status.name.toUpperCase()}"
+                                    th:selected="${status.name == item.itemStatus}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Library Dropdown -->
+                    <div class="mb-3">
+                        <label for="libraryId" class="form-label">Library</label>
+                        <select class="form-select" name="libraryId" required>
+                            <option th:each="lib : ${libraries}"
+                                    th:value="${lib.id}"
+                                    th:text="${lib.name}"
+                                    th:selected="${lib.name == item.libraryName}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="locationNote" class="form-label">Location Note</label>
+                        <textarea class="form-control" name="locationNote" rows="2"
+                                  th:text="${item.locationNote}"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

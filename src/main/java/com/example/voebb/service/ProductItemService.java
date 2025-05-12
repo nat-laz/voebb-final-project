@@ -1,6 +1,7 @@
 package com.example.voebb.service;
 
 import com.example.voebb.model.dto.item.ItemAdminDTO;
+import com.example.voebb.model.dto.item.UpdateItemDTO;
 import com.example.voebb.model.dto.product.LocationAndItemStatusDTO;
 import com.example.voebb.model.dto.product.LocationAndItemsCountDTO;
 import com.example.voebb.model.entity.ProductItem;
@@ -18,6 +19,8 @@ public interface ProductItemService {
     List<LocationAndItemStatusDTO> getAllLocationsForProduct(Long productId);
 
     Page<ItemAdminDTO> getAllItems(Pageable pageable);
+
+    void editItem(UpdateItemDTO dto);
 
     void deleteItemById(Long id);
 
