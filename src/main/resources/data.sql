@@ -7,7 +7,9 @@ SELECT setval('product_types_product_type_id_seq', (SELECT MAX(product_type_id) 
 INSERT INTO item_status (item_status_id, item_status_name)
 VALUES (1, 'available'),
        (2, 'reserved'),
-       (3, 'borrowed')
+       (3, 'borrowed'),
+       (4, 'damaged'),
+       (5, 'lost')
 ON CONFLICT (item_status_id) DO NOTHING;
 SELECT setval('item_status_item_status_id_seq', (SELECT MAX(item_status_id) FROM item_status));
 
@@ -177,6 +179,10 @@ INSERT INTO product_items (item_id, product_id, status_id) VALUES (39, 11, 3) ON
 INSERT INTO product_items (item_id, product_id, status_id) VALUES (40, 11, 2) ON CONFLICT (item_id) DO NOTHING;
 INSERT INTO product_items (item_id, product_id, status_id) VALUES (41, 11, 1) ON CONFLICT (item_id) DO NOTHING;
 
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (42, 11, 4) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (43, 11, 5) ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO product_items (item_id, product_id, status_id) VALUES (44, 11, 5) ON CONFLICT (item_id) DO NOTHING;
+
 SELECT setval('product_items_item_id_seq', (SELECT MAX(item_id) FROM product_items));
 
 -- ItemLocation
@@ -221,6 +227,9 @@ INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (38,
 INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (39, 3, 'Lower Shelf-1') ON CONFLICT (item_id) DO NOTHING;
 INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (40, 4, 'Room 1-18') ON CONFLICT (item_id) DO NOTHING;
 INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (41, 5, 'Top Rack-9') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (42, 3, 'Lower Shelf-1') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (43, 4, 'Room 1-18') ON CONFLICT (item_id) DO NOTHING;
+INSERT INTO item_location (item_id, library_id, location_in_library) VALUES (44, 5, 'Top Rack-9') ON CONFLICT (item_id) DO NOTHING;
 
 --  ─────────── mock: client_id = 1 borrows item_id = 1 ───────────
 INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)

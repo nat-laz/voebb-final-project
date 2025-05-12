@@ -2,6 +2,7 @@ package com.example.voebb.controller.web.admin_panel;
 
 import com.example.voebb.model.dto.item.ItemAdminDTO;
 import com.example.voebb.service.ProductItemService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,9 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/items")
@@ -23,8 +23,8 @@ public class ItemControllerAdmin {
 
     @GetMapping
     public String getAllItems(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                       Model model,
-                       @RequestParam(value = "success", required = false) String success) {
+                              Model model,
+                              @RequestParam(value = "success", required = false) String success) {
 
         Page<ItemAdminDTO> page = productItemService.getAllItems(pageable);
         model.addAttribute("page", page);
@@ -42,5 +42,19 @@ public class ItemControllerAdmin {
 
     // TODO: editItem
 
-    // TODO: deleteItem
+
+    @PostMapping("/{id}/delete")
+    public String deleteItem(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            productItemService.deleteItemById(id);
+            redirectAttributes.addFlashAttribute("success", "Item deleted successfully.");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", "Item not found.");
+        }
+
+        return "redirect:/admin/items";
+    }
+
 }

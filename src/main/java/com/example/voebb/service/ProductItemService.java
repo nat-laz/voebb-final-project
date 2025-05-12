@@ -18,4 +18,7 @@ public interface ProductItemService {
     List<LocationAndItemStatusDTO> getAllLocationsForProduct(Long productId);
 
     Page<ItemAdminDTO> getAllItems(Pageable pageable);
+
+    void deleteItemById(Long id);
+
 }
