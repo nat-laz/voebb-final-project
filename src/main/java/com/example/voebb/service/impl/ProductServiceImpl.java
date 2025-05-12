@@ -4,6 +4,7 @@ import com.example.voebb.model.dto.creator.CreatorRequestDTO;
 import com.example.voebb.model.dto.product.ProductInfoDTO;
 import com.example.voebb.model.dto.product.SearchResultProductDTO;
 import com.example.voebb.model.entity.Product;
+import com.example.voebb.repository.CountryRepo;
 import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.CreatorProductRelationService;
 import com.example.voebb.service.ProductItemService;
@@ -19,6 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -28,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
     private final BookDetailsService bookDetailsService;
     private final CreatorService creatorService;
     private final ProductTypeService productTypeService;
+    private final CountryRepo countryRepo;
 
     @Autowired
     public ProductServiceImpl(
@@ -36,6 +41,7 @@ public class ProductServiceImpl implements ProductService {
             CreatorProductRelationService creatorProductRelationService,
             CreatorService creatorService,
             ProductTypeService productTypeService,
+            CountryRepo countryRepo,
             ProductItemService productItemService) {
         this.productRepo = productRepo;
         this.bookDetailsService = bookDetailsService;
@@ -43,6 +49,7 @@ public class ProductServiceImpl implements ProductService {
         this.productTypeService = productTypeService;
         this.creatorProductRelationService = creatorProductRelationService;
         this.productItemService = productItemService;
+        this.countryRepo = countryRepo;
     }
 
     @Override
@@ -85,7 +92,8 @@ public class ProductServiceImpl implements ProductService {
                 product.getReleaseYear(),
                 product.getPhoto(),
                 product.getDescription(),
-                product.getProductLinkToEmedia()
+                product.getProductLinkToEmedia(),
+                product.getCountries()
         );
     }
 
@@ -144,8 +152,13 @@ public class ProductServiceImpl implements ProductService {
         product.setProductLinkToEmedia(dto.getProductLinkToEmedia());
         product.setType(productType);
 
+        // ✅ Add this block to handle countries
+        if (dto.getCountryIds() != null && !dto.getCountryIds().isEmpty()) {
+            Set<Country> countries = new HashSet<>(countryRepo.findAllById(dto.getCountryIds()));
+            product.setCountries(countries);
+        }
+
         return productRepo.save(product);
     }
-
 
 }

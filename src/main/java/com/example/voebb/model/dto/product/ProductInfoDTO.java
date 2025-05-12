@@ -10,6 +10,7 @@ public record ProductInfoDTO(
         String releaseYear,
         String photo,
         String description, // summary of the product based on media_type
-        String productLinkToEmedia
+        String productLinkToEmedia,
+        java.util.Set<com.example.voebb.model.entity.Country> countries
 ) {
 }
