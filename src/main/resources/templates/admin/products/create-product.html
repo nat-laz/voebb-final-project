@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Product</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.5/dist/zephyr/bootstrap.min.css" rel="stylesheet">
+  <script>
+    function toggleConditionalFields() {
+      const type = document.getElementById("productType").value;
+      document.getElementById("bookDetailsBlock").classList.toggle("d-none", !(type === "book" || type === "ebook"));
+      document.getElementById("emediaBlock").classList.toggle("d-none", type !== "ebook");
+    }
+  </script>
+</head>
+<body>
+<main class="container mt-5">
+  <h2 class="text-center mb-4">Add New Product</h2>
+
+  <form th:action="@{/admin/products/create}" th:object="${product}" method="post" enctype="multipart/form-data">
+    <div class="row g-3">
+
+      <!-- Product Type -->
+      <div class="mb-3">
+        <label>Product Type</label>
+        <select id="productType" name="productType" class="form-select" onchange="toggleConditionalFields()" required>
+          <option value="">-- select --</option>
+          <option value="book">Book</option>
+          <option value="ebook">e-Book</option>
+          <option value="movie">Movie (DVD)</option>
+        </select>
+      </div>
+
+      <!-- Title -->
+      <div class="col-md-6">
+        <label class="form-label">Title</label>
+        <input name="title" class="form-control" required>
+      </div>
+
+      <!-- Release Year -->
+      <div class="col-md-4">
+        <label class="form-label">Release Year</label>
+        <input name="releaseYear" type="number" class="form-control">
+      </div>
+
+      <!-- Photo -->
+      <div class="col-md-8">
+        <label class="form-label">Cover photo</label>
+        <input name="photo" class="form-control">
+      </div>
+
+      <!-- Creator -->
+      <div class="col-12">
+        <h5>Creator</h5>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">First Name</label>
+        <input name="creators[0].firstName" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Last Name</label>
+        <input name="creators[0].lastName" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Role</label>
+        <input name="creators[0].role" class="form-control" required>
+      </div>
+
+      <!-- Description -->
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control" rows="3"></textarea>
+      </div>
+
+      <!-- eMedia Block -->
+      <div id="emediaBlock" class="col-12 d-none">
+        <label class="form-label">eMedia Link</label>
+        <input id="productLinkToEmedia" name="productLinkToEmedia" class="form-control"/>
+      </div>
+
+      <!-- Book Details -->
+      <div id="bookDetailsBlock" class="border rounded p-3 d-none">
+        <h5>Book Details</h5>
+        <div class="mb-2">
+          <label>ISBN</label>
+          <input name="bookDetails.isbn" class="form-control"/>
+        </div>
+        <div class="mb-2">
+          <label>Edition</label>
+          <input name="bookDetails.edition" class="form-control"/>
+        </div>
+        <div class="mb-2">
+          <label>Pages</label>
+          <input name="bookDetails.pages" type="number" class="form-control"/>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mt-4 text-end">
+      <a href="/admin/products" class="btn btn-secondary">Cancel</a>
+      <button class="btn btn-success" type="submit">Save</button>
+    </div>
+  </form>
+</main>
+</body>
+</html>

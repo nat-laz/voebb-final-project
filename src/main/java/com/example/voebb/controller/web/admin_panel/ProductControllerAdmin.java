@@ -20,7 +20,7 @@ public class ProductControllerAdmin {
 
     private final ProductService productService;
 
-
+    // GET: List all products
     @GetMapping
     public String page(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                        Model model,
@@ -37,26 +37,31 @@ public class ProductControllerAdmin {
         return "admin/products/page";
     }
 
+    // GET: Show form to create a new product
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("product", new NewProductDTO()); // For form binding
+        return "admin/products/create-product"; // Matches create-product.html
+    }
 
+    // POST: Create a new product
     @PostMapping
-    public String create(@ModelAttribute NewProductDTO requestDTO,
+    public String create(@ModelAttribute("product") NewProductDTO requestDTO,
                          RedirectAttributes ra) {
-
         productService.createProduct(requestDTO);
         ra.addFlashAttribute("success", "Product created successfully");
-
         return "redirect:/admin/products";
     }
 
-    @PostMapping("deleteProduct/{id}")
+    // POST: Delete a product by ID
+    @PostMapping("/deleteProduct/{id}")
     public String deleteProduct(@PathVariable Long id,
                                 RedirectAttributes ra) {
-
         productService.deleteProductById(id);
         ra.addFlashAttribute("success", "Product deleted successfully");
         return "redirect:/admin/products";
     }
 
-
     // TODO: add EDIT Product functionality
+
 }
