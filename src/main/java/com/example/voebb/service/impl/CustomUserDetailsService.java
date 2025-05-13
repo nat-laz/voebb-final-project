@@ -94,9 +94,15 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     }
 
     @Override
+    @Transactional
     public UserDTO updateUser(Long id, UserDTO userDto) {
         CustomUser existingUser = userRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
+
+        Set<CustomUserRole> userRoles = userDto.roleIds().stream()
+                .map(roleId -> customUserRoleRepo.findById(roleId)
+                        .orElseThrow(() -> new RuntimeException("Role not found")))
+                .collect(Collectors.toSet());
 
         existingUser.setFirstName(userDto.firstName());
         existingUser.setLastName(userDto.lastName());
@@ -107,6 +113,8 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         if (userDto.password() != null && !userDto.password().isBlank()) {
             existingUser.setPassword(userDto.password());
         }
+
+        existingUser.setRoles(userRoles);
 
         CustomUser updatedUser = userRepo.save(existingUser);
         return toDto(updatedUser);
@@ -135,9 +143,8 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
 
     // Mapping methods
     private UserDTO toDto(CustomUser user) {
-
-        List<String> roleNames = user.getRoles().stream()
-                .map(CustomUserRole::getName)
+        List<Long> roleIds = user.getRoles().stream()
+                .map(CustomUserRole::getId)
                 .toList();
 
         return new UserDTO(
@@ -148,11 +155,16 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
                 user.getLastName(),
                 user.isEnabled(),
                 user.getBorrowedBooksCount(),
-                roleNames
+                roleIds
         );
     }
 
     private CustomUser toEntity(UserDTO dto) {
+        Set<CustomUserRole> userRoles = dto.roleIds().stream()
+                .map(roleId -> customUserRoleRepo.findById(roleId)
+                        .orElseThrow(() -> new RuntimeException("Role not found")))
+                .collect(Collectors.toSet());
+
         CustomUser user = new CustomUser();
         user.setId(dto.id()); // Optional: depending on whether you're creating or updating
         user.setFirstName(dto.firstName());
@@ -161,6 +173,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         user.setEnabled(dto.enabled());
         user.setBorrowedBooksCount(dto.borrowedBooksCount());
         user.setPassword(dto.password());
+        user.setRoles(userRoles);
         return user;
     }
 

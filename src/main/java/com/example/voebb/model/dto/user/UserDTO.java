@@ -10,7 +10,6 @@ public record UserDTO(
         String lastName,
         boolean enabled,
         int borrowedBooksCount,
-        List<String> roles
-
+        List<Long> roleIds
 ) {
 }
