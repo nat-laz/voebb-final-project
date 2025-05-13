@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class UserController {
+public class LoginController {
     private final CustomUserDetailsService customUserDetailsService;
 
-    public UserController(CustomUserDetailsService customUserDetailsService) {
+    public LoginController(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
     }
 
@@ -22,7 +22,7 @@ public class UserController {
 
     @PostMapping("/register")
     public String postRegisterPage(@ModelAttribute UserRegistrationDTO userRegistrationDTO) {
-        customUserDetailsService.createUser(userRegistrationDTO);
+        customUserDetailsService.registerUser(userRegistrationDTO);
         return "redirect:/";
     }
 }
