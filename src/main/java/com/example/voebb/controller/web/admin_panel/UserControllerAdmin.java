@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/admin/users")
 public class UserControllerAdmin {
@@ -24,7 +26,7 @@ public class UserControllerAdmin {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("user", new UserDTO(null, "", "", "", true, 0, ""));
+        model.addAttribute("user", new UserDTO(null, "", "", "", "", true, 0, List.of()));
         return "admin/user/create-user";
     }
 

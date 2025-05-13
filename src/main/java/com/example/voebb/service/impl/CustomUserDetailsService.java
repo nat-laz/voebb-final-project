@@ -88,7 +88,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     @Override
     @Transactional
     public UserDTO createUser(UserDTO userDto) {
-        CustomUser user = fromDto(userDto);
+        CustomUser user = toEntity(userDto);
         CustomUser saved = userRepo.save(user);
         return toDto(saved);
     }
@@ -135,18 +135,24 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
 
     // Mapping methods
     private UserDTO toDto(CustomUser user) {
+
+        List<String> roleNames = user.getRoles().stream()
+                .map(CustomUserRole::getName)
+                .toList();
+
         return new UserDTO(
                 user.getId(),
+                user.getEmail(),
+                null, // Do not expose password
                 user.getFirstName(),
                 user.getLastName(),
-                user.getEmail(),
                 user.isEnabled(),
                 user.getBorrowedBooksCount(),
-                null // Do not expose password
+                roleNames
         );
     }
 
-    private CustomUser fromDto(UserDTO dto) {
+    private CustomUser toEntity(UserDTO dto) {
         CustomUser user = new CustomUser();
         user.setId(dto.id()); // Optional: depending on whether you're creating or updating
         user.setFirstName(dto.firstName());
