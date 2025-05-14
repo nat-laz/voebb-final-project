@@ -7,6 +7,10 @@
           href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.5/dist/zephyr/bootstrap.min.css">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css"
+            rel="stylesheet"
+    />
 </head>
 <body>
 <div class="container my-4">
@@ -26,13 +30,26 @@
         <i class="bi bi-plus-circle"></i> Add Product
     </button>
 
-    <div th:replace="fragments/product-table :: productTable(${page})"></div>
+    <div th:replace="~{admin/fragments/product-table :: productTable}"></div>
 
     <!-- modal fragment -->
-    <div th:replace="fragments/add-product-modal :: addProductModal"></div>
+    <div th:replace="admin/fragments/add-product-modal :: addProductModal"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"
+></script>
+
+<!-- Optional: Manually init the select if needed -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const select = document.getElementById('countryNames');
+        if (select) {
+            new mdb.Select(select);
+        }
+    });
+</script>
 <script>
     /**
      * Dynamically toggles visibility and validation of form fields based on selected product type.

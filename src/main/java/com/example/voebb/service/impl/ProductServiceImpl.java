@@ -9,11 +9,9 @@ import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.CreatorProductRelationService;
 import com.example.voebb.service.ProductItemService;
 import com.example.voebb.service.ProductService;
-import com.example.voebb.model.dto.product.NewBookDetailsDTO;
 import com.example.voebb.model.dto.product.NewProductDTO;
 import com.example.voebb.model.dto.product.AdminProductDTO;
 import com.example.voebb.model.entity.*;
-import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductTypeService productTypeService;
     private final CountryRepo countryRepo;
 
+
     @Autowired
     public ProductServiceImpl(
             ProductRepo productRepo,
@@ -43,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
             CreatorService creatorService,
             ProductTypeService productTypeService,
             CountryRepo countryRepo,
+
             ProductItemService productItemService) {
         this.productRepo = productRepo;
         this.bookDetailsService = bookDetailsService;
@@ -104,17 +105,18 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
-    public AdminProductDTO createProduct(NewProductDTO dto) {
 
+
+
+    @Override
+    public AdminProductDTO createProduct(NewProductDTO dto, List<Long> selectedCountryIds) {
         // 1. Link with existing media_type
-        // TODO: decide about isDigital should be a field of addProductForm or calculated on the fly if ProductLinkToEmedia exists
-        ProductType productType = productTypeService.findOrCreate(
-                dto.getProductType().trim());
+        ProductType productType = productTypeService.findOrCreate(dto.getProductType().trim());
 
         // 2. Save to Product table
-        Product savedProduct = buildAndSaveProduct(dto, productType);
+        Product savedProduct = buildAndSaveProduct(dto, productType, selectedCountryIds);
 
-        // 3. If 'book' || 'e-book' add book details
+        // 3. If 'book' or 'e-book', add book details
         String type = dto.getProductType().trim().toLowerCase();
         boolean isBook = type.equals("book") || type.equals("ebook");
 
@@ -127,8 +129,6 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("A product must have at least one creator.");
         }
         creatorService.assignCreatorsToProduct(dto.getCreators(), savedProduct);
-
-        // TODO:  Link with existing OR create language and country
 
         return new AdminProductDTO(
                 savedProduct.getId(),
@@ -150,7 +150,52 @@ public class ProductServiceImpl implements ProductService {
         productRepo.deleteById(productId);
     }
 
-    private Product buildAndSaveProduct(NewProductDTO dto, ProductType productType) {
+    @Override
+    public Product getProductById(Long id) {
+        return productRepo.getProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    @Override
+    public Product updateProduct(Long id, Product updatedProduct, List<Long> selectedCountryIds) {
+        Product existingProduct = getProductById(id);
+
+        // Update fields
+        existingProduct.setTitle(updatedProduct.getTitle());
+        existingProduct.setReleaseYear(updatedProduct.getReleaseYear());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setPhoto(updatedProduct.getPhoto());
+        existingProduct.setProductLinkToEmedia(updatedProduct.getProductLinkToEmedia());
+
+        // Handle product type if you allow changing it
+        if (updatedProduct.getType() != null) {
+            existingProduct.setType(updatedProduct.getType());
+        }
+
+        // Update countries
+        if (selectedCountryIds != null) {
+            Set<Country> countries = new HashSet<>(countryRepo.findAllById(selectedCountryIds));
+            existingProduct.setCountries(countries);
+        }
+
+        return productRepo.save(existingProduct);
+    }
+
+    @Override
+    public void saveProduct(Product existingProduct) {
+        if (existingProduct == null) {
+            throw new IllegalArgumentException("Product must not be null");
+        }
+        if (existingProduct.getId() == null) {
+            throw new IllegalArgumentException("Product must have an ID");
+        }
+        if (!productRepo.existsById(existingProduct.getId())) {
+            throw new IllegalArgumentException("Product with ID " + existingProduct.getId() + " does not exist");
+        }
+        productRepo.save(existingProduct);
+    }
+
+    private Product buildAndSaveProduct(NewProductDTO dto, ProductType productType, List<Long> selectedCountryIds) {
         Product product = new Product();
         product.setTitle(dto.getTitle());
         product.setReleaseYear(dto.getReleaseYear());
@@ -159,11 +204,11 @@ public class ProductServiceImpl implements ProductService {
         product.setProductLinkToEmedia(dto.getProductLinkToEmedia());
         product.setType(productType);
 
-        // ✅ Add this block to handle countries
-        if (dto.getCountryNames() != null && !dto.getCountryNames().isEmpty()) {
-            Set<Country> countries = new HashSet<>(countryRepo.findByNameIn(dto.getCountryNames()));
-            product.setCountries(countries);
+        if (selectedCountryIds != null && !selectedCountryIds.isEmpty()) {
+            List<Country> countries = countryRepo.findAllById(selectedCountryIds);
+            product.setCountries(new HashSet<>(countries));
         }
+
         return productRepo.save(product);
     }
 

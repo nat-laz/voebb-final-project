@@ -1,10 +1,9 @@
 package com.example.voebb.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,5 +24,8 @@ public class Country {
     private String name;
 
     @ManyToMany(mappedBy = "countries", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private Set<Product> products = new HashSet<>();
 }

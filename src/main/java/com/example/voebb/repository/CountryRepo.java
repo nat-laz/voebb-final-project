@@ -13,7 +13,7 @@ public interface CountryRepo extends JpaRepository<Country, Long> {
 
     Optional<Country> findByNameIgnoreCase(String name);
 
-    List<Country> findByNameIn(Set<String> names);
+    List<Country> findByNameIn(List<String> names);
 
     boolean existsByName(String name);
 }
