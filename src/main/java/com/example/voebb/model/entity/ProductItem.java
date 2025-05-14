@@ -1,11 +1,10 @@
 package com.example.voebb.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -36,4 +35,12 @@ public class ProductItem {
     private ItemLocation location;
 
 
+    /**
+     * Links item with its location, ensuring bidirectional sync.
+     * Required for @MapsId.
+     */
+    public void addLocation(ItemLocation location) {
+        this.location = location;
+        location.setItem(this);
+    }
 }

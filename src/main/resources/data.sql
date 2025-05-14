@@ -1,6 +1,7 @@
 -- Product types
 INSERT INTO product_types (product_type_id, name, is_digital) VALUES (1, 'book', false) ON CONFLICT (product_type_id) DO NOTHING;
 INSERT INTO product_types (product_type_id, name, is_digital) VALUES (2, 'ebook', true) ON CONFLICT (product_type_id) DO NOTHING;
+INSERT INTO product_types (product_type_id, name, is_digital) VALUES (3, 'DVD', false) ON CONFLICT (product_type_id) DO NOTHING;
 SELECT setval('product_types_product_type_id_seq', (SELECT MAX(product_type_id) FROM product_types));
 
 -- Item status
@@ -48,7 +49,8 @@ VALUES (1, 1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_
        (8, 2, 'https://ebooks.voebb.de/hp4', 'Harry Potter and the Half-Blood Prince', '2005', 'photo_url_6','Sixth book in the series'),
        (9, 1, NULL, 'Harry Potter and the Deathly Hallows', '2007', 'photo_url_7', 'Final book in the series'),
        (10, 1, NULL, 'Harry Potter and the Cursed Child', '2016', 'photo_url_8', 'Play based on Harry Potter universe'),
-       (11, 1, NULL, 'Fantastic Beasts and Where to Find Them', '2001', 'photo_url_9','A companion book to Harry Potter')
+       (11, 1, NULL, 'Fantastic Beasts and Where to Find Them', '2001', 'photo_url_9','A companion book to Harry Potter'),
+       (12, 3, NULL, 'The Matrix', '1999', 'photo_url_9','DVD format')
 ON CONFLICT (product_id) DO NOTHING;
 SELECT setval('products_product_id_seq', (SELECT MAX(product_id) FROM products));
 

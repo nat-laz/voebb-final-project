@@ -1,5 +1,6 @@
 package com.example.voebb.service;
 
+import com.example.voebb.model.dto.item.CreateItemDTO;
 import com.example.voebb.model.dto.item.ItemAdminDTO;
 import com.example.voebb.model.dto.item.UpdateItemDTO;
 import com.example.voebb.model.dto.product.LocationAndItemStatusDTO;
@@ -19,6 +20,8 @@ public interface ProductItemService {
     List<LocationAndItemStatusDTO> getAllLocationsForProduct(Long productId);
 
     Page<ItemAdminDTO> getAllItems(Pageable pageable);
+
+    void createItem(CreateItemDTO dto);
 
     void editItem(UpdateItemDTO dto);
 

@@ -1,18 +1,14 @@
 package com.example.voebb.service.impl;
 
+import com.example.voebb.model.dto.item.CreateItemDTO;
 import com.example.voebb.model.dto.item.ItemAdminDTO;
 import com.example.voebb.model.dto.item.UpdateItemDTO;
 import com.example.voebb.model.dto.product.LocationAndItemStatusDTO;
 import com.example.voebb.model.dto.product.LocationAndItemsCountDTO;
 
-import com.example.voebb.model.entity.ItemLocation;
-import com.example.voebb.model.entity.ItemStatus;
-import com.example.voebb.model.entity.Library;
-import com.example.voebb.model.entity.ProductItem;
-import com.example.voebb.repository.ItemLocationRepo;
-import com.example.voebb.repository.ItemStatusRepo;
-import com.example.voebb.repository.LibraryRepo;
-import com.example.voebb.repository.ProductItemRepo;
+import com.example.voebb.model.entity.*;
+import com.example.voebb.repository.*;
+import com.example.voebb.service.ItemLocationService;
 import com.example.voebb.service.ProductItemService;
 
 
@@ -31,16 +27,22 @@ public class ProductItemServiceImpl implements ProductItemService {
     private final ItemLocationRepo itemLocationRepo;
     private final ItemStatusRepo itemStatusRepo;
     private final LibraryRepo libraryRepo;
+    private final ProductRepo productRepo;
+    private final ItemLocationService itemLocationService;
 
     public ProductItemServiceImpl(
             ProductItemRepo productItemRepo,
             ItemLocationRepo itemLocationRepo,
             ItemStatusRepo itemStatusRepo,
-            LibraryRepo libraryRepo) {
+            LibraryRepo libraryRepo,
+            ProductRepo productRepo,
+            ItemLocationService itemLocationService) {
         this.productItemRepo = productItemRepo;
         this.itemLocationRepo = itemLocationRepo;
         this.itemStatusRepo = itemStatusRepo;
         this.libraryRepo = libraryRepo;
+        this.productRepo = productRepo;
+        this.itemLocationService = itemLocationService;
     }
 
     @Override
@@ -64,7 +66,25 @@ public class ProductItemServiceImpl implements ProductItemService {
     }
 
     @Override
+    public void createItem(CreateItemDTO dto) {
+        Product product = productRepo.findById(dto.productId())
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        Library library = libraryRepo.findById(dto.libraryId())
+                .orElseThrow(() -> new EntityNotFoundException("Library not found"));
+
+        ProductItem item = new ProductItem();
+        item.setProduct(product);
+        item.setStatus(itemStatusRepo.findByNameIgnoreCase("available")
+                .orElseThrow());
+        itemLocationService.createLocation(item, dto.locationNote(), library);
+
+        productItemRepo.save(item);
+    }
+
+
     @Transactional
+    @Override
     public void editItem(UpdateItemDTO dto) {
         ProductItem item = productItemRepo.findById(dto.itemId())
                 .orElseThrow(() -> new EntityNotFoundException("Item not found with ID: " + dto.itemId()));

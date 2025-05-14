@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ItemStatusRepo extends JpaRepository<ItemStatus, Long> {
@@ -35,5 +36,7 @@ public interface ItemStatusRepo extends JpaRepository<ItemStatus, Long> {
                     END
             """)
     List<ItemStatus> filterEditableStatusesForBorrowManagement();
+
+    Optional<ItemStatus> findByNameIgnoreCase(String name);
 }
 

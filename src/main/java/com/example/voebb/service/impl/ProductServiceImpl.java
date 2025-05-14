@@ -1,18 +1,13 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.creator.CreatorRequestDTO;
-import com.example.voebb.model.dto.product.ProductInfoDTO;
-import com.example.voebb.model.dto.product.SearchResultProductDTO;
+import com.example.voebb.model.dto.product.*;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.CreatorProductRelationService;
 import com.example.voebb.service.ProductItemService;
 import com.example.voebb.service.ProductService;
-import com.example.voebb.model.dto.product.NewBookDetailsDTO;
-import com.example.voebb.model.dto.product.NewProductDTO;
-import com.example.voebb.model.dto.product.AdminProductDTO;
 import com.example.voebb.model.entity.*;
-import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -73,21 +68,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
+        Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
+        return page.map(this::toProductInfoDTO);
+    }
 
+
+    @Override
     public ProductInfoDTO findById(Long id) {
         Product product = productRepo.getProductById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        return new ProductInfoDTO(
-                product.getId(),
-                product.getType().getName(),
-                product.getTitle(),
-                product.getReleaseYear(),
-                product.getPhoto(),
-                product.getDescription(),
-                product.getProductLinkToEmedia()
-        );
+        return toProductInfoDTO(product);
     }
+
 
     public AdminProductDTO createProduct(NewProductDTO dto) {
 
@@ -114,6 +108,7 @@ public class ProductServiceImpl implements ProductService {
         creatorService.assignCreatorsToProduct(dto.getCreators(), savedProduct);
 
         // TODO:  Link with existing OR create language and country
+
 
         return new AdminProductDTO(
                 savedProduct.getId(),
@@ -147,5 +142,19 @@ public class ProductServiceImpl implements ProductService {
         return productRepo.save(product);
     }
 
+    private ProductInfoDTO toProductInfoDTO(Product product) {
+        BookDetailsDTO bookDetailsDTO = bookDetailsService.getDetailsDTOByProductId(product.getId());
+
+        return new ProductInfoDTO(
+                product.getId(),
+                product.getType().getName(),
+                product.getTitle(),
+                product.getReleaseYear(),
+                product.getPhoto(),
+                product.getDescription(),
+                product.getProductLinkToEmedia(),
+                bookDetailsDTO
+        );
+    }
 
 }

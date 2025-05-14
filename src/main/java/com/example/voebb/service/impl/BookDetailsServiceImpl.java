@@ -33,22 +33,19 @@ public class BookDetailsServiceImpl implements BookDetailsService {
 
 
     @Override
-    public BookDetails getDetailsByProductId(Long productId) {
-        Product product = productRepo.getProductById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
-        String productType = product.getType().getName();
+    public BookDetailsDTO getDetailsDTOByProductId(Long productId) {
+        Product product = productRepo.getProductById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        if (productType.equals("book") || productType.equals("ebook")) {
-            return product.getBookDetails();
+        if (product.getType() == null) return null;
+
+        String type = product.getType().getName();
+        if (!"book".equalsIgnoreCase(type) && !"ebook".equalsIgnoreCase(type)) {
+            return null;
         }
 
-        throw new RuntimeException("Product is not a book");
-    }
-
-    @Override
-    public BookDetailsDTO getDetailsDTOByProductId(Long productId) {
-        BookDetails details = productRepo.getProductById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"))
-                .getBookDetails();
+        BookDetails details = product.getBookDetails();
+        if (details == null) return null;
 
         return new BookDetailsDTO(
                 details.getIsbn(),
@@ -57,21 +54,25 @@ public class BookDetailsServiceImpl implements BookDetailsService {
         );
     }
 
+
     @Override
-    public BookDetails updateDetails(Long productId, BookDetails newDetails) {
-        BookDetails oldDetails = getDetailsByProductId(productId);
+    public BookDetails updateDetails(Long productId, NewBookDetailsDTO newDetails) {
+        BookDetails existing = bookDetailsRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("BookDetails not found for product ID: " + productId));
 
-        oldDetails.setEdition(newDetails.getEdition());
-        oldDetails.setIsbn(newDetails.getIsbn());
-        oldDetails.setPages(newDetails.getPages());
+        existing.setEdition(newDetails.getEdition());
+        existing.setIsbn(newDetails.getIsbn());
+        existing.setPages(newDetails.getPages());
 
-
-        return bookDetailsRepo.save(oldDetails);
+        return bookDetailsRepo.save(existing);
     }
 
     @Override
     public void deleteDetails(Long productId) {
-        getDetailsByProductId(productId);
+        if (!bookDetailsRepo.existsById(productId)) {
+            throw new RuntimeException("BookDetails not found for product ID: " + productId);
+        }
+
         bookDetailsRepo.deleteById(productId);
     }
 

@@ -109,6 +109,18 @@
     <th:block th:each="item : ${page.content}">
         <div th:replace="admin/fragments/_item-edit :: editItemModal(item=${item}, statuses=${statuses}, libraries=${libraries})"></div>
     </th:block>
+
+    <!--    TODO: Properly re-directing after creating the New Product-->
+    <div th:replace="/admin/fragments/add-product-modal :: addProductModal"></div>
 </main>
+
+<script th:if="${openCreateItemModal}" th:inline="javascript">
+    window.addEventListener('DOMContentLoaded', function () {
+        const modal = new bootstrap.Modal(document.getElementById('createItemModal'));
+        modal.show();
+    });
+</script>
+
+
 </html>
 
