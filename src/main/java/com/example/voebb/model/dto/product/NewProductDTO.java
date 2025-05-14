@@ -25,13 +25,12 @@ public class NewProductDTO {
 
     List<CreatorWithRoleDTO> creators = new ArrayList<>();
 
-    List<String> countryNames;
+//    List<String> countryNames;
+//
+//    public List<String> getCountries() {
+//        return countryNames;
+//    }
 
-    public List<String> getCountries() {
-        return countryNames;
-    }
-
-
-    private List<Long> countryIds;
+    List<Long> countryIds;
 
 }

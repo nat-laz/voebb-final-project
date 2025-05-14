@@ -92,6 +92,35 @@
         toggleFields();
     }
 </script>
+<script>
+    const listItems = document.querySelectorAll("#country_list li");
+    document.getElementById("searchInput").addEventListener("input", function () {
+        const filter = this.value.toLowerCase();
+        let lastVisibleItem = null;
 
+        listItems.forEach(function (item) {
+            const label = item.querySelector("label");
+            const text = label.textContent.toLowerCase();
+
+            if (text.includes(filter)) {
+                item.style.display = "list-item"
+                lastVisibleItem = item;
+            } else {
+                item.style.display = "none";
+            }
+        });
+
+        listItems.forEach(function (item) {
+            if (item.style.display === "list-item") {
+                item.style.borderBottom = "1px solid #ddd";
+            }
+        });
+
+        if (lastVisibleItem) {
+            lastVisibleItem.style.borderBottom = "none";
+        }
+
+    });
+</script>
 </body>
 </html>

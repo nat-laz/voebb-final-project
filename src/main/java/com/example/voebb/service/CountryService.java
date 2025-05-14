@@ -7,7 +7,6 @@ import java.util.List;
 public interface CountryService {
 
 
-
     Country findOrCreate(String name);
 
     Country createCountry(Country country);
@@ -21,6 +20,7 @@ public interface CountryService {
     void deleteCountryById(Long id);
 
     List<Country> findAll();
+
     List<Country> findCountriesByIds(List<Long> ids);
 
 }

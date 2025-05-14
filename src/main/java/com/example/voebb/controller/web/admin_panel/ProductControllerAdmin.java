@@ -1,6 +1,7 @@
 package com.example.voebb.controller.web.admin_panel;
 
 import com.example.voebb.model.dto.product.NewProductDTO;
+import com.example.voebb.model.dto.product.UpdateProductDTO;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.service.CountryService;
 import com.example.voebb.service.ProductService;
@@ -36,6 +37,7 @@ public class ProductControllerAdmin {
         model.addAttribute("page", page);
         model.addAttribute("products", page.getContent());
         model.addAttribute("countries", countryService.findAll());
+        model.addAttribute("productDTO", new NewProductDTO());
 
         if (success != null && !success.isBlank()) {
             model.addAttribute("success", success);
@@ -46,23 +48,20 @@ public class ProductControllerAdmin {
 
     // POST: Create a new product
     @PostMapping
-    public String create(@ModelAttribute("product") NewProductDTO requestDTO,
+    public String create(@ModelAttribute("productDTO") NewProductDTO requestDTO,
                          RedirectAttributes ra) {
-        List<Long> selectedCountryIds = requestDTO.getCountryIds();
-
+        List<Long> countryIds = requestDTO.getCountryIds();
 
         // Logic to process the selected countries along with product creation
-        productService.createProduct(requestDTO, selectedCountryIds);
+        productService.createProduct(requestDTO);
         ra.addFlashAttribute("success", "Product created successfully");
         return "redirect:/admin/products";
     }
+
     @GetMapping("/edit/{id}")
     public String editProduct(@PathVariable("id") Long id, Model model) {
-        Product product = productService.getProductById(id);
-        if (product == null) {
-            model.addAttribute("error", "Product not found");
-            return "redirect:/admin/products"; // or wherever you'd want to redirect if not found
-        }
+        UpdateProductDTO product = productService.getProductById(id);
+
         model.addAttribute("product", product);
         model.addAttribute("countries", countryService.findAll());
         return "admin/products/edit"; // this should point to the Thymeleaf template for editing
@@ -70,23 +69,12 @@ public class ProductControllerAdmin {
 
     // Update product - POST method
     @PostMapping("/edit/{id}")
-    public String updateProduct(@PathVariable("id") Long id, @ModelAttribute("product") Product updatedProduct,
-                                @RequestParam("selectedCountryIds") List<Long> selectedCountryIds,
+    public String updateProduct(@PathVariable("id") Long id,
+                                @ModelAttribute("product") UpdateProductDTO updatedProduct,
                                 RedirectAttributes ra) {
-        Product existingProduct = productService.getProductById(id);
-        if (existingProduct == null) {
-            ra.addFlashAttribute("error", "Product not found");
-            return "redirect:/admin/products";
-        }
-
-        // Handle updating fields
-        existingProduct.setTitle(updatedProduct.getTitle());
-        existingProduct.setReleaseYear(updatedProduct.getReleaseYear());
-        existingProduct.setDescription(updatedProduct.getDescription());
-        existingProduct.setCountries(new HashSet<>(countryService.findCountriesByIds(selectedCountryIds)));
 
         // Save the updated product
-        productService.saveProduct(existingProduct);
+        productService.updateProduct(id, updatedProduct);
         return "redirect:/admin/products";
 
     }

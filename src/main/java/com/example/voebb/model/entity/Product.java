@@ -1,25 +1,23 @@
 package com.example.voebb.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "products")
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     @Column(name = "product_id")
     private Long id;
 
@@ -47,7 +45,7 @@ public class Product {
     @Column(name = "product_link_to_emedia")
     private String productLinkToEmedia;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private BookDetails bookDetails;
 
 
@@ -57,7 +55,7 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "language_id")
     )
-    private Set<Language> languages = new HashSet<>();
+    private Set<Language> languages;
 
 
     @ManyToMany
@@ -66,6 +64,6 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "country_id")
     )
-    private Set<Country> countries = new HashSet<>();
+    private List<Country> countries;
 
 }

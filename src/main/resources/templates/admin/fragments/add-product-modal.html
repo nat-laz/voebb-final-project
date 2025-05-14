@@ -65,18 +65,25 @@
                             </div>
 
                             <!-- Countries -->
-                            <div class="form-outline mb-4">
-                                <label class="form-label">Countries</label>
-                                <div th:each="country : ${countries}">
-                                    <div class="form-check">
-                                        <input class="form-check-input"
-                                               type="checkbox"
-                                               th:id="'country-' + ${country.id}"
-                                               th:name="countryIds"
-                                               th:value="${country.id}" />
-                                        <label class="form-check-label" th:for="'country-' + ${country.id}"
-                                               th:text="${country.name}"></label>
-                                    </div>
+                            <div class="border rounded-2 p-2 no-upper-and-bottom-border" style="max-width: 300px">
+                                <input type="text" id="searchInput" placeholder="Search countries..." class="form-control mb-2">
+                                <div class="overflow-auto" style="max-height: 200px">
+                                    <ul class="list-group" id="country_list" style="border: none" >
+                                        <li class="list-group-item" style="border-left: none; border-right: none"
+                                            th:each="country : ${countries}">
+                                            <div class="form-check">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="countryIds"
+                                                       th:value="${country.id}"
+                                                       th:id="'checkbox__' + ${country.id}"
+                                                >
+                                                <label class="form-check-label"
+                                                       th:for="'checkbox__' + ${country.id}"
+                                                       th:text="${country.name}"></label>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
 
