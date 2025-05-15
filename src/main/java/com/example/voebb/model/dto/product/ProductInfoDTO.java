@@ -13,6 +13,8 @@ public record ProductInfoDTO(
         String photo,
         String description, // summary of the product based on media_type
         String productLinkToEmedia,
-        Set<String> countries
+        Set<String> countries,
+        BookDetailsDTO bookDetails //  null for non-books
+        //TODO: add Languages, Creators
 ) {
 }

@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 public interface ProductService {
     Page<SearchResultProductDTO> getAllByTitle(String title, Pageable pageable);
 
+    Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable);
+
     ProductInfoDTO findById(Long id);
 
     AdminProductDTO createProduct(NewProductDTO dto);

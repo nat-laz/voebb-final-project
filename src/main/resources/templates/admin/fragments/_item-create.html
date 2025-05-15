@@ -1,0 +1,193 @@
+<div th:fragment="createItemModal">
+    <div class="modal fade" id="createItemModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs" id="itemTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="search-tab" data-bs-toggle="tab"
+                                    data-bs-target="#searchTab" type="button" role="tab">
+                                Link with Existing Product
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                           <span data-bs-toggle="tooltip"
+                                 data-bs-placement="top"
+                                 title="Please select a product first">
+                                    <button class="nav-link disabled" id="details-tab"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#detailsTab"
+                                            type="button"
+                                            role="tab"
+                                            tabindex="-1"
+                                            aria-disabled="true">
+                                        Add Item Location Details
+                                    </button>
+</span>
+
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3">
+
+                        <!-- Tab 1: Search for Product -->
+                        <div class="tab-pane fade show active" id="searchTab" role="tabpanel">
+                            <form th:action="@{/admin/items/create}" method="get">
+                                <input type="hidden" name="action" value="search"/>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" name="searchTitle"
+                                           th:value="${searchTitle}" placeholder="Search by product title"/>
+                                    <button type="submit" class="btn btn-outline-primary" id="searchBtn" disabled>
+                                        Search
+                                    </button>
+                                </div>
+                                <div id="clearBtnContainer" th:if="${searchTitle}" class="mb-2">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="clearBtn">
+                                        Clear Search
+                                    </button>
+                                </div>
+
+                            </form>
+
+
+                            <!-- Matching Products Table -->
+                            <div th:if="${matchingProducts != null}">
+
+                                <div id="noMatchWarning" th:if="${matchingProducts.totalElements == 0}"
+                                     class="alert alert-warning">
+                                    No products found with this title.
+                                </div>
+
+                                <div th:if="${matchingProducts.totalElements > 0}">
+                                    <form id="productSelectionForm">
+                                        <table class="table table-sm table-hover align-middle mb-2 no-border">
+                                            <thead class="table-light">
+                                            <tr>
+                                                <th>Select</th>
+                                                <th>Title</th>
+                                                <th>Type</th>
+                                                <th>ISBN</th>
+                                                <th>Year</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="product : ${matchingProducts}">
+                                                <td>
+                                                    <input type="radio" name="productId" th:value="${product.id}"
+                                                           onclick="enableContinueBtn(this)" required/>
+                                                </td>
+                                                <td th:text="${product.title}"></td>
+                                                <td th:text="${product.productType}"></td>
+                                                <td th:text="${product.bookDetails?.isbn ?: 'N/A'}"></td>
+                                                <td th:text="${product.releaseYear}"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </form>
+
+                                    <!-- Pagination -->
+                                    <div class="d-flex justify-content-center" id="paginationContainer"
+                                         th:if="${matchingProducts != null and matchingProducts.totalPages > 1}">
+                                        <nav aria-label="Product page navigation">
+                                            <ul class="pagination pagination-sm mb-0">
+                                                <li class="page-item"
+                                                    th:classappend="${matchingProducts.first} ? 'disabled'">
+                                                    <a class="page-link"
+                                                       th:href="@{/admin/items/create(action='search', searchTitle=${searchTitle}, page=${matchingProducts.number - 1})}">
+                                                        &laquo;
+                                                    </a>
+                                                </li>
+                                                <li class="page-item"
+                                                    th:each="pageNum : ${#numbers.sequence(0, matchingProducts.totalPages - 1)}"
+                                                    th:classappend="${pageNum == matchingProducts.number} ? 'active'">
+                                                    <a class="page-link"
+                                                       th:href="@{/admin/items/create(action='search', searchTitle=${searchTitle}, page=${pageNum})}"
+                                                       th:text="${pageNum + 1}"></a>
+                                                </li>
+                                                <li class="page-item"
+                                                    th:classappend="${matchingProducts.last} ? 'disabled'">
+                                                    <a class="page-link"
+                                                       th:href="@{/admin/items/create(action='search', searchTitle=${searchTitle}, page=${matchingProducts.number + 1})}">
+                                                        &raquo;
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+
+                                </div>
+
+                                <div th:if="${matchingProducts.totalElements > 0}">
+                                    <button id="continueBtn"
+                                            type="button"
+                                            class="btn btn-primary mt-2"
+                                            disabled
+                                            onclick="goToDetailsTab()">
+                                        Continue with Item Details
+                                    </button>
+                                </div>
+
+                                <!--    TODO: Properly re-directing after creating the New Product-->
+                                <div id="createNewProductContainer"
+                                     class="alert alert-light border d-flex justify-content-between align-items-center mt-3 p-3 rounded">
+                                    <div class="me-3 mb-0">
+                                        <p class="mb-0 text-muted">No matching products found?</p>
+                                        <small class="text-muted">You can create a new one instead.</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary d-flex align-items-center"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#addProductModal">
+                                        <i class="bi bi-plus-circle me-1"></i> Create New Product
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--  Tab 2: Add Item Location Details -->
+                        <div class="tab-pane fade" id="detailsTab" role="tabpanel">
+                            <form th:action="@{/admin/items/create}" method="post">
+                                <input type="hidden" name="action" value="create"/>
+                                <input type="hidden" id="selectedProductId" name="productId"/>
+
+
+                                <div class="mb-3">
+                                    <label class="form-label">Library</label>
+                                    <select class="form-select" name="libraryId" required>
+                                        <option value="" disabled selected>-- Select library --</option>
+                                        <option th:each="lib : ${libraries}"
+                                                th:value="${lib.id}"
+                                                th:text="${lib.name}"></option>
+                                    </select>
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <label class="form-label">Location Note</label>
+                                    <textarea class="form-control" name="locationNote" rows="2" required></textarea>
+                                </div>
+
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-success">Save Item</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/create-item-modal.js}"></script>
+
+</div>

@@ -73,6 +73,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
+        Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
+        return page.map(this::toProductInfoDTO);
+    }
+
+
+    @Override
     public ProductInfoDTO findById(Long id) {
         Product product = productRepo.getProductById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -91,19 +98,20 @@ public class ProductServiceImpl implements ProductService {
                 product.getPhoto(),
                 product.getDescription(),
                 product.getProductLinkToEmedia(),
-                countryNames
+                countryNames,
+                bookDetailsService.getDetailsDTOByProductId(product.getId())
         );
     }
 
-    @Override
     public AdminProductDTO createProduct(NewProductDTO dto) {
+
         // 1. Link with existing media_type
         ProductType productType = productTypeService.findOrCreate(dto.getProductType().trim());
 
         // 2. Save to Product table
         Product savedProduct = buildAndSaveProduct(dto, productType);
 
-        // 3. If 'book' or 'e-book', add book details
+        // 3. If 'book' || 'e-book' add book details
         String type = dto.getProductType().trim().toLowerCase();
         boolean isBook = type.equals("book") || type.equals("ebook");
 
@@ -211,6 +219,27 @@ public class ProductServiceImpl implements ProductService {
         product.setType(productType);
         product.setCountries(countries);
         return productRepo.save(product);
+    }
+
+    private ProductInfoDTO toProductInfoDTO(Product product) {
+        BookDetailsDTO bookDetailsDTO = bookDetailsService.getDetailsDTOByProductId(product.getId());
+
+        Set<String> countryNames = product.getCountries()
+                .stream()
+                .map(Country::getName)
+                .collect(Collectors.toSet());
+
+        return new ProductInfoDTO(
+                product.getId(),
+                product.getType().getName(),
+                product.getTitle(),
+                product.getReleaseYear(),
+                product.getPhoto(),
+                product.getDescription(),
+                product.getProductLinkToEmedia(),
+                countryNames,
+                bookDetailsDTO
+        );
     }
 
 }

@@ -9,11 +9,9 @@ public interface BookDetailsService {
 
     void saveBookDetails(NewBookDetailsDTO dto, Product product);
 
-    BookDetails getDetailsByProductId(Long productId);
-
     BookDetailsDTO getDetailsDTOByProductId(Long productId);
 
-    BookDetails updateDetails(Long productId, BookDetails newDetails);
+    BookDetails updateDetails(Long productId, NewBookDetailsDTO newDetails);
 
     void deleteDetails(Long productId);
 }

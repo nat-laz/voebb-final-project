@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout}">
+<head>
+    <title layout:title="Item Management">Item Management</title>
+</head>
+
+<main layout:fragment="content">
+
+    <div class="container my-4">
+        <h2 class="mb-3">Item Management</h2>
+
+        <div th:replace="admin/fragments/_alerts :: alerts"></div>
+
+        <!-- AddItem button -->
+        <button class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#createItemModal">
+            <i class="bi bi-plus-circle"></i> Add Item
+        </button>
+
+        <table class="table table-striped">
+            <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Library</th>
+                <th>Location</th>
+                <th class="text-end">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, stat : ${page.content}">
+                <td th:text="${stat.index + 1 + page.number * page.size}">1</td>
+                <td th:text="${item.productTitle}">Title</td>
+                <td th:text="${item.productType}">Book</td>
+                <td th:text="${item.itemStatus}">Available</td>
+                <td th:text="${item.libraryName}">Central Library</td>
+                <td th:text="${item.locationNote}">Shelf 1A</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-primary"
+                            data-bs-toggle="modal"
+                            th:attr="data-bs-target='#editItemModal__' + ${item.itemId}">
+                        Edit
+                    </button>
+
+                    <!-- Disabled Delete Button with Tooltip -->
+                    <th:block
+                            th:if="${item.itemStatus.toLowerCase() == 'borrowed' or item.itemStatus.toLowerCase() == 'reserved'}">
+                            <span data-bs-toggle="tooltip"
+                                  data-bs-placement="top"
+                                  title="Cannot delete item while it's borrowed or reserved">
+                                <button type="button"
+                                        class="btn btn-sm btn-disabled-visible"
+                                        disabled>
+                                    <i class="bi bi-trash3"></i> Delete
+                                </button>
+                            </span>
+                    </th:block>
+
+
+                    <!-- Active delete button -->
+                    <th:block
+                            th:unless="${item.itemStatus.toLowerCase() == 'borrowed' or item.itemStatus.toLowerCase() == 'reserved'}">
+                        <form th:action="@{/admin/items/{id}/delete(id=${item.itemId})}" method="post"
+                              style="display:inline">
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Are you sure you want to delete this item?');">
+                                <i class="bi bi-trash3"></i> Delete
+                            </button>
+                        </form>
+                    </th:block>
+
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- TODO: (?) extract in fragment and reuse dynamically based on the section('Item', 'User', etc. ) -->
+    <!-- Pagination -->
+    <nav th:if="${page.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link" th:href="@{|/admin/items?page=${page.number - 1}|}">Previous</a>
+            </li>
+
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${i == page.number} ? 'active'">
+                <a class="page-link" th:href="@{|/admin/items?page=${i}|}" th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link" th:href="@{|/admin/items?page=${page.number + 1}|}">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Create Modal -->
+    <div th:replace="admin/fragments/_item-create :: createItemModal"></div>
+
+    <!-- Edit Modals -->
+    <th:block th:each="item : ${page.content}">
+        <div th:replace="admin/fragments/_item-edit :: editItemModal(item=${item}, statuses=${statuses}, libraries=${libraries})"></div>
+    </th:block>
+
+    <!--    TODO: Properly re-directing after creating the New Product-->
+    <div th:replace="/admin/fragments/add-product-modal :: addProductModal"></div>
+</main>
+
+<script th:if="${openCreateItemModal}" th:inline="javascript">
+    window.addEventListener('DOMContentLoaded', function () {
+        const modal = new bootstrap.Modal(document.getElementById('createItemModal'));
+        modal.show();
+    });
+</script>
+
+
+</html>
+
