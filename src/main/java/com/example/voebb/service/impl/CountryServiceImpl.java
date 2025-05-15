@@ -14,6 +14,7 @@ public class CountryServiceImpl implements CountryService {
 
     private final CountryRepo countryRepo;
 
+
     @Autowired
     public CountryServiceImpl(CountryRepo countryRepo) {
         this.countryRepo = countryRepo;
@@ -68,6 +69,15 @@ public class CountryServiceImpl implements CountryService {
     public void deleteCountryById(Long id) {
         countryRepo.deleteById(id);
 
+    }
+
+    @Override
+    public List<Country> findAll() {
+        return countryRepo.findAll();
+    }
+    @Override
+    public List<Country> findCountriesByIds(List<Long> ids) {
+        return countryRepo.findAllById(ids);
     }
 
 

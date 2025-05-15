@@ -6,7 +6,7 @@
     <title>Registration page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.5/dist/zephyr/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <!-- Navbar -->
 <div th:replace="~{user/fragments/main-navbar.html :: main-navbar}"></div>
@@ -19,6 +19,7 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating mb3">
+
                     <input class="form-control"
                            id="firstName"
                            placeholder=""
@@ -26,6 +27,7 @@
                            th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''"
                            th:field="*{firstName}"
                            type="text">
+
                     <label for="firstName">First name</label>
 
                     <div class="invalid-feedback"
@@ -37,6 +39,7 @@
 
             <div class="col-md-6">
                 <div class="form-floating mb-3">
+
                     <input class="form-control"
                            id="lastName"
                            placeholder=""
@@ -44,6 +47,7 @@
                            th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''"
                            th:field="*{lastName}"
                            type="text">
+
                     <label for="lastName">Last name</label>
 
                     <div class="invalid-feedback"
@@ -55,6 +59,7 @@
         </div>
 
         <div class="form-floating mb-3">
+
             <input class="form-control"
                    id="email"
                    placeholder=""
@@ -62,6 +67,7 @@
                    th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
                    th:field="*{email}"
                    type="email">
+
             <label for="email">Email</label>
 
             <div class="invalid-feedback"
@@ -94,6 +100,9 @@
 
 <!-- Modals -->
 <div th:replace="~{user/fragments/user-login-modal :: #loginModal}"></div>
+
+<!-- Footer -->
+<footer th:replace="~{user/fragments/footer.html :: footer}" class="mt-auto"></footer>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
