@@ -1,23 +1,21 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.creator.CreatorRequestDTO;
-import com.example.voebb.model.dto.product.ProductInfoDTO;
-import com.example.voebb.model.dto.product.SearchResultProductDTO;
+import com.example.voebb.model.dto.product.*;
+import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Product;
-import com.example.voebb.repository.ProductRepo;
-import com.example.voebb.service.CreatorProductRelationService;
-import com.example.voebb.service.ProductItemService;
-import com.example.voebb.service.ProductService;
-import com.example.voebb.model.dto.product.NewBookDetailsDTO;
-import com.example.voebb.model.dto.product.NewProductDTO;
-import com.example.voebb.model.dto.product.AdminProductDTO;
-import com.example.voebb.model.entity.*;
+import com.example.voebb.model.entity.ProductType;
+import com.example.voebb.repository.CountryRepo;
 import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -28,14 +26,15 @@ public class ProductServiceImpl implements ProductService {
     private final BookDetailsService bookDetailsService;
     private final CreatorService creatorService;
     private final ProductTypeService productTypeService;
+    private final CountryRepo countryRepo;
 
-    @Autowired
     public ProductServiceImpl(
             ProductRepo productRepo,
             BookDetailsService bookDetailsService,
             CreatorProductRelationService creatorProductRelationService,
             CreatorService creatorService,
             ProductTypeService productTypeService,
+            CountryRepo countryRepo,
             ProductItemService productItemService) {
         this.productRepo = productRepo;
         this.bookDetailsService = bookDetailsService;
@@ -43,6 +42,7 @@ public class ProductServiceImpl implements ProductService {
         this.productTypeService = productTypeService;
         this.creatorProductRelationService = creatorProductRelationService;
         this.productItemService = productItemService;
+        this.countryRepo = countryRepo;
     }
 
     @Override
@@ -73,10 +73,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-
     public ProductInfoDTO findById(Long id) {
         Product product = productRepo.getProductById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Set<String> countryNames = product.getCountries()
+                .stream()
+                .map(Country::getName)
+                .collect(Collectors.toSet());
+
 
         return new ProductInfoDTO(
                 product.getId(),
@@ -85,21 +90,20 @@ public class ProductServiceImpl implements ProductService {
                 product.getReleaseYear(),
                 product.getPhoto(),
                 product.getDescription(),
-                product.getProductLinkToEmedia()
+                product.getProductLinkToEmedia(),
+                countryNames
         );
     }
 
+    @Override
     public AdminProductDTO createProduct(NewProductDTO dto) {
-
         // 1. Link with existing media_type
-        // TODO: decide about isDigital should be a field of addProductForm or calculated on the fly if ProductLinkToEmedia exists
-        ProductType productType = productTypeService.findOrCreate(
-                dto.getProductType().trim());
+        ProductType productType = productTypeService.findOrCreate(dto.getProductType().trim());
 
         // 2. Save to Product table
         Product savedProduct = buildAndSaveProduct(dto, productType);
 
-        // 3. If 'book' || 'e-book' add book details
+        // 3. If 'book' or 'e-book', add book details
         String type = dto.getProductType().trim().toLowerCase();
         boolean isBook = type.equals("book") || type.equals("ebook");
 
@@ -112,8 +116,6 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("A product must have at least one creator.");
         }
         creatorService.assignCreatorsToProduct(dto.getCreators(), savedProduct);
-
-        // TODO:  Link with existing OR create language and country
 
         return new AdminProductDTO(
                 savedProduct.getId(),
@@ -135,7 +137,71 @@ public class ProductServiceImpl implements ProductService {
         productRepo.deleteById(productId);
     }
 
+    @Override
+    public UpdateProductDTO getProductById(Long id) {
+        Product product = productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        BookDetailsDTO bookDetailsDTO = new BookDetailsDTO(
+                product.getBookDetails().getIsbn(),
+                product.getBookDetails().getEdition(),
+                product.getBookDetails().getPages()
+        );
+
+        // TODO: Make mapper
+        return new UpdateProductDTO(
+                product.getId(),
+                product.getType().getName(),
+                product.getTitle(),
+                product.getReleaseYear(),
+                product.getPhoto(),
+                product.getDescription(),
+                product.getProductLinkToEmedia(),
+                bookDetailsDTO,
+                product.getCountries().stream().map(
+                        Country::getId
+                ).toList()
+        );
+    }
+
+    @Override
+    @Transactional
+    public UpdateProductDTO updateProduct(Long productId, UpdateProductDTO updateProductDTO) {
+        Product existingProduct = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        List<Country> countries = countryRepo.findAllById(updateProductDTO.countryIds());
+
+        // TODO: make mapper
+        existingProduct.setTitle(updateProductDTO.title());
+        existingProduct.setReleaseYear(updateProductDTO.releaseYear());
+        existingProduct.setDescription(updateProductDTO.description());
+        existingProduct.setPhoto(updateProductDTO.photo());
+        existingProduct.setProductLinkToEmedia(updateProductDTO.productLinkToEmedia());
+        existingProduct.setCountries(countries);
+        productRepo.save(existingProduct);
+        return updateProductDTO;
+    }
+
+    @Override
+    @Transactional
+    public void saveProduct(Product existingProduct) {
+        if (existingProduct == null) {
+            throw new IllegalArgumentException("Product must not be null");
+        }
+        if (existingProduct.getId() == null) {
+            throw new IllegalArgumentException("Product must have an ID");
+        }
+        if (!productRepo.existsById(existingProduct.getId())) {
+            throw new IllegalArgumentException("Product with ID " + existingProduct.getId() + " does not exist");
+        }
+        productRepo.save(existingProduct);
+    }
+
+    // TODO: extract mapper method from here
     private Product buildAndSaveProduct(NewProductDTO dto, ProductType productType) {
+        List<Country> countries = countryRepo.findAllById(dto.getCountryIds());
+
         Product product = new Product();
         product.setTitle(dto.getTitle());
         product.setReleaseYear(dto.getReleaseYear());
@@ -143,9 +209,8 @@ public class ProductServiceImpl implements ProductService {
         product.setDescription(dto.getDescription());
         product.setProductLinkToEmedia(dto.getProductLinkToEmedia());
         product.setType(productType);
-
+        product.setCountries(countries);
         return productRepo.save(product);
     }
-
 
 }

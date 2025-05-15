@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -23,4 +24,13 @@ public class NewProductDTO {
     NewBookDetailsDTO bookDetails;   // nullable for non-books
 
     List<CreatorWithRoleDTO> creators = new ArrayList<>();
+
+//    List<String> countryNames;
+//
+//    public List<String> getCountries() {
+//        return countryNames;
+//    }
+
+    List<Long> countryIds;
+
 }
