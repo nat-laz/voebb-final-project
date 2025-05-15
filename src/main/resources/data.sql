@@ -102,7 +102,27 @@ VALUES (1, 1),
 -- Countries ─────────────────────────────────────────────────
 INSERT INTO countries (country_id, country_name)
 VALUES (1, 'United Kingdom'),
-       (2, 'United States')
+       (2, 'United States'),
+       (3, 'Canada'),
+       (4, 'Germany'),
+       (5, 'France'),
+       (6, 'Italy'),
+       (7, 'Spain'),
+       (8, 'Australia'),
+       (9, 'Japan'),
+       (10, 'China'),
+       (11, 'India'),
+       (12, 'Brazil'),
+       (13, 'Mexico'),
+       (14, 'South Korea'),
+       (15, 'Russia'),
+       (16, 'Netherlands'),
+       (17, 'Sweden'),
+       (18, 'Norway'),
+       (19, 'Switzerland'),
+       (20, 'South Africa'),
+       (21, 'Argentina'),
+       (22, 'New Zealand')
 ON CONFLICT (country_id) DO NOTHING;
 SELECT setval('countries_country_id_seq', (SELECT MAX(country_id) FROM countries));
 
@@ -111,8 +131,7 @@ INSERT INTO country_relation (product_id, country_id)
 VALUES (1, 1),  -- Philosopher's Stone published in the UK
        (1, 2),  -- ... and in the US
        (10, 1), -- Cursed Child in the UK
-       (11, 2)  -- Fantastic Beasts in the US
-ON CONFLICT (product_id, country_id) DO NOTHING;
+       (11, 2);  -- Fantastic Beasts in the US
 
 -- Join table (product linked to languages)
 INSERT INTO language_relation (product_id, language_id)

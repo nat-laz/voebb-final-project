@@ -1,30 +1,36 @@
 package com.example.voebb.controller.web.admin_panel;
 
 import com.example.voebb.model.dto.user.UserDTO;
+import com.example.voebb.repository.CustomUserRoleRepo;
 import com.example.voebb.service.CustomUserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/users")
 public class UserControllerAdmin {
 
     private final CustomUserService customUserService;
+    private final CustomUserRoleRepo customUserRoleRepo;
 
-    public UserControllerAdmin(CustomUserService customUserService) {
+    public UserControllerAdmin(CustomUserService customUserService, CustomUserRoleRepo customUserRoleRepo) {
         this.customUserService = customUserService;
+        this.customUserRoleRepo = customUserRoleRepo;
     }
 
     @GetMapping
     public String listUsers(Model model) {
-        model.addAttribute("users", customUserService.getAllUsers());
+        model.addAttribute("userDTOs", customUserService.getAllUsers());
         return "admin/user/user-management";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("user", new UserDTO(null, "", "", "", true, 0, ""));
+        model.addAttribute("userDTO", new UserDTO(null, "", "", "", "", true, 0, List.of()));
+        model.addAttribute("allRoles", customUserRoleRepo.findAll());
         return "admin/user/create-user";
     }
 
@@ -56,12 +62,13 @@ public class UserControllerAdmin {
     @GetMapping("/edit/{id}")
     public String editUser(@PathVariable Long id, Model model) {
         UserDTO user = customUserService.getUserById(id);
-        model.addAttribute("user", user);
+        model.addAttribute("userDTO", user);
+        model.addAttribute("allRoles", customUserRoleRepo.findAll());
         return "admin/user/edit-user";
     }
 
     @PostMapping("/edit/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute("user") UserDTO userDto) {
+    public String updateUser(@PathVariable Long id, @ModelAttribute("userDTO") UserDTO userDto) {
         customUserService.updateUser(id, userDto);
         return "redirect:/admin/users";
     }

@@ -2,14 +2,13 @@ package com.example.voebb.model.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -18,6 +17,7 @@ public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     @Column(name = "country_id")
     private Long id;
 
@@ -25,5 +25,5 @@ public class Country {
     private String name;
 
     @ManyToMany(mappedBy = "countries", fetch = FetchType.LAZY)
-    private Set<Product> products = new HashSet<>();
+    private List<Product> products;
 }
