@@ -1,11 +1,15 @@
 package com.example.voebb.model.dto.user;
 
+import java.util.List;
+
 public record UserDTO(
         Long id,
+        String email,
+        String password,
         String firstName,
         String lastName,
-        String email,
         boolean enabled,
         int borrowedBooksCount,
-        String password
-) {}
+        List<Long> roleIds
+) {
+}

@@ -1,5 +1,6 @@
 package com.example.voebb.service;
 
+import com.example.voebb.model.dto.user.UserRegistrationDTO;
 import com.example.voebb.model.entity.CustomUser;
 import com.example.voebb.repository.CustomUserRepo;
 import com.example.voebb.service.impl.CustomUserDetailsService;
@@ -32,8 +33,16 @@ class CustomUserServiceTest {
     void testCreateUser_success() {
         String email = "test@test.com";
         String password = "12345678";
+        String firstName = "TestFirstName";
+        String lastName = "TestLastName";
 
-        userService.createUser(email, password);
+        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                email,
+                password,
+                firstName,
+                lastName
+        );
+        userService.registerUser(userRegistrationDTO);
 
         // Check login
         Optional<CustomUser> savedLoginOpt = customUserRepo.findByEmail(email);
