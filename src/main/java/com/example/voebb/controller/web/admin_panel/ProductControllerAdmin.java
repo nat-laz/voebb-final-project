@@ -48,7 +48,6 @@ public class ProductControllerAdmin {
     @PostMapping
     public String create(@ModelAttribute("productDTO") CreateProductDTO requestDTO,
                          RedirectAttributes ra) {
-        List<Long> countryIds = requestDTO.getCountryIds();
 
         // Logic to process the selected countries along with product creation
         productService.createProduct(requestDTO);
@@ -58,9 +57,9 @@ public class ProductControllerAdmin {
 
     @GetMapping("/edit/{id}")
     public String editProduct(@PathVariable("id") Long id, Model model) {
-        UpdateProductDTO product = productService.getProductById(id);
+        UpdateProductDTO product = productService.getUpdateProductDTOById(id);
 
-        model.addAttribute("product", product);
+        model.addAttribute("updateProductDTO", product);
         model.addAttribute("countries", countryService.findAll());
         return "admin/products/edit"; // this should point to the Thymeleaf template for editing
     }
@@ -68,7 +67,7 @@ public class ProductControllerAdmin {
     // Update product - POST method
     @PostMapping("/edit/{id}")
     public String updateProduct(@PathVariable("id") Long id,
-                                @ModelAttribute("product") UpdateProductDTO updatedProduct,
+                                @ModelAttribute("updateProductDTO") UpdateProductDTO updatedProduct,
                                 RedirectAttributes ra) {
 
         // Save the updated product

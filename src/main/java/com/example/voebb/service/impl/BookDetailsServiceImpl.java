@@ -19,9 +19,9 @@ public class BookDetailsServiceImpl implements BookDetailsService {
     @Override
     public void saveBookDetails(BookDetailsDTO dto, Product product) {
         BookDetails details = new BookDetails();
-        details.setIsbn(dto.isbn());
-        details.setEdition(dto.edition());
-        details.setPages(dto.pages());
+        details.setIsbn(dto.getIsbn());
+        details.setEdition(dto.getEdition());
+        details.setPages(dto.getPages());
         details.setProduct(product);
 
         bookDetailsRepo.save(details);
@@ -52,9 +52,9 @@ public class BookDetailsServiceImpl implements BookDetailsService {
     @Override
     public void updateDetails(Product product, BookDetailsDTO newDetails) {
         BookDetails existing = product.getBookDetails();
-        existing.setPages(newDetails.pages());
-        existing.setIsbn(newDetails.isbn());
-        existing.setEdition(newDetails.edition());
+        existing.setPages(newDetails.getPages());
+        existing.setIsbn(newDetails.getIsbn());
+        existing.setEdition(newDetails.getEdition());
     }
 
     @Override

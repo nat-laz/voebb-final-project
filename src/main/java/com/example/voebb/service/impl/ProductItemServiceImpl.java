@@ -73,9 +73,9 @@ public class ProductItemServiceImpl implements ProductItemService {
 
     @Transactional
     @Override
-    public void editItem(UpdateItemDTO dto) {
-        ProductItem item = productItemRepo.findById(dto.itemId())
-                .orElseThrow(() -> new EntityNotFoundException("Item not found with ID: " + dto.itemId()));
+    public void editItem(Long id, UpdateItemDTO dto) {
+        ProductItem item = productItemRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Item not found with ID: " + id));
 
         ItemStatus newStatus = itemStatusRepo.findById(dto.statusId())
                 .orElseThrow(() -> new EntityNotFoundException("Item status not found with ID: " + dto.statusId()));

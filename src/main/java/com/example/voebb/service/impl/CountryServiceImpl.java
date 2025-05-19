@@ -66,14 +66,15 @@ public class CountryServiceImpl implements CountryService {
 
     }
 
+    //TODO:  Use CountryDTO
     @Override
     public List<Country> findAll() {
         return countryRepo.findAll();
     }
+
     @Override
     public List<Country> findCountriesByIds(List<Long> ids) {
         return countryRepo.findAllById(ids);
     }
-
 
 }

@@ -3,7 +3,6 @@ package com.example.voebb.model.dto.product;
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -18,9 +17,11 @@ public class CreateProductDTO {
     String photo;
     String description;
     String productLinkToEmedia;
-    BookDetailsDTO bookDetails;   // nullable for non-books
-    List<CreatorWithRoleDTO> creators = new ArrayList<>();
+    BookDetailsDTO bookDetails;
+    List<CreatorWithRoleDTO> creators;
     List<Long> countryIds;
+
+
     // TODO: List<Long> languageIds;
 
 }

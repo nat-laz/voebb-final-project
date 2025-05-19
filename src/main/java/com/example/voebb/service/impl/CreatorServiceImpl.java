@@ -35,9 +35,9 @@ public class CreatorServiceImpl implements CreatorService {
 
         for (CreatorWithRoleDTO dto : creatorDTOs) {
 
-            String firstName = dto.firstName() == null ? "" : dto.firstName().trim();
-            String lastName  = dto.lastName()  == null ? "" : dto.lastName().trim();
-            String roleName = dto.role()   == null ? "" : dto.role().trim();
+            String firstName = dto.getFirstName() == null ? "" : dto.getFirstName().trim();
+            String lastName  = dto.getLastName()  == null ? "" : dto.getLastName().trim();
+            String roleName = dto.getRole()   == null ? "" : dto.getRole().trim();
 
             Creator creator = creatorRepo
                     .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)

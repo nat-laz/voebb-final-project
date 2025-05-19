@@ -44,7 +44,7 @@ public class ProductControllerWeb {
     @GetMapping("/products/{id}")
     public String getDetailsPage(@PathVariable Long id,
                                  Model model) {
-        ProductInfoDTO productInfoDTO = productService.findById(id);
+        ProductInfoDTO productInfoDTO = productService.getProductInfoDTOById(id);
 
         model.addAttribute("productInfoDTO", productInfoDTO);
         model.addAttribute("creatorWithRoleDTOs", creatorProductRelationService.getCreatorsByProductId(id));

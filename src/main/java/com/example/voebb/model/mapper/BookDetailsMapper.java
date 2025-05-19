@@ -13,9 +13,9 @@ public class BookDetailsMapper {
         return new BookDetails(
                 product.getId(),
                 product,
-                dto.isbn(),
-                dto.edition(),
-                dto.pages()
+                dto.getIsbn(),
+                dto.getEdition(),
+                dto.getPages()
         );
     }
 
