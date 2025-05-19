@@ -14,6 +14,7 @@ import com.example.voebb.service.ProductItemService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductItemServiceImpl implements ProductItemService {
 
     private final ProductItemRepo productItemRepo;
@@ -30,20 +32,6 @@ public class ProductItemServiceImpl implements ProductItemService {
     private final ProductRepo productRepo;
     private final ItemLocationService itemLocationService;
 
-    public ProductItemServiceImpl(
-            ProductItemRepo productItemRepo,
-            ItemLocationRepo itemLocationRepo,
-            ItemStatusRepo itemStatusRepo,
-            LibraryRepo libraryRepo,
-            ProductRepo productRepo,
-            ItemLocationService itemLocationService) {
-        this.productItemRepo = productItemRepo;
-        this.itemLocationRepo = itemLocationRepo;
-        this.itemStatusRepo = itemStatusRepo;
-        this.libraryRepo = libraryRepo;
-        this.productRepo = productRepo;
-        this.itemLocationService = itemLocationService;
-    }
 
     @Override
     public List<ProductItem> getAllByProductId(Long productId) {

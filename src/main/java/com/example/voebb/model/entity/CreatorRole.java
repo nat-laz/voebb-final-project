@@ -19,5 +19,5 @@ public class CreatorRole {
     private Long id;
 
     @Column(name = "creator_role", nullable = false, unique = true, length = 30)
-    private String creatorRole;          // [AUTHOR, DIRECTOR, CO_AUTHOR etc. ]
+    private String creatorRoleName;          // [AUTHOR, DIRECTOR, CO_AUTHOR etc. ]
 }

@@ -32,8 +32,8 @@
     </ul>
 </div>
 
-<div th:each="productDTO : ${productDTOs}" class="d-flex justify-content-center mb-4">
-    <div th:replace="~{user/fragments/product-card :: card(${productDTO})}"></div>
+<div th:each="cardProductDTO : ${cardProductDTOs}" class="d-flex justify-content-center mb-4">
+    <div th:replace="~{user/fragments/product-card :: card(${cardProductDTO})}"></div>
 </div>
 
 <!-- Modals -->

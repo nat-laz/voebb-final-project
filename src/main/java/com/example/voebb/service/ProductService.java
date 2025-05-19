@@ -6,13 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
-    Page<SearchResultProductDTO> getAllByTitle(String title, Pageable pageable);
+    Page<CardProductDTO> getProductCardsByTitle(String title, Pageable pageable);
 
     Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable);
 
     ProductInfoDTO findById(Long id);
 
-    AdminProductDTO createProduct(NewProductDTO dto);
+    void createProduct(CreateProductDTO dto);
 
     Page<Product> getAllProducts(Pageable pageable);
 

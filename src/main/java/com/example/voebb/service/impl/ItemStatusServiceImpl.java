@@ -3,16 +3,16 @@ package com.example.voebb.service.impl;
 import com.example.voebb.model.entity.ItemStatus;
 import com.example.voebb.repository.ItemStatusRepo;
 import com.example.voebb.service.ItemStatusService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ItemStatusServiceImpl implements ItemStatusService {
 
-    @Autowired
-    private ItemStatusRepo itemStatusRepo;
+    private final ItemStatusRepo itemStatusRepo;
 
     @Override
     public List<ItemStatus> getAllStatuses() {

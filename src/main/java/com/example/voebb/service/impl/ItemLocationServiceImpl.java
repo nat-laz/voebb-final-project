@@ -4,9 +4,11 @@ import com.example.voebb.model.entity.ItemLocation;
 import com.example.voebb.model.entity.Library;
 import com.example.voebb.model.entity.ProductItem;
 import com.example.voebb.service.ItemLocationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ItemLocationServiceImpl implements ItemLocationService {
 
     @Override

@@ -4,16 +4,14 @@ import com.example.voebb.model.entity.Language;
 import com.example.voebb.repository.LanguageRepo;
 import com.example.voebb.service.LanguageService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class LanguageServiceImpl implements LanguageService {
 
     private final LanguageRepo languageRepo;
-
-    public LanguageServiceImpl(LanguageRepo languageRepo) {
-        this.languageRepo = languageRepo;
-    }
 
     @Transactional
     @Override

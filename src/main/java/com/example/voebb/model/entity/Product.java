@@ -66,4 +66,8 @@ public class Product {
     )
     private List<Country> countries;
 
+    public boolean isBook(){
+       return this.getType().getName().equalsIgnoreCase("book") || this.getType().getName().equalsIgnoreCase("ebook");
+    }
+
 }

@@ -4,22 +4,17 @@ import com.example.voebb.model.entity.Country;
 import com.example.voebb.repository.CountryRepo;
 import com.example.voebb.service.CountryService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CountryServiceImpl implements CountryService {
 
     private final CountryRepo countryRepo;
-
-
-    @Autowired
-    public CountryServiceImpl(CountryRepo countryRepo) {
-        this.countryRepo = countryRepo;
-    }
-
 
     @Override
     @Transactional

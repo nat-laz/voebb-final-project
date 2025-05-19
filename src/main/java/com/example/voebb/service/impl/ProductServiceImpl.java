@@ -1,23 +1,24 @@
 package com.example.voebb.service.impl;
 
-import com.example.voebb.model.dto.creator.CreatorRequestDTO;
 import com.example.voebb.model.dto.product.*;
 import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.model.entity.ProductType;
+import com.example.voebb.model.mapper.ProductMapper;
 import com.example.voebb.repository.CountryRepo;
 import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.*;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;
@@ -28,82 +29,40 @@ public class ProductServiceImpl implements ProductService {
     private final ProductTypeService productTypeService;
     private final CountryRepo countryRepo;
 
-    public ProductServiceImpl(
-            ProductRepo productRepo,
-            BookDetailsService bookDetailsService,
-            CreatorProductRelationService creatorProductRelationService,
-            CreatorService creatorService,
-            ProductTypeService productTypeService,
-            CountryRepo countryRepo,
-            ProductItemService productItemService) {
-        this.productRepo = productRepo;
-        this.bookDetailsService = bookDetailsService;
-        this.creatorService = creatorService;
-        this.productTypeService = productTypeService;
-        this.creatorProductRelationService = creatorProductRelationService;
-        this.productItemService = productItemService;
-        this.countryRepo = countryRepo;
-    }
 
     @Override
-    public Page<SearchResultProductDTO> getAllByTitle(String title, Pageable pageable) {
+    public Page<CardProductDTO> getProductCardsByTitle(String title, Pageable pageable) {
         Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
 
-        return page.map(product -> {
-            CreatorRequestDTO mainCreator = creatorProductRelationService.getCreatorsByProductId(product.getId())
-                    .stream()
-                    .filter(creator -> creator.roleId() == 1)
-                    .findFirst()
-                    .map(creatorWithRoleDTO -> new CreatorRequestDTO(
-                            creatorWithRoleDTO.firstName(),
-                            creatorWithRoleDTO.lastName()
-                    ))
-                    .orElse(null);
-
-            return new SearchResultProductDTO(
-                    product.getId(),
-                    product.getType().getName(),
-                    product.getTitle(),
-                    product.getReleaseYear(),
-                    product.getPhoto(),
-                    product.getProductLinkToEmedia(),
-                    mainCreator,
-                    productItemService.getLocationsForAvailableItemsByProductId(product.getId()));
-        });
-    }
-
-    @Override
-    public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
-        Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
-        return page.map(this::toProductInfoDTO);
-    }
-
-
-    @Override
-    public ProductInfoDTO findById(Long id) {
-        Product product = productRepo.getProductById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        Set<String> countryNames = product.getCountries()
-                .stream()
-                .map(Country::getName)
-                .collect(Collectors.toSet());
-
-
-        return new ProductInfoDTO(
+        return page.map(product -> new CardProductDTO(
                 product.getId(),
                 product.getType().getName(),
                 product.getTitle(),
                 product.getReleaseYear(),
                 product.getPhoto(),
-                product.getDescription(),
                 product.getProductLinkToEmedia(),
-                countryNames,
-                bookDetailsService.getDetailsDTOByProductId(product.getId())
-        );
+                creatorProductRelationService.getMainCreators(product.getId(), product.getType().getMainCreatorRoleId())
+                        .stream()
+                        .map(s -> s.firstName() + " " + s.lastName())
+                        .collect(Collectors.joining(", ")),
+                productItemService.getLocationsForAvailableItemsByProductId(product.getId())));
     }
 
-    public AdminProductDTO createProduct(NewProductDTO dto) {
+    @Override
+    public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
+        Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
+        return page.map(ProductMapper::toProductInfoDTO);
+    }
+
+    @Override
+    public ProductInfoDTO findById(Long id) {
+        Product product = productRepo.getProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        return ProductMapper.toProductInfoDTO(product);
+    }
+
+    @Override
+    public void createProduct(CreateProductDTO dto) {
 
         // 1. Link with existing media_type
         ProductType productType = productTypeService.findOrCreate(dto.getProductType().trim());
@@ -124,11 +83,6 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("A product must have at least one creator.");
         }
         creatorService.assignCreatorsToProduct(dto.getCreators(), savedProduct);
-
-        return new AdminProductDTO(
-                savedProduct.getId(),
-                savedProduct.getTitle(),
-                productType.getName());
 
     }
 
@@ -159,7 +113,6 @@ public class ProductServiceImpl implements ProductService {
         // TODO: Make mapper
         return new UpdateProductDTO(
                 product.getId(),
-                product.getType().getName(),
                 product.getTitle(),
                 product.getReleaseYear(),
                 product.getPhoto(),
@@ -179,6 +132,10 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
         List<Country> countries = countryRepo.findAllById(updateProductDTO.countryIds());
+
+        if (existingProduct.isBook()) {
+            bookDetailsService.updateDetails(existingProduct, updateProductDTO.bookDetails());
+        }
 
         // TODO: make mapper
         existingProduct.setTitle(updateProductDTO.title());
@@ -207,7 +164,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     // TODO: extract mapper method from here
-    private Product buildAndSaveProduct(NewProductDTO dto, ProductType productType) {
+    private Product buildAndSaveProduct(CreateProductDTO dto, ProductType productType) {
         List<Country> countries = countryRepo.findAllById(dto.getCountryIds());
 
         Product product = new Product();
@@ -219,27 +176,6 @@ public class ProductServiceImpl implements ProductService {
         product.setType(productType);
         product.setCountries(countries);
         return productRepo.save(product);
-    }
-
-    private ProductInfoDTO toProductInfoDTO(Product product) {
-        BookDetailsDTO bookDetailsDTO = bookDetailsService.getDetailsDTOByProductId(product.getId());
-
-        Set<String> countryNames = product.getCountries()
-                .stream()
-                .map(Country::getName)
-                .collect(Collectors.toSet());
-
-        return new ProductInfoDTO(
-                product.getId(),
-                product.getType().getName(),
-                product.getTitle(),
-                product.getReleaseYear(),
-                product.getPhoto(),
-                product.getDescription(),
-                product.getProductLinkToEmedia(),
-                countryNames,
-                bookDetailsDTO
-        );
     }
 
 }

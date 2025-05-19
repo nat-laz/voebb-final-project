@@ -1,12 +1,11 @@
 package com.example.voebb.controller.web.admin_panel;
 
-import com.example.voebb.model.dto.product.NewProductDTO;
+import com.example.voebb.model.dto.product.CreateProductDTO;
 import com.example.voebb.model.dto.product.UpdateProductDTO;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.service.CountryService;
 import com.example.voebb.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -37,7 +35,7 @@ public class ProductControllerAdmin {
         model.addAttribute("page", page);
         model.addAttribute("products", page.getContent());
         model.addAttribute("countries", countryService.findAll());
-        model.addAttribute("productDTO", new NewProductDTO());
+        model.addAttribute("createProductDTO", new CreateProductDTO());
 
         if (success != null && !success.isBlank()) {
             model.addAttribute("success", success);
@@ -48,7 +46,7 @@ public class ProductControllerAdmin {
 
     // POST: Create a new product
     @PostMapping
-    public String create(@ModelAttribute("productDTO") NewProductDTO requestDTO,
+    public String create(@ModelAttribute("productDTO") CreateProductDTO requestDTO,
                          RedirectAttributes ra) {
         List<Long> countryIds = requestDTO.getCountryIds();
 

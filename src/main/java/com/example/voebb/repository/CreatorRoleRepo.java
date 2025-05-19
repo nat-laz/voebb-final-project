@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CreatorRoleRepo extends JpaRepository<CreatorRole, Long> {
 
-    Optional<CreatorRole> findByCreatorRoleIgnoreCase(String role);
+    Optional<CreatorRole> findByCreatorRoleNameIgnoreCase(String role);
 }

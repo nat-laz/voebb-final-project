@@ -1,11 +1,12 @@
 package com.example.voebb.controller.web;
 
 import com.example.voebb.model.dto.product.ProductInfoDTO;
-import com.example.voebb.model.dto.product.SearchResultProductDTO;
+import com.example.voebb.model.dto.product.CardProductDTO;
 import com.example.voebb.service.BookDetailsService;
 import com.example.voebb.service.CreatorProductRelationService;
 import com.example.voebb.service.ProductItemService;
 import com.example.voebb.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,18 +17,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@RequiredArgsConstructor
 public class ProductControllerWeb {
     private final ProductService productService;
-    private final CreatorProductRelationService creatorService;
+    private final CreatorProductRelationService creatorProductRelationService;
     private final BookDetailsService bookDetailsService;
     private final ProductItemService productItemService;
 
-    public ProductControllerWeb(ProductService productService, CreatorProductRelationService creatorService, BookDetailsService bookDetailsService, ProductItemService productItemService) {
-        this.productService = productService;
-        this.creatorService = creatorService;
-        this.bookDetailsService = bookDetailsService;
-        this.productItemService = productItemService;
-    }
 
     @GetMapping()
     public String getSearchPage() {
@@ -38,10 +34,10 @@ public class ProductControllerWeb {
     public String getSearchResultPage(@PageableDefault(size = 5) Pageable pageable,
                                       @RequestParam String title,
                                       Model model) {
-        Page<SearchResultProductDTO> resultProducts = productService.getAllByTitle(title, pageable);
+        Page<CardProductDTO> resultProducts = productService.getProductCardsByTitle(title, pageable);
         model.addAttribute("title", title);
         model.addAttribute("page", resultProducts);
-        model.addAttribute("productDTOs", resultProducts.getContent());
+        model.addAttribute("cardProductDTOs", resultProducts.getContent());
         return "user/product/product-list";
     }
 
@@ -50,10 +46,10 @@ public class ProductControllerWeb {
                                  Model model) {
         ProductInfoDTO productInfoDTO = productService.findById(id);
 
-        model.addAttribute("productInfo", productInfoDTO);
-        model.addAttribute("creators", creatorService.getCreatorsByProductId(id));
-        model.addAttribute("bookDetails", bookDetailsService.getDetailsDTOByProductId(id));
-        model.addAttribute("locations", productItemService.getAllLocationsForProduct(id));
+        model.addAttribute("productInfoDTO", productInfoDTO);
+        model.addAttribute("creatorWithRoleDTOs", creatorProductRelationService.getCreatorsByProductId(id));
+        model.addAttribute("bookDetailsDTO", bookDetailsService.getDetailsDTOByProductId(id));
+        model.addAttribute("locationAndItemStatusDTOs", productItemService.getAllLocationsForProduct(id));
         return "user/product/product-full-details";
     }
 }

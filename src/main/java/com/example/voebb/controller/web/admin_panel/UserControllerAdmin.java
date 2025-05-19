@@ -3,6 +3,7 @@ package com.example.voebb.controller.web.admin_panel;
 import com.example.voebb.model.dto.user.UserDTO;
 import com.example.voebb.repository.CustomUserRoleRepo;
 import com.example.voebb.service.CustomUserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,15 +12,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin/users")
+@RequiredArgsConstructor
 public class UserControllerAdmin {
 
     private final CustomUserService customUserService;
     private final CustomUserRoleRepo customUserRoleRepo;
-
-    public UserControllerAdmin(CustomUserService customUserService, CustomUserRoleRepo customUserRoleRepo) {
-        this.customUserService = customUserService;
-        this.customUserRoleRepo = customUserRoleRepo;
-    }
 
     @GetMapping
     public String listUsers(Model model) {
