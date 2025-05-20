@@ -1,11 +1,12 @@
 package com.example.voebb.service.impl;
 
-import com.example.voebb.model.dto.product.*;
-import com.example.voebb.model.entity.BookDetails;
+import com.example.voebb.model.dto.product.CardProductDTO;
+import com.example.voebb.model.dto.product.CreateProductDTO;
+import com.example.voebb.model.dto.product.ProductInfoDTO;
+import com.example.voebb.model.dto.product.UpdateProductDTO;
 import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.model.entity.ProductType;
-import com.example.voebb.model.mapper.BookDetailsMapper;
 import com.example.voebb.model.mapper.ProductMapper;
 import com.example.voebb.repository.CountryRepo;
 import com.example.voebb.repository.ProductRepo;
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;
-    private final CreatorProductRelationService creatorProductRelationService;
     private final ProductItemService productItemService;
     private final BookDetailsService bookDetailsService;
     private final CreatorService creatorService;
@@ -47,15 +47,12 @@ public class ProductServiceImpl implements ProductService {
         newProduct.setType(productType);
         newProduct.setCountries(countries);
 
-        productRepo.save(newProduct);
-
         if (newProduct.isBook()) {
-            bookDetailsService.saveBookDetails(dto.getBookDetails(), newProduct);
+            bookDetailsService.updateDetails(newProduct, dto.getBookDetails());
         }
-
+        Product savedProduct = productRepo.save(newProduct);
         creatorService.assignCreatorsToProduct(dto.getCreators(), newProduct);
     }
-
 
     @Override
     public Page<CardProductDTO> getProductCardsByTitle(String title, Pageable pageable) {
@@ -68,9 +65,9 @@ public class ProductServiceImpl implements ProductService {
                 product.getReleaseYear(),
                 product.getPhoto(),
                 product.getProductLinkToEmedia(),
-                creatorProductRelationService.getMainCreators(product.getId(), product.getType().getMainCreatorRoleId())
-                        .stream()
-                        .map(s -> s.firstName() + " " + s.lastName())
+                product.getCreatorProductRelations().stream()
+                        .filter(relation -> relation.getCreatorRole().getId().equals(product.getType().getMainCreatorRoleId()))
+                        .map(relation -> relation.getCreator().getFirstName() + " " + relation.getCreator().getLastName())
                         .collect(Collectors.joining(", ")),
                 productItemService.getLocationsForAvailableItemsByProductId(product.getId())));
     }
@@ -94,14 +91,13 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-       return ProductMapper.toUpdateProductDTO(product);
+        return ProductMapper.toUpdateProductDTO(product);
     }
 
     @Override
     public Page<Product> getAllProducts(Pageable pageable) {
         return productRepo.findAll(pageable);
     }
-
 
     @Override
     @Transactional

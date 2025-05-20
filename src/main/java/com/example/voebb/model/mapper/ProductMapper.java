@@ -1,15 +1,12 @@
 package com.example.voebb.model.mapper;
 
+import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
 import com.example.voebb.model.dto.product.BookDetailsDTO;
 import com.example.voebb.model.dto.product.ProductInfoDTO;
 import com.example.voebb.model.dto.product.UpdateProductDTO;
 import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Product;
-import com.example.voebb.repository.CountryRepo;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,7 +30,13 @@ public class ProductMapper {
                 product.getDescription(),
                 product.getProductLinkToEmedia(),
                 countryNames,
-                bookDetailsDTO
+                bookDetailsDTO,
+                product.getCreatorProductRelations().stream()
+                        .map(relation -> new CreatorWithRoleDTO(
+                                relation.getCreator().getFirstName(),
+                                relation.getCreator().getLastName(),
+                                relation.getCreatorRole().getCreatorRoleName()
+                        )).toList()
         );
     }
 
@@ -50,6 +53,15 @@ public class ProductMapper {
                         Country::getId
                 ).toList()
         );
+
+    }
+
+    public static void updateEntity(Product oldEntity, UpdateProductDTO dto) {
+        oldEntity.setTitle(dto.title());
+        oldEntity.setPhoto(dto.photo());
+        oldEntity.setDescription(dto.description());
+        oldEntity.setProductLinkToEmedia(dto.productLinkToEmedia());
+        oldEntity.setReleaseYear(dto.releaseYear());
 
     }
 

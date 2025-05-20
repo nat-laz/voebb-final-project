@@ -51,10 +51,10 @@ public class BookDetailsServiceImpl implements BookDetailsService {
 
     @Override
     public void updateDetails(Product product, BookDetailsDTO newDetails) {
-        BookDetails existing = product.getBookDetails();
-        existing.setPages(newDetails.getPages());
-        existing.setIsbn(newDetails.getIsbn());
-        existing.setEdition(newDetails.getEdition());
+        BookDetails existingDetails = product.getBookDetails();
+        existingDetails.setPages(newDetails.getPages());
+        existingDetails.setIsbn(newDetails.getIsbn());
+        existingDetails.setEdition(newDetails.getEdition());
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.example.voebb.model.entity;
 
+import com.example.voebb.model.dto.product.BookDetailsDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +59,6 @@ public class Product {
     )
     private Set<Language> languages;
 
-
     @ManyToMany
     @JoinTable(
             name = "country_relation",
@@ -66,8 +67,16 @@ public class Product {
     )
     private List<Country> countries;
 
+    @OneToMany(mappedBy = "product")
+    List<CreatorProductRelation> creatorProductRelations = new ArrayList<>();
+
     public boolean isBook(){
        return this.getType().getName().equalsIgnoreCase("book") || this.getType().getName().equalsIgnoreCase("ebook");
+    }
+
+    public void addRelation(CreatorProductRelation creatorProductRelation){
+        creatorProductRelations.add(creatorProductRelation);
+        creatorProductRelation.setProduct(this);
     }
 
 }

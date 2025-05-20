@@ -4,10 +4,11 @@ import com.example.voebb.model.dto.creator.CreatorFullNameDTO;
 import com.example.voebb.model.dto.creator.CreatorResponseDTO;
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
 import com.example.voebb.model.entity.Creator;
+import com.example.voebb.model.entity.CreatorProductRelation;
 import com.example.voebb.model.entity.CreatorRole;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.CreatorRepo;
-import com.example.voebb.service.CreatorProductRelationService;
+import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.CreatorRoleService;
 import com.example.voebb.service.CreatorService;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,15 +23,14 @@ import java.util.List;
 public class CreatorServiceImpl implements CreatorService {
 
     private final CreatorRepo creatorRepo;
-    private final CreatorProductRelationService creatorProductRelationService;
     private final CreatorRoleService creatorRoleService;
+    private final ProductRepo productRepo;
 
 
     @Override
     @Transactional
     public void assignCreatorsToProduct(List<CreatorWithRoleDTO> creatorDTOs,
                                         Product product) {
-
         if (creatorDTOs == null || creatorDTOs.isEmpty()) return;
 
         for (CreatorWithRoleDTO dto : creatorDTOs) {
@@ -50,8 +50,11 @@ public class CreatorServiceImpl implements CreatorService {
 
             CreatorRole role = creatorRoleService.findOrCreate(roleName);
 
-            creatorProductRelationService.distributeInTheirTables(
-                    creator.getId(), product.getId(), role.getId());
+            CreatorProductRelation relation = new CreatorProductRelation();
+            product.addRelation(relation);
+            creator.addRelation(relation);
+            relation.setCreatorRole(role);
+            creatorRepo.save(creator);
         }
     }
 
@@ -71,7 +74,9 @@ public class CreatorServiceImpl implements CreatorService {
 
     @Override
     public CreatorResponseDTO saveCreator(CreatorFullNameDTO dto) {
-        Creator newCreator = new Creator(null, dto.firstName(), dto.lastName());
+        Creator newCreator = new Creator();
+        newCreator.setFirstName(dto.firstName());
+        newCreator.setLastName(dto.lastName());
         Creator savedCreator = creatorRepo.save(newCreator);
         return new CreatorResponseDTO(savedCreator.getId(), savedCreator.getFirstName(), savedCreator.getLastName());
     }

@@ -3,7 +3,7 @@ package com.example.voebb.controller.web;
 import com.example.voebb.model.dto.product.ProductInfoDTO;
 import com.example.voebb.model.dto.product.CardProductDTO;
 import com.example.voebb.service.BookDetailsService;
-import com.example.voebb.service.CreatorProductRelationService;
+import com.example.voebb.service.CreatorService;
 import com.example.voebb.service.ProductItemService;
 import com.example.voebb.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class ProductControllerWeb {
     private final ProductService productService;
-    private final CreatorProductRelationService creatorProductRelationService;
     private final BookDetailsService bookDetailsService;
     private final ProductItemService productItemService;
+    private final CreatorService creatorService;
 
 
     @GetMapping()
@@ -47,7 +47,6 @@ public class ProductControllerWeb {
         ProductInfoDTO productInfoDTO = productService.getProductInfoDTOById(id);
 
         model.addAttribute("productInfoDTO", productInfoDTO);
-        model.addAttribute("creatorWithRoleDTOs", creatorProductRelationService.getCreatorsByProductId(id));
         model.addAttribute("bookDetailsDTO", bookDetailsService.getDetailsDTOByProductId(id));
         model.addAttribute("locationAndItemStatusDTOs", productItemService.getAllLocationsForProduct(id));
         return "user/product/product-full-details";

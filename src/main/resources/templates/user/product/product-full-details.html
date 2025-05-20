@@ -31,10 +31,10 @@
 </div>
 
 <!-- Creators section -->
-<div class="container mt-4" th:if="${creatorWithRoleDTOs.size() > 0}">
+<div class="container mt-4" th:if="${productInfoDTO.creators.size() > 0}">
     <h4>Creators</h4>
-    <ul th:each="creatorWithRoleDTO : ${creatorWithRoleDTOs}">
-        <li th:text="${creatorWithRoleDTO.role()}
+    <ul th:each="creatorWithRoleDTO : ${productInfoDTO.creators}">
+        <li th:text="${creatorWithRoleDTO.role}
         + ': '+ ${creatorWithRoleDTO.firstName}
         + ' ' + ${creatorWithRoleDTO.lastName}"></li>
     </ul>
