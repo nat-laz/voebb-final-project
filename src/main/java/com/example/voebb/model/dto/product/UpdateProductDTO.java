@@ -4,7 +4,6 @@ import java.util.List;
 
 public record UpdateProductDTO(
         Long id,
-        String productType,
         String title,
         String releaseYear,
         String photo,

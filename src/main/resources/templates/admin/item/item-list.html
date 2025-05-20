@@ -65,7 +65,7 @@
                     <!-- Active delete button -->
                     <th:block
                             th:unless="${item.itemStatus.toLowerCase() == 'borrowed' or item.itemStatus.toLowerCase() == 'reserved'}">
-                        <form th:action="@{/admin/items/{id}/delete(id=${item.itemId})}" method="post"
+                        <form th:action="@{/admin/items/delete/{id}/(id=${item.itemId})}" method="post"
                               style="display:inline">
                             <button type="submit"
                                     class="btn btn-sm btn-outline-danger"

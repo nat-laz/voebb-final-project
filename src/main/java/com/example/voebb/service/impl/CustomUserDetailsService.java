@@ -9,6 +9,7 @@ import com.example.voebb.repository.CustomUserRepo;
 import com.example.voebb.repository.CustomUserRoleRepo;
 import com.example.voebb.service.CustomUserService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService, CustomUserService {
 
     private final CustomUserRepo userRepo;
@@ -29,12 +31,6 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     private final PasswordEncoder passwordEncoder;
     private final CustomUserRepo customUserRepo;
 
-    public CustomUserDetailsService(CustomUserRepo userRepo, CustomUserRoleRepo customUserRoleRepo, PasswordEncoder passwordEncoder, CustomUserRepo customUserRepo) {
-        this.userRepo = userRepo;
-        this.customUserRoleRepo = customUserRoleRepo;
-        this.passwordEncoder = passwordEncoder;
-        this.customUserRepo = customUserRepo;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

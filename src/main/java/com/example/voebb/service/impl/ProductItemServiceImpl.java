@@ -14,6 +14,7 @@ import com.example.voebb.service.ProductItemService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductItemServiceImpl implements ProductItemService {
 
     private final ProductItemRepo productItemRepo;
@@ -30,20 +32,6 @@ public class ProductItemServiceImpl implements ProductItemService {
     private final ProductRepo productRepo;
     private final ItemLocationService itemLocationService;
 
-    public ProductItemServiceImpl(
-            ProductItemRepo productItemRepo,
-            ItemLocationRepo itemLocationRepo,
-            ItemStatusRepo itemStatusRepo,
-            LibraryRepo libraryRepo,
-            ProductRepo productRepo,
-            ItemLocationService itemLocationService) {
-        this.productItemRepo = productItemRepo;
-        this.itemLocationRepo = itemLocationRepo;
-        this.itemStatusRepo = itemStatusRepo;
-        this.libraryRepo = libraryRepo;
-        this.productRepo = productRepo;
-        this.itemLocationService = itemLocationService;
-    }
 
     @Override
     public List<ProductItem> getAllByProductId(Long productId) {
@@ -85,9 +73,9 @@ public class ProductItemServiceImpl implements ProductItemService {
 
     @Transactional
     @Override
-    public void editItem(UpdateItemDTO dto) {
-        ProductItem item = productItemRepo.findById(dto.itemId())
-                .orElseThrow(() -> new EntityNotFoundException("Item not found with ID: " + dto.itemId()));
+    public void editItem(Long id, UpdateItemDTO dto) {
+        ProductItem item = productItemRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Item not found with ID: " + id));
 
         ItemStatus newStatus = itemStatusRepo.findById(dto.statusId())
                 .orElseThrow(() -> new EntityNotFoundException("Item status not found with ID: " + dto.statusId()));

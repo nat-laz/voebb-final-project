@@ -6,17 +6,15 @@ import com.example.voebb.repository.ProductTypeRepo;
 import com.example.voebb.service.ProductTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class ProductTypeServiceImpl implements ProductTypeService {
 
     private final ProductTypeRepo productTypeRepo;
-
-    public ProductTypeServiceImpl(ProductTypeRepo productTypeRepo) {
-        this.productTypeRepo = productTypeRepo;
-    }
 
     @Transactional
     @Override

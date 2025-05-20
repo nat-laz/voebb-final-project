@@ -1,15 +1,16 @@
 package com.example.voebb.model.dto.creator;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
+@Setter
+@Getter
 @AllArgsConstructor
-public class CreatorWithRoleDTO {
-
-    private String firstName;
-    private String lastName;
-    private String role;
+@NoArgsConstructor
+public class CreatorWithRoleDTO{
+    String firstName;
+    String lastName;
+    String role;
 }

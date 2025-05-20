@@ -1,9 +1,8 @@
 package com.example.voebb.service;
 
-import com.example.voebb.model.dto.creator.CreatorRequestDTO;
+import com.example.voebb.model.dto.creator.CreatorFullNameDTO;
 import com.example.voebb.model.dto.creator.CreatorResponseDTO;
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
-import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Product;
 
 import java.util.List;
@@ -16,9 +15,9 @@ public interface CreatorService {
 
     CreatorResponseDTO getCreatorById(Long id);
 
-    CreatorResponseDTO saveCreator(CreatorRequestDTO dto);
+    CreatorResponseDTO saveCreator(CreatorFullNameDTO dto);
 
-    CreatorResponseDTO updateCreator(Long id, CreatorRequestDTO dto);
+    CreatorResponseDTO updateCreator(Long id, CreatorFullNameDTO dto);
 
     void deleteCreator(Long id);
 }

@@ -76,12 +76,11 @@ public class ItemControllerAdmin {
     }
 
 
-    @PostMapping("/{id}/edit")
-    public String editItem(@PathVariable Long id,
-                           @ModelAttribute UpdateItemDTO dto,
+    @PostMapping("/edit/{id}")
+    public String editItem(@PathVariable Long id , @ModelAttribute UpdateItemDTO updateItemDto,
                            RedirectAttributes redirectAttributes) {
         try {
-            productItemService.editItem(dto);
+            productItemService.editItem(id, updateItemDto);
             redirectAttributes.addFlashAttribute("success", "Item updated successfully.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to update item: " + e.getMessage());
@@ -90,7 +89,7 @@ public class ItemControllerAdmin {
         return "redirect:/admin/items";
     }
 
-    @PostMapping("/{id}/delete")
+    @PostMapping("/delete/{id}")
     public String deleteItem(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             productItemService.deleteItemById(id);

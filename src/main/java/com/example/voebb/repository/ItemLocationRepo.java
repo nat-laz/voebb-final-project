@@ -32,12 +32,13 @@ public interface ItemLocationRepo extends JpaRepository<ItemLocation, Long> {
     SELECT new com.example.voebb.model.dto.product.LocationAndItemStatusDTO(
         l.library.name,
         l.library.address.district,
-        l.item.status.name
+        l.item.status.name,
+        l.note
     )
     FROM ProductItem i
     JOIN i.location l
     WHERE i.product.id = :productId
-    GROUP BY l.library.address.district, l.library.name, l.item.status.name
+    GROUP BY l.library.address.district, l.library.name, l.item.status.name, l.note
     """)
     List<LocationAndItemStatusDTO> getItemLocationsFullInfo(@Param("productId") Long productId);
 

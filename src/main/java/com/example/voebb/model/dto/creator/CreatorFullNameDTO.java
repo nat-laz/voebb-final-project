@@ -1,7 +1,6 @@
 package com.example.voebb.model.dto.creator;
 
-public record CreatorRequestDTO(
+public record CreatorFullNameDTO(
         String firstName,
         String lastName) {
-
 }
