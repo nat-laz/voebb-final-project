@@ -8,7 +8,7 @@
 <body class="d-flex flex-column min-vh-100">
 
 <!-- Navbar -->
-<div th:replace="~{user/fragments/main-navbar.html :: main-navbar}"></div>
+<div th:replace="~{public/fragments/main-navbar.html :: main-navbar}"></div>
 
 <!-- General Product Info -->
 <div class="container mt-4">
@@ -46,25 +46,23 @@
     <table class="table table-hover">
         <thead>
         <tr>
-            <th scope="col">#</th>
+            <th scope="col">Status</th>
             <th scope="col">District</th>
             <th scope="col">Library</th>
             <th scope="col">Location in library</th>
-            <th scope="col">Status</th>
             <th scope="col">Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="locationAndItemStatusDTO, stat : ${locationAndItemStatusDTOs}">
-            <td th:text="${stat.index} + 1">1</td>
-            <td th:text="${locationAndItemStatusDTO.district}">District</td>
-            <td th:text="${locationAndItemStatusDTO.libraryName}">Library name</td>
-            <td th:text="${locationAndItemStatusDTO.locationInLibrary()}">Location in library</td>
+        <tr th:each="locationAndItemStatusDTO : ${locationAndItemStatusDTOs}">
             <td th:switch="${locationAndItemStatusDTO.itemStatus}">
                 <span th:case="'available'" class="badge bg-success fs-6">Available</span>
                 <span th:case="'borrowed'" class="badge bg-danger fs-6">Borrowed</span>
                 <span th:case="'reserved'" class="badge bg-warning fs-6">Reserved</span>
             </td>
+            <td th:text="${locationAndItemStatusDTO.district}">District</td>
+            <td th:text="${locationAndItemStatusDTO.libraryName}">Library name</td>
+            <td th:text="${locationAndItemStatusDTO.locationInLibrary()}">Location in library</td>
             <td>
                 <!-- TODO: Button to borrow item, add logic that hides this button if user is not logged in-->
                 <a class="btn btn-sm btn-primary"
@@ -81,10 +79,10 @@
 </div>
 
 <!-- Modals -->
-<div th:replace="~{user/fragments/user-login-modal :: #loginModal}"></div>
+<div th:replace="~{public/fragments/user-login-modal :: #loginModal}"></div>
 
 <!-- Footer -->
-<footer th:replace="~{user/fragments/footer.html :: footer}" class="mt-auto"></footer>
+<footer th:replace="~{public/fragments/footer.html :: footer}" class="mt-auto"></footer>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

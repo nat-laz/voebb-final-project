@@ -9,7 +9,7 @@
 <body class="d-flex flex-column min-vh-100">
 
 <!-- Navbar -->
-<div th:replace="~{user/fragments/main-navbar.html :: main-navbar}"></div>
+<div th:replace="~{public/fragments/main-navbar.html :: main-navbar}"></div>
 
 <main class="container mt-5">
 
@@ -99,10 +99,10 @@
 </main>
 
 <!-- Modals -->
-<div th:replace="~{user/fragments/user-login-modal :: #loginModal}"></div>
+<div th:replace="~{public/fragments/user-login-modal :: #loginModal}"></div>
 
 <!-- Footer -->
-<footer th:replace="~{user/fragments/footer.html :: footer}" class="mt-auto"></footer>
+<footer th:replace="~{public/fragments/footer.html :: footer}" class="mt-auto"></footer>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
