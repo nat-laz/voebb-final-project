@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<main layout:fragment="content" class="container">
+    <h2 class="text-center mb-4">Edit Library</h2>
+
+    <form th:action="@{/admin/libraries/edit/{id}(id=${library.id})}" th:object="${library}" method="post">
+        <div class="mb-3">
+            <label for="name" class="form-label">Library name</label>
+            <input type="text" id="name" th:field="*{name}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Email</label>
+            <textarea id="description" class="form-control" name="description" rows="2"
+                      th:field="*{description}"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="postcode" class="form-label">postcode</label>
+            <input type="text" id="postcode" th:field="*{postcode}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="city" class="form-label">city</label>
+            <input type="text" id="city" th:field="*{city}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="district" class="form-label">district</label>
+            <input type="text" id="district" th:field="*{district}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="street" class="form-label">street</label>
+            <input type="text" id="street" th:field="*{street}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="houseNumber" class="form-label">houseNumber</label>
+            <input type="text" id="houseNumber" th:field="*{houseNumber}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="osmLink" class="form-label">osmLink</label>
+            <input type="text" id="osmLink" th:field="*{osmLink}" class="form-control" required>
+        </div>
+
+        <div class="btn-group mb-3 text-center w-100" role="group">
+            <button type="submit" class="btn btn-success">Submit</button>
+            <a href="/admin/libraries" class="btn btn-danger">Back to Libraries</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>
