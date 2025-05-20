@@ -3,18 +3,16 @@ package com.example.voebb.service.impl;
 import com.example.voebb.model.entity.Library;
 import com.example.voebb.repository.LibraryRepo;
 import com.example.voebb.service.LibraryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class LibraryServiceImpl implements LibraryService {
 
     private final LibraryRepo libraryRepo;
-
-    public LibraryServiceImpl(LibraryRepo libraryRepo) {
-        this.libraryRepo = libraryRepo;
-    }
 
     @Override
     public void createLibrary(Library library) {

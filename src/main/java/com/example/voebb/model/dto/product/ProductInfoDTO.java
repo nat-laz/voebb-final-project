@@ -1,5 +1,8 @@
 package com.example.voebb.model.dto.product;
 
+import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
+
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,7 +17,8 @@ public record ProductInfoDTO(
         String description, // summary of the product based on media_type
         String productLinkToEmedia,
         Set<String> countries,
-        BookDetailsDTO bookDetails //  null for non-books
-        //TODO: add Languages, Creators
+        BookDetailsDTO bookDetails, //  null for non-books
+        List<CreatorWithRoleDTO> creators
+        //TODO: add Languages
 ) {
 }

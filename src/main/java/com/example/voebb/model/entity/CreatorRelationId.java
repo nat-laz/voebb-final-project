@@ -16,10 +16,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Embeddable
 public class CreatorRelationId implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
     private Long creatorId;
     private Long productId;
     private Long creatorRoleId;
+
 }

@@ -8,24 +8,19 @@ import com.example.voebb.repository.CustomUserRepo;
 import com.example.voebb.repository.ProductItemRepo;
 import com.example.voebb.service.BorrowService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 @Service
+@RequiredArgsConstructor
 public class BorrowServiceImpl implements BorrowService {
 
     private final BorrowRepo borrowRepo;
     private final CustomUserRepo customUserRepo;
     private final ProductItemRepo productItemRepo;
-
-    @Autowired
-    public BorrowServiceImpl(BorrowRepo borrowRepo, CustomUserRepo customUserRepo, ProductItemRepo productItemRepo) {
-        this.borrowRepo = borrowRepo;
-        this.customUserRepo = customUserRepo;
-        this.productItemRepo = productItemRepo;
-    }
 
     @Transactional
     @Override

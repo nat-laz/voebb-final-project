@@ -23,7 +23,7 @@ public interface ProductItemService {
 
     void createItem(CreateItemDTO dto);
 
-    void editItem(UpdateItemDTO dto);
+    void editItem( Long id, UpdateItemDTO dto);
 
     void deleteItemById(Long id);
 

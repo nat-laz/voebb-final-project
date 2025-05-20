@@ -1,7 +1,15 @@
+--  Creator Roles
+INSERT INTO creator_roles (creator_role_id, creator_role)
+VALUES (1, 'author'),
+       (2, 'co-author'),
+       (3, 'editor'),
+       (4, 'director');
+SELECT setval('creator_roles_creator_role_id_seq', (SELECT MAX(creator_role_id) FROM creator_roles));
+
 -- Product types
-INSERT INTO product_types (product_type_id, name, is_digital) VALUES (1, 'book', false) ON CONFLICT (product_type_id) DO NOTHING;
-INSERT INTO product_types (product_type_id, name, is_digital) VALUES (2, 'ebook', true) ON CONFLICT (product_type_id) DO NOTHING;
-INSERT INTO product_types (product_type_id, name, is_digital) VALUES (3, 'DVD', false) ON CONFLICT (product_type_id) DO NOTHING;
+INSERT INTO product_types (product_type_id, name, main_creator_role_id) VALUES (1, 'book', 1) ON CONFLICT (product_type_id) DO NOTHING;
+INSERT INTO product_types (product_type_id, name, main_creator_role_id) VALUES (2, 'ebook', 1) ON CONFLICT (product_type_id) DO NOTHING;
+INSERT INTO product_types (product_type_id, name, main_creator_role_id) VALUES (3, 'DVD', 4) ON CONFLICT (product_type_id) DO NOTHING;
 SELECT setval('product_types_product_type_id_seq', (SELECT MAX(product_type_id) FROM product_types));
 
 -- Item status
@@ -14,19 +22,10 @@ VALUES (1, 'available'),
 ON CONFLICT (item_status_id) DO NOTHING;
 SELECT setval('item_status_item_status_id_seq', (SELECT MAX(item_status_id) FROM item_status));
 
---  Creator Roles
-INSERT INTO creator_roles (creator_role_id, creator_role)
-VALUES (1, 'author'),
-       (2, 'co-author'),
-       (3, 'editor'),
-       (4, 'director');
-SELECT setval('creator_roles_creator_role_id_seq', (SELECT MAX(creator_role_id) FROM creator_roles));
-
 -- Client Roles
 INSERT INTO user_roles (role_id, role_name)
 VALUES (1, 'ROLE_ADMIN'),
-       (2, 'ROLE_CLIENT'),
-       (3, 'ROLE_GUEST');
+       (2, 'ROLE_CLIENT');
 
 -- Languages  ─────────────────────────────────────────────────
 INSERT INTO languages (language_id, language_name)

@@ -6,7 +6,7 @@
      th:fragment="editItemModal(item, statuses, libraries)">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form th:action="@{/admin/items/{id}/edit(id=${item.itemId})}" method="post">
+            <form th:action="@{/admin/items/edit/{id}(id=${item.itemId})}" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title" th:id="'editItemModalLabel__' + ${item.itemId}">
                         Edit Item #<span th:text="${item.itemId}"></span>

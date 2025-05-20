@@ -1,11 +1,13 @@
 package com.example.voebb.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -23,4 +25,11 @@ public class Creator {
     @Column(name = "creator_last_name",  nullable = false, length = 60)
     private String lastName;
 
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    private List<CreatorProductRelation> creatorProductRelations = new ArrayList<>();
+
+    public void addRelation(CreatorProductRelation creatorProductRelation){
+        creatorProductRelations.add(creatorProductRelation);
+        creatorProductRelation.setCreator(this);
+    }
 }
