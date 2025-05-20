@@ -48,9 +48,9 @@ public class ProductServiceImpl implements ProductService {
         newProduct.setCountries(countries);
 
         if (newProduct.isBook()) {
-            bookDetailsService.updateDetails(newProduct, dto.getBookDetails());
+            bookDetailsService.saveBookDetails(dto.getBookDetails(), newProduct);
         }
-        Product savedProduct = productRepo.save(newProduct);
+        productRepo.save(newProduct);
         creatorService.assignCreatorsToProduct(dto.getCreators(), newProduct);
     }
 

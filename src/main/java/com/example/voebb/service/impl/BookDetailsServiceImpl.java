@@ -23,7 +23,6 @@ public class BookDetailsServiceImpl implements BookDetailsService {
         details.setEdition(dto.getEdition());
         details.setPages(dto.getPages());
         details.setProduct(product);
-
         bookDetailsRepo.save(details);
     }
 
