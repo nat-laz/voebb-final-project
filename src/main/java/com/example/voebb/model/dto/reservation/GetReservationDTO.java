@@ -2,7 +2,7 @@ package com.example.voebb.model.dto.reservation;
 
 import java.time.LocalDate;
 
-public record ReservationResponseDTO(
+public record GetReservationDTO(
         Long id,
         String customUserFullName,
         String itemTitle,

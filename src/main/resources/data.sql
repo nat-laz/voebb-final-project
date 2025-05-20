@@ -97,7 +97,7 @@ INSERT INTO custom_users (first_name, last_name, email, password, is_enabled, bo
 VALUES ('User 1', 'One', 'test@gmail.com', '1234', true, 0),
        ('User 2 ', 'Two', 'test@example.com', '1234', true, 0),
        ('I am new User ', '', 'new@example.com', '1234', true, 0),
-       ('I was here before you', '', 'old@example.com', '1234', true, 0) ON CONFLICT (custom_user_id) DO NOTHING;
+       ('I was here before you', '', 'old@example.com', '1234', true, 5) ON CONFLICT (custom_user_id) DO NOTHING;
 
 -- Join table (same Client -> multiple Roles)
 INSERT INTO users_roles_relation (custom_user_id, role_id)
@@ -386,4 +386,4 @@ VALUES (6, 3, 20, DATE '2025-05-08', DATE '2025-05-11') ON CONFLICT DO NOTHING;
 INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
 VALUES (7, 4, 12, DATE '2025-05-08', DATE '2025-05-11') ON CONFLICT DO NOTHING;
 
-SELECT setval('reservations_reservation_id_seq', (SELECT MAX(item_id) FROM reservations));
+SELECT setval('reservations_reservation_id_seq', (SELECT MAX(reservation_id) FROM reservations));
