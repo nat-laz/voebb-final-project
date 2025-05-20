@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateProductDTO {
 
-    String productType;          // TODO:  Long typeId;
+    Long productTypeId;
     String title;
     String releaseYear;
     String photo;
@@ -20,8 +20,5 @@ public class CreateProductDTO {
     BookDetailsDTO bookDetails;
     List<CreatorWithRoleDTO> creators;
     List<Long> countryIds;
-
-
-    // TODO: List<Long> languageIds;
-
+    List<Long> languageIds;
 }
