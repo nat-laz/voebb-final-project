@@ -92,7 +92,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
                                String oldEmail,
                                HttpServletRequest request,
                                HttpServletResponse response){
-        Boolean emailChange = false;
+        boolean emailChange = false;
         CustomUser existingUser = userRepo.findByEmail(oldEmail)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + oldEmail + " not found"));
 
