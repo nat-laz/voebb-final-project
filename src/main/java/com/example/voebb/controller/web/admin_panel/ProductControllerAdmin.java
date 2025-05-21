@@ -2,10 +2,7 @@ package com.example.voebb.controller.web.admin_panel;
 
 import com.example.voebb.model.dto.product.CreateProductDTO;
 import com.example.voebb.model.entity.Product;
-import com.example.voebb.service.CountryService;
-import com.example.voebb.service.LanguageService;
-import com.example.voebb.service.ProductService;
-import com.example.voebb.service.ProductTypeService;
+import com.example.voebb.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +22,7 @@ public class ProductControllerAdmin {
     private final CountryService countryService;
     private final LanguageService languageService;
     private final ProductTypeService productTypeService;
+    private final CreatorRoleService creatorRoleService;
 
     @GetMapping
     public String getAllProducts(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
@@ -50,6 +48,7 @@ public class ProductControllerAdmin {
         model.addAttribute("countries", countryService.getAllCountries());
         model.addAttribute("languages", languageService.getAllLanguages());
         model.addAttribute("productTypes", productTypeService.getAllProductTypes());
+        model.addAttribute("roles", creatorRoleService.getAllCreatorRoles());
         return "admin/products/add-product";
     }
 

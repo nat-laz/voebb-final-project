@@ -53,11 +53,11 @@ public class CreatorRoleServiceImpl implements CreatorRoleService {
     @Override
     public void createCreatorRole(String roleName) {
         CreatorRole role = new CreatorRole(null, roleName);
-        CreatorRole saved = creatorRoleRepo.save(role);
+        creatorRoleRepo.save(role);
     }
 
     @Override
-    public void  updateCreatorRole(Long id, String roleName) {
+    public void updateCreatorRole(Long id, String roleName) {
         CreatorRole existing = creatorRoleRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Creator role not found"));
 

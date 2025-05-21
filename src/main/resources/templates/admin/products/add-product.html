@@ -24,6 +24,10 @@
             color: #888;
             cursor: pointer;
         }
+
+        .list-group-item button {
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -34,7 +38,7 @@
 
         <div th:replace="admin/fragments/_alerts :: alerts"></div>
 
-        <form th:action="@{/admin/products}" th:object="${createProductDTO}" method="post"
+        <form th:action="@{/admin/products/new}" th:object="${createProductDTO}" method="post"
               class="row g-4 needs-validation" novalidate>
 
             <div class="col-12 card p-4 shadow-sm">
@@ -75,7 +79,7 @@
 
                     <div id="emediaBlock" class="col-md-6 d-none">
                         <label class="form-label">Product Link (eMedia)</label>
-                        <input th:field="*{productLinkToEmedia}" class="form-control" type="url">
+                        <input th:field="*{productLinkToEmedia}" class="form-control">
                         <div class="invalid-feedback">Enter a valid eMedia link.</div>
                     </div>
                 </div>
@@ -99,38 +103,51 @@
                 </div>
             </div>
 
-            <div class="col-12 card p-4 shadow-sm">
-                <h5 class="mb-3">Creators</h5>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">First Name <span class="text-danger">*</span></label>
-                        <input name="creators[0].firstName" class="form-control" required>
+            <!-- Creators Section -->
+            <div class="card p-4 shadow-sm">
+                <h5 class="mb-3 fw-semibold">Creators</h5>
+
+                <div id="creatorsPreview" class="d-flex flex-wrap gap-2 mb-3"></div>
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-5 position-relative">
+                        <label class="form-label">Search Creator <span class="text-danger">*</span></label>
+                        <input id="searchCreator" type="text" class="form-control" placeholder="e.g. Rowling"
+                               autocomplete="off" required>
+                        <ul id="searchResults" class="list-group position-absolute w-100 d-none shadow-sm"
+                            style="z-index: 10;"></ul>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Last Name <span class="text-danger">*</span></label>
-                        <input name="creators[0].lastName" class="form-control" required>
+                        <label class="form-label">Creator Role <span class="text-danger">*</span></label>
+                        <input id="creatorRole" type="text" class="form-control" placeholder="e.g. Author" required>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Role <span class="text-danger">*</span></label>
-                        <input name="creators[0].role" class="form-control" required>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary w-100" onclick="addCreatorToPreview()">Add
+                            Creator
+                        </button>
                     </div>
                 </div>
+
+                <!--  Fields populated by AJAX -->
+                <input type="hidden" id="creatorId">
+                <input type="hidden" id="creatorFirstName">
+                <input type="hidden" id="creatorLastName">
+                <input type="hidden" id="creatorIndex" value="0">
             </div>
 
+
+            <!-- Country & Language Section -->
             <div class="col-12 card p-4 shadow-sm">
                 <h5 class="mb-3">Metadata</h5>
                 <div class="row">
-                    <!-- Countries -->
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Publication Countries</label>
-
                         <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
                             <div id="selectedCountries" class="d-flex flex-wrap gap-2"></div>
                         </div>
-
                         <input id="searchCountryInput" type="text" class="form-control form-control-sm mb-2"
                                placeholder="Search countries..."/>
-
                         <ul class="list-group border rounded" id="country_list"
                             style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none; ">
                             <li class="list-group-item border-0 py-2"
@@ -151,14 +168,11 @@
 
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Available Languages</label>
-
                         <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
                             <div id="selectedLanguages" class="d-flex flex-wrap gap-2"></div>
                         </div>
-
                         <input id="searchLanguageInput" type="text" class="form-control form-control-sm mb-2"
                                placeholder="Search languages..."/>
-
                         <ul class="list-group border rounded" id="language_list"
                             style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none; ">
                             <li class="list-group-item border-0 py-2"
@@ -187,117 +201,29 @@
             </div>
 
         </form>
+    </div>
 
-        <script>
-            const productTypeSelect = document.querySelector('[name="productTypeId"]');
-            const bookDetailsBlock = document.getElementById('bookDetailsBlock');
-            const emediaBlock = document.getElementById('emediaBlock');
-            const emediaInput = emediaBlock?.querySelector('input');
+    <div th:replace="admin/fragments/_creator-create :: createCreatorModal"></div>
 
-            function toggleConditionalFields() {
-                const selected = productTypeSelect.options[productTypeSelect.selectedIndex]?.textContent?.toLowerCase();
-                const isBook = selected === "book" || selected === "ebook";
-                const isEbook = selected === "ebook";
+    <script th:src="@{/js/product/conditional-display-product-details.js}"></script>
+    <script th:src="@{/js/product/select-country-language.js}"></script>
+    <script th:src="@{/js/product/creators-form.js}"></script>
 
-                // Book fields toggle
-                bookDetailsBlock.classList.toggle("d-none", !isBook);
-                bookDetailsBlock.querySelectorAll("input").forEach(input => {
-                    input.disabled = !isBook;
-                    input.required = isBook;
-                });
-
-                // eMedia link toggle
-                emediaBlock.classList.toggle("d-none", !isEbook);
-                if (emediaInput) {
-                    emediaInput.disabled = !isEbook;
-                    emediaInput.required = isEbook;
-                }
-            }
-
-            productTypeSelect.addEventListener("change", toggleConditionalFields);
-            toggleConditionalFields();
-
-            (function () {
-                'use strict';
-                const forms = document.querySelectorAll('.needs-validation');
-                Array.from(forms).forEach(function (form) {
-                    form.addEventListener('submit', function (event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-            })();
-        </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const syncSelectedTags = (inputSelector, outputSelector) => {
-                    const checkboxes = document.querySelectorAll(inputSelector);
-                    const output = document.querySelector(outputSelector);
-
-                    const render = () => {
-                        output.innerHTML = "";
-                        checkboxes.forEach(cb => {
-                            if (cb.checked) {
-                                const label = document.querySelector(`label[for="${cb.id}"]`);
-                                const tag = document.createElement("span");
-                                tag.className = "selected-tag";
-                                tag.innerHTML = `
-                            ${label?.textContent || "?"}
-                            <button type="button" onclick="document.getElementById('${cb.id}').click()">&times;</button>
-                        `;
-                                output.appendChild(tag);
-                            }
-                        });
-                    };
-
-                    checkboxes.forEach(cb => cb.addEventListener("change", render));
-                    render();
-                };
-
-                syncSelectedTags("#country_list input[type=checkbox]", "#selectedCountries");
-                syncSelectedTags("#language_list input[type=checkbox]", "#selectedLanguages");
-
-                const setupSearchFilter = (inputId, listId) => {
-                    const listItems = document.querySelectorAll(`#${listId} li`);
-                    const input = document.getElementById(inputId);
-
-                    if (!input || listItems.length === 0) return;
-
-                    input.addEventListener("input", function () {
-                        const filter = this.value.toLowerCase();
-                        let lastVisibleItem = null;
-
-                        listItems.forEach(function (item) {
-                            const label = item.querySelector("label");
-                            const text = label.textContent.toLowerCase();
-
-                            if (text.includes(filter)) {
-                                item.style.display = "list-item";
-                                lastVisibleItem = item;
-                            } else {
-                                item.style.display = "none";
-                            }
-                        });
-
-                        listItems.forEach(function (item) {
-                            if (item.style.display === "list-item") {
-                                item.style.borderBottom = "1px solid #eee";
-                            }
-                        });
-
-                        if (lastVisibleItem) {
-                            lastVisibleItem.style.borderBottom = "none";
-                        }
-                    });
-                };
-
-                setupSearchFilter("searchCountryInput", "country_list");
-                setupSearchFilter("searchLanguageInput", "language_list");
+    <script>
+        (function () {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
             });
-        </script>
+        })();
+    </script>
 </main>
 </body>
 </html>

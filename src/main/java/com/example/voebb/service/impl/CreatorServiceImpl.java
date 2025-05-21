@@ -24,8 +24,6 @@ public class CreatorServiceImpl implements CreatorService {
 
     private final CreatorRepo creatorRepo;
     private final CreatorRoleService creatorRoleService;
-    private final ProductRepo productRepo;
-
 
     @Override
     @Transactional
@@ -56,6 +54,24 @@ public class CreatorServiceImpl implements CreatorService {
             relation.setCreatorRole(role);
             creatorRepo.save(creator);
         }
+    }
+
+    @Override
+    public List<CreatorResponseDTO> searchByLastName(String lastName) {
+
+        if (lastName == null || lastName.trim().isEmpty()) {
+           throw new IllegalArgumentException("Last name cannot be null or empty");
+        }
+
+        return creatorRepo
+                .findByLastNameContainingIgnoreCase(lastName)
+                .stream()
+                .map(creator -> new CreatorResponseDTO(
+                        creator.getId(),
+                        creator.getFirstName(),
+                        creator.getLastName()
+                ))
+                .toList();
     }
 
     @Override

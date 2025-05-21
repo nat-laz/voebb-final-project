@@ -1,5 +1,6 @@
 package com.example.voebb.service.impl;
 
+import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
 import com.example.voebb.model.dto.product.CardProductDTO;
 import com.example.voebb.model.dto.product.CreateProductDTO;
 import com.example.voebb.model.dto.product.ProductInfoDTO;
@@ -64,7 +65,14 @@ public class ProductServiceImpl implements ProductService {
             bookDetailsService.saveBookDetails(dto.getBookDetails(), newProduct);
         }
 
-        creatorService.assignCreatorsToProduct(dto.getCreators(), newProduct);
+        List<CreatorWithRoleDTO> validCreators = dto.getCreators() == null ? List.of() :
+                dto.getCreators().stream()
+                        .filter(creator -> creator != null
+                                && creator.getRole() != null && !creator.getRole().isBlank()
+                                && creator.getLastName() != null && !creator.getLastName().isBlank())
+                        .toList();
+
+        creatorService.assignCreatorsToProduct(validCreators, newProduct);
     }
 
 
