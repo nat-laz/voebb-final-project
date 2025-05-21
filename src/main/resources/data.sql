@@ -19,7 +19,7 @@ VALUES (1, 'available'),
        (3, 'borrowed'),
        (4, 'damaged'),
        (5, 'lost')
-ON CONFLICT (item_status_id) DO NOTHING;
+    ON CONFLICT (item_status_id) DO NOTHING;
 SELECT setval('item_status_item_status_id_seq', (SELECT MAX(item_status_id) FROM item_status));
 
 -- Client Roles
@@ -32,7 +32,7 @@ INSERT INTO languages (language_id, language_name)
 VALUES
     (1, 'English'),
     (2, 'German')
-ON CONFLICT (language_id) DO NOTHING;
+    ON CONFLICT (language_id) DO NOTHING;
 SELECT setval('languages_language_id_seq', (SELECT MAX(language_id) FROM languages));
 -- DUMMY DATA BELLOW
 
@@ -50,7 +50,7 @@ VALUES (1, 1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_
        (10, 1, NULL, 'Harry Potter and the Cursed Child', '2016', 'photo_url_8', 'Play based on Harry Potter universe'),
        (11, 1, NULL, 'Fantastic Beasts and Where to Find Them', '2001', 'photo_url_9','A companion book to Harry Potter'),
        (12, 3, NULL, 'The Matrix', '1999', 'photo_url_9','DVD format')
-ON CONFLICT (product_id) DO NOTHING;
+    ON CONFLICT (product_id) DO NOTHING;
 SELECT setval('products_product_id_seq', (SELECT MAX(product_id) FROM products));
 
 -- Book Details (for both physical books and e-books)
@@ -66,14 +66,14 @@ VALUES (1, '9780747532699', '1st Edition', 223),
        (9, '9780747595830', '1st Edition', 607),
        (10, '9781338216660', '1st Edition', 320),
        (11, '9781408880715', '1st Edition', 128)
-ON CONFLICT DO NOTHING;
+    ON CONFLICT DO NOTHING;
 
 -- Creators
 INSERT INTO creators (creator_id, creator_first_name, creator_last_name)
 VALUES (1, 'J. K.', 'Rowling'),
        (2, 'John', 'Tiffany'),
        (3, 'Jack', 'Thorne')
-ON CONFLICT (creator_id) DO NOTHING;
+    ON CONFLICT (creator_id) DO NOTHING;
 SELECT setval('creators_creator_id_seq', (SELECT MAX(creator_id) FROM creators));
 
 -- Join table (same Creator ->  multiple  Roles; same Product -> multiple Creators)
@@ -90,8 +90,11 @@ VALUES
 --  Clients ─────────────────────────────────────────────────
 INSERT INTO custom_users (first_name, last_name, email, password, is_enabled, borrowed_books_count)
 VALUES ('User 1', 'One', 'test@gmail.com', '1234', true, 0),
-       ('User 2 ', 'Two', 'test@example.com', '1234', true, 0)
-ON CONFLICT (custom_user_id) DO NOTHING;
+       ('User 2 ', 'Two', 'test@example.com', '1234', true, 0),
+       ('Helly ', 'R.', 'helly@example.com', '1234', true, 0),
+       ('Mark', 'S', 'mark@example.com', '1234', true, 0),
+       ('Ronald', 'B.', 'ronald@example.com', '1234', true, 5)
+    ON CONFLICT (custom_user_id) DO NOTHING;
 
 -- Join table (same Client -> multiple Roles)
 INSERT INTO users_roles_relation (custom_user_id, role_id)
@@ -122,7 +125,7 @@ VALUES (1, 'United Kingdom'),
        (20, 'South Africa'),
        (21, 'Argentina'),
        (22, 'New Zealand')
-ON CONFLICT (country_id) DO NOTHING;
+    ON CONFLICT (country_id) DO NOTHING;
 SELECT setval('countries_country_id_seq', (SELECT MAX(country_id) FROM countries));
 
 -- Join table (product linked to countries)
@@ -136,7 +139,7 @@ VALUES (1, 1),  -- Philosopher's Stone published in the UK
 INSERT INTO language_relation (product_id, language_id)
 VALUES (1, 1),
        (1, 2)
-ON CONFLICT (product_id, language_id) DO NOTHING;
+    ON CONFLICT (product_id, language_id) DO NOTHING;
 
 -- Libraries ─────────────────────────────────────────────────
 INSERT INTO libraries (library_id, library_name, library_description, address_city, address_district, address_postcode, address_street, address_house_nr, address_osm_link) VALUES (1, 'Central City Library', 'Main public library in the heart of Berlin.', 'Berlin', 'Mitte', '10115', 'Hauptstraße', '123', 'https://www.openstreetmap.org/?mlat=52.5300&mlon=13.3847#map=16/52.5300/13.3847') ON CONFLICT (library_id) DO NOTHING;
@@ -258,5 +261,18 @@ SELECT setval('borrows_borrow_id_seq', (SELECT MAX(borrow_id) FROM borrows));
 
 --  ─────────── mock: client_id = 1 reserves item_id = 1 ───────────
 INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
-VALUES (1, 2, 1, CURRENT_DATE, CURRENT_DATE + INTERVAL '7 day') ON CONFLICT DO NOTHING;
-SELECT setval('reservations_reservation_id_seq', (SELECT MAX(item_id) FROM reservations));
+VALUES (1, 2, 1, DATE '2025-05-10', DATE '2025-05-13') ON CONFLICT DO NOTHING;
+INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
+VALUES (2, 2, 2, DATE '2025-05-10', DATE '2025-05-13') ON CONFLICT DO NOTHING;
+INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
+VALUES (3, 1, 3, DATE '2025-05-08', DATE '2025-05-11') ON CONFLICT DO NOTHING;
+INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
+VALUES (4, 1, 3, DATE '2025-05-08', DATE '2025-05-11') ON CONFLICT DO NOTHING;
+INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
+VALUES (5, 4, 44, DATE '2025-05-08', DATE '2025-05-11') ON CONFLICT DO NOTHING;
+INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
+VALUES (6, 3, 20, DATE '2025-05-08', DATE '2025-05-11') ON CONFLICT DO NOTHING;
+INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
+VALUES (7, 4, 12, DATE '2025-05-08', DATE '2025-05-11') ON CONFLICT DO NOTHING;
+
+SELECT setval('reservations_reservation_id_seq', (SELECT MAX(reservation_id) FROM reservations));
