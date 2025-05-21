@@ -3,20 +3,30 @@ package com.example.voebb.model.dto.user;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public record UserRegistrationDTO(
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserRegistrationDTO{
         @NotNull(message = "Email must be not null")
         @Email(message = "Email should match pattern")
-        String email,
+        String email;
 
         @NotNull(message = "Password must be not null")
         @Size(min = 8, message = "Password must be at least 8 chars long")
-        String password,
+        String password;
 
         @NotNull(message = "First name must be not null")
-        String firstName,
+        String firstName;
 
         @NotNull(message = "Last name must be not null")
-        String lastName) {
+        String lastName;
 }
+
+
+

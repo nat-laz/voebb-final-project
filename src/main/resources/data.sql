@@ -88,15 +88,21 @@ VALUES
     (3, 10, 2); -- Thorne   CO_AUTHOR
 
 --  Clients ─────────────────────────────────────────────────
-INSERT INTO custom_users (first_name, last_name, email, password, is_enabled, borrowed_books_count)
-VALUES ('User 1', 'One', 'test@gmail.com', '1234', true, 0),
-       ('User 2 ', 'Two', 'test@example.com', '1234', true, 0)
+-- Test password is 12345678
+INSERT INTO custom_users (custom_user_id, first_name, last_name, email, password, is_enabled, borrowed_books_count)
+VALUES (1, 'Admin 1', 'Admin 1', 'admin1@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 0),
+       (2, 'Admin 2', 'Admin 2', 'admin2@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 0),
+       (3, 'Client 1', 'Client 1', 'client1@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 0),
+       (4, 'Client 2', 'Client 2', 'client2@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 0)
 ON CONFLICT (custom_user_id) DO NOTHING;
+SELECT setval('custom_users_custom_user_id_seq', (SELECT MAX(custom_user_id) FROM custom_users));
 
 -- Join table (same Client -> multiple Roles)
 INSERT INTO users_roles_relation (custom_user_id, role_id)
 VALUES (1, 1),
-       (1, 2);
+       (2, 1),
+       (3, 2),
+       (4, 2);
 
 -- Countries ─────────────────────────────────────────────────
 INSERT INTO countries (country_id, country_name)

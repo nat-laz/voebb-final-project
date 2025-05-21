@@ -18,8 +18,8 @@
             <button type="button"
                     class="btn btn-secondary"
                     data-bs-toggle="modal"
-                    data-bs-target="#loginModal">
-                Account
+                    data-bs-target="#loginModal"
+            th:text="${#authorization.expr('isAuthenticated()')} ? 'Profile' : 'Login'">
             </button>
         </div>
 
