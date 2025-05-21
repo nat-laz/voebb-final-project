@@ -5,6 +5,26 @@
 
 <head>
     <title layout:title="Add Product">Add Product</title>
+
+    <style>
+        .selected-tag {
+            background-color: #e9ecef;
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .selected-tag button {
+            border: none;
+            background: transparent;
+            margin-left: 6px;
+            font-weight: bold;
+            color: #888;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,17 +34,18 @@
 
         <div th:replace="admin/fragments/_alerts :: alerts"></div>
 
-        <form th:action="@{/admin/products/new}" th:object="${createProductDTO}" method="post"
+        <form th:action="@{/admin/products}" th:object="${createProductDTO}" method="post"
               class="row g-4 needs-validation" novalidate>
 
             <div class="col-12 card p-4 shadow-sm">
+                <h5 class="mb-3">Basic Information</h5>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Product Type <span class="text-danger">*</span></label>
                         <select th:field="*{productTypeId}" class="form-select" required>
                             <option value="">-- Select Type --</option>
                             <option th:each="type : ${productTypes}" th:value="${type.id}"
-                                    th:text="${type.name}"></option>
+                                    th:text="${type.name.toUpperCase()}"></option>
                         </select>
                         <div class="invalid-feedback">Product type is required.</div>
                     </div>
@@ -79,7 +100,7 @@
             </div>
 
             <div class="col-12 card p-4 shadow-sm">
-                <h5 class="mb-3">Creator</h5>
+                <h5 class="mb-3">Creators</h5>
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">First Name <span class="text-danger">*</span></label>
@@ -96,54 +117,66 @@
                 </div>
             </div>
 
+            <div class="col-12 card p-4 shadow-sm">
+                <h5 class="mb-3">Metadata</h5>
+                <div class="row">
+                    <!-- Countries -->
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Publication Countries</label>
 
-            <div class="col-md-6">
-                <h5 class="fw-semibold mb-3">Publication place</h5>
-
-                <input id="searchInput" type="text" class="form-control form-control-sm mb-2"
-                       placeholder="Search countries..."/>
-
-                <ul class="list-group" id="country_list"
-                    style="max-height: 200px; overflow-y: auto; border: none; padding-left: 0.25rem;">
-                    <li class="list-group-item border-0 py-1"
-                        th:each="country : ${countries}">
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   th:value="${country.id}"
-                                   th:field="*{countryIds}"
-                                   th:id="'country__' + ${country.id}">
-                            <label class="form-check-label"
-                                   th:for="'country__' + ${country.id}"
-                                   th:text="${country.name}"></label>
+                        <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
+                            <div id="selectedCountries" class="d-flex flex-wrap gap-2"></div>
                         </div>
-                    </li>
-                </ul>
-            </div>
 
+                        <input id="searchCountryInput" type="text" class="form-control form-control-sm mb-2"
+                               placeholder="Search countries..."/>
 
-            <div class="col-md-6">
-                <h5 class="fw-semibold mb-3">Languages</h5>
+                        <ul class="list-group border rounded" id="country_list"
+                            style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none; ">
+                            <li class="list-group-item border-0 py-2"
+                                th:each="country : ${countries}">
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           th:value="${country.id}"
+                                           th:field="*{countryIds}"
+                                           th:id="'country__' + ${country.id}">
+                                    <label class="form-check-label"
+                                           th:for="'country__' + ${country.id}"
+                                           th:text="${country.name}"></label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
 
-                <input id="searchLanguageInput" type="text" class="form-control form-control-sm mb-2"
-                       placeholder="Search languages..."/>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Available Languages</label>
 
-                <ul class="list-group" id="language_list"
-                    style="max-height: 200px; overflow-y: auto; border: none; padding-left: 0.25rem;">
-                    <li class="list-group-item border-0 py-1"
-                        th:each="lang : ${languages}">
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   th:value="${lang.id}"
-                                   th:field="*{languageIds}"
-                                   th:id="'lang__' + ${lang.id}">
-                            <label class="form-check-label"
-                                   th:for="'lang__' + ${lang.id}"
-                                   th:text="${lang.name}"></label>
+                        <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
+                            <div id="selectedLanguages" class="d-flex flex-wrap gap-2"></div>
                         </div>
-                    </li>
-                </ul>
+
+                        <input id="searchLanguageInput" type="text" class="form-control form-control-sm mb-2"
+                               placeholder="Search languages..."/>
+
+                        <ul class="list-group border rounded" id="language_list"
+                            style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none; ">
+                            <li class="list-group-item border-0 py-2"
+                                th:each="language : ${languages}">
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           th:value="${language.id}"
+                                           th:field="*{languageIds}"
+                                           th:id="'language__' + ${language.id}">
+                                    <label class="form-check-label"
+                                           th:for="'language__' + ${language.id}"
+                                           th:text="${language.name}"></label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <div class="col-12">
@@ -152,128 +185,119 @@
                     <a th:href="@{/admin/products}" class="btn btn-danger">Back to Products</a>
                 </div>
             </div>
+
         </form>
-    </div>
-    <script>
-        const productTypeSelect = document.querySelector('[name="productTypeId"]');
-        const bookDetailsBlock = document.getElementById('bookDetailsBlock');
-        const emediaBlock = document.getElementById('emediaBlock');
-        const emediaInput = emediaBlock?.querySelector('input');
 
-        function toggleConditionalFields() {
-            const selected = productTypeSelect.options[productTypeSelect.selectedIndex]?.textContent?.toLowerCase();
-            const isBook = selected === "book" || selected === "ebook";
-            const isEbook = selected === "ebook";
+        <script>
+            const productTypeSelect = document.querySelector('[name="productTypeId"]');
+            const bookDetailsBlock = document.getElementById('bookDetailsBlock');
+            const emediaBlock = document.getElementById('emediaBlock');
+            const emediaInput = emediaBlock?.querySelector('input');
 
-            // Book fields toggle
-            bookDetailsBlock.classList.toggle("d-none", !isBook);
-            bookDetailsBlock.querySelectorAll("input").forEach(input => {
-                input.disabled = !isBook;
-                input.required = isBook;
-            });
+            function toggleConditionalFields() {
+                const selected = productTypeSelect.options[productTypeSelect.selectedIndex]?.textContent?.toLowerCase();
+                const isBook = selected === "book" || selected === "ebook";
+                const isEbook = selected === "ebook";
 
-            // eMedia link toggle
-            emediaBlock.classList.toggle("d-none", !isEbook);
-            if (emediaInput) {
-                emediaInput.disabled = !isEbook;
-                emediaInput.required = isEbook;
-            }
-        }
-
-        productTypeSelect.addEventListener("change", toggleConditionalFields);
-        toggleConditionalFields();
-
-        (function () {
-            'use strict';
-            const forms = document.querySelectorAll('.needs-validation');
-            Array.from(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        })();
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const listItems = document.querySelectorAll("#country_list li");
-            const input = document.getElementById("searchInput");
-
-            if (!input || listItems.length === 0) return;
-
-            input.addEventListener("input", function () {
-                const filter = this.value.toLowerCase();
-                let lastVisibleItem = null;
-
-                listItems.forEach(function (item) {
-                    const label = item.querySelector("label");
-                    const text = label.textContent.toLowerCase();
-
-                    if (text.includes(filter)) {
-                        item.style.display = "list-item";
-                        lastVisibleItem = item;
-                    } else {
-                        item.style.display = "none";
-                    }
+                // Book fields toggle
+                bookDetailsBlock.classList.toggle("d-none", !isBook);
+                bookDetailsBlock.querySelectorAll("input").forEach(input => {
+                    input.disabled = !isBook;
+                    input.required = isBook;
                 });
 
-                listItems.forEach(function (item) {
-                    if (item.style.display === "list-item") {
-                        item.style.borderBottom = "1px solid #eee";
-                    }
-                });
-
-                if (lastVisibleItem) {
-                    lastVisibleItem.style.borderBottom = "none";
+                // eMedia link toggle
+                emediaBlock.classList.toggle("d-none", !isEbook);
+                if (emediaInput) {
+                    emediaInput.disabled = !isEbook;
+                    emediaInput.required = isEbook;
                 }
-            });
-        });
+            }
 
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const setupSearchFilter = (inputId, listId) => {
-                const listItems = document.querySelectorAll(`#${listId} li`);
-                const input = document.getElementById(inputId);
+            productTypeSelect.addEventListener("change", toggleConditionalFields);
+            toggleConditionalFields();
 
-                if (!input || listItems.length === 0) return;
-
-                input.addEventListener("input", function () {
-                    const filter = this.value.toLowerCase();
-                    let lastVisibleItem = null;
-
-                    listItems.forEach(function (item) {
-                        const label = item.querySelector("label");
-                        const text = label.textContent.toLowerCase();
-
-                        if (text.includes(filter)) {
-                            item.style.display = "list-item";
-                            lastVisibleItem = item;
-                        } else {
-                            item.style.display = "none";
+            (function () {
+                'use strict';
+                const forms = document.querySelectorAll('.needs-validation');
+                Array.from(forms).forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
                         }
-                    });
-
-                    listItems.forEach(function (item) {
-                        if (item.style.display === "list-item") {
-                            item.style.borderBottom = "1px solid #eee";
-                        }
-                    });
-
-                    if (lastVisibleItem) {
-                        lastVisibleItem.style.borderBottom = "none";
-                    }
+                        form.classList.add('was-validated');
+                    }, false);
                 });
-            };
+            })();
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const syncSelectedTags = (inputSelector, outputSelector) => {
+                    const checkboxes = document.querySelectorAll(inputSelector);
+                    const output = document.querySelector(outputSelector);
 
-            setupSearchFilter("searchInput", "country_list");
-            setupSearchFilter("searchLanguageInput", "language_list");
-        });
-    </script>
+                    const render = () => {
+                        output.innerHTML = "";
+                        checkboxes.forEach(cb => {
+                            if (cb.checked) {
+                                const label = document.querySelector(`label[for="${cb.id}"]`);
+                                const tag = document.createElement("span");
+                                tag.className = "selected-tag";
+                                tag.innerHTML = `
+                            ${label?.textContent || "?"}
+                            <button type="button" onclick="document.getElementById('${cb.id}').click()">&times;</button>
+                        `;
+                                output.appendChild(tag);
+                            }
+                        });
+                    };
 
+                    checkboxes.forEach(cb => cb.addEventListener("change", render));
+                    render();
+                };
+
+                syncSelectedTags("#country_list input[type=checkbox]", "#selectedCountries");
+                syncSelectedTags("#language_list input[type=checkbox]", "#selectedLanguages");
+
+                const setupSearchFilter = (inputId, listId) => {
+                    const listItems = document.querySelectorAll(`#${listId} li`);
+                    const input = document.getElementById(inputId);
+
+                    if (!input || listItems.length === 0) return;
+
+                    input.addEventListener("input", function () {
+                        const filter = this.value.toLowerCase();
+                        let lastVisibleItem = null;
+
+                        listItems.forEach(function (item) {
+                            const label = item.querySelector("label");
+                            const text = label.textContent.toLowerCase();
+
+                            if (text.includes(filter)) {
+                                item.style.display = "list-item";
+                                lastVisibleItem = item;
+                            } else {
+                                item.style.display = "none";
+                            }
+                        });
+
+                        listItems.forEach(function (item) {
+                            if (item.style.display === "list-item") {
+                                item.style.borderBottom = "1px solid #eee";
+                            }
+                        });
+
+                        if (lastVisibleItem) {
+                            lastVisibleItem.style.borderBottom = "none";
+                        }
+                    });
+                };
+
+                setupSearchFilter("searchCountryInput", "country_list");
+                setupSearchFilter("searchLanguageInput", "language_list");
+            });
+        </script>
 </main>
 </body>
 </html>
