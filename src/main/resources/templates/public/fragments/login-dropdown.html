@@ -1,16 +1,17 @@
 <div th:fragment="public-login-dropdown" class="nav-item dropdown ms-auto">
-  <a class="nav-link dropdown-toggle d-flex align-items-center px-3 py-2 rounded-2 text-white hover-bg-light"
+  <a class="nav-link dropdown-toggle d-flex align-items-center px-3 py-2 rounded-2 text-white"
      href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
      style="transition: background-color 0.2s ease;">
-          
-          <span th:text="${#authorization.expr('isAuthenticated()')} ? ${#authentication.getName()} : 'Login'"
-                class="fw-semibold me-2"></span>
-    
-    <i class="bi bi-person-circle" style="font-size: 1.5rem; color: #f8f9fa;"></i>
+    <span th:if="${!#authorization.expr('isAuthenticated()')}">
+      <i class="bi bi-person-circle" style="color: white;"></i> Login
+    </span>
+    <span th:if="${#authorization.expr('isAuthenticated()')}">
+      <!-- TODO: icon is to small and if set font size to 1.5 then icon move whole navbar down -->
+      <i class="bi bi-person-circle" style="font-size: 1.5rem; color: white;"></i>
+    </span>
   </a>
   
-  <div class="dropdown-menu dropdown-menu-end bg-secondary shadow p-3 mb-5 bg-body rounded" style="width: 280px;">
-    
+  <div class="dropdown-menu dropdown-menu-end bg-secondary shadow-sm p-3 mb-5 bg-body rounded" style="width: 280px;">
     <div th:if="${!#authorization.expr('isAuthenticated()')}" class="container rounded" style="width: 260px;">
       <form th:action="@{/login}" method="post">
         <div class="mb-3">

@@ -72,8 +72,7 @@
                 <td>
                     <!-- TODO: Button to borrow item, add logic that hides this button if user is not logged in-->
                     <a class="btn btn-sm btn-primary"
-                       data-bs-target="#loginModal"
-                       data-bs-toggle="modal"
+                       href="/register"
                        sec:authorize="isAnonymous()">Login and borrow</a>
                     <a class="btn btn-sm btn-primary"
                        th:href="@{/borrow}"
