@@ -20,9 +20,9 @@
             </a>
         </div>
 
-        <div th:replace="admin/fragments/_alerts :: alerts"></div>
+        <div th:replace="~{admin/fragments/_alerts :: alerts}"></div>
 
-        <div th:replace="admin/fragments/_product-table :: productTable(${page})"></div>
+        <div th:replace="~{admin/fragments/_product-table :: productTable(${page})}"></div>
     </div>
 
 </main>

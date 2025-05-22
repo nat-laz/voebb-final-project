@@ -8,7 +8,6 @@ import com.example.voebb.model.entity.CreatorProductRelation;
 import com.example.voebb.model.entity.CreatorRole;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.CreatorRepo;
-import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.CreatorRoleService;
 import com.example.voebb.service.CreatorService;
 import jakarta.persistence.EntityNotFoundException;
@@ -64,7 +63,7 @@ public class CreatorServiceImpl implements CreatorService {
         }
 
         return creatorRepo
-                .findByLastNameContainingIgnoreCase(lastName)
+                .findTop5ByLastNameContainingIgnoreCase(lastName)
                 .stream()
                 .map(creator -> new CreatorResponseDTO(
                         creator.getId(),
@@ -89,6 +88,7 @@ public class CreatorServiceImpl implements CreatorService {
     }
 
     @Override
+    @Transactional
     public CreatorResponseDTO saveCreator(CreatorFullNameDTO dto) {
         Creator newCreator = new Creator();
         newCreator.setFirstName(dto.firstName());

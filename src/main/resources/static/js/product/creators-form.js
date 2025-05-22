@@ -1,67 +1,116 @@
-const searchInput = document.getElementById("searchCreator");
-const resultsBox = document.getElementById("searchResults");
+const creatorSearchInput = document.getElementById("creatorSearchInput");
+const creatorResultsBox = document.getElementById("creatorResultsBox");
+const roleSearchInput = document.getElementById("roleSearchInput");
+const roleResultsBox = document.getElementById("roleResultsBox");
 
-searchInput.addEventListener("blur", function () {
-    setTimeout(() => resultsBox.classList.add("d-none"), 200);
+
+// =============== CREATOR SEARCH ===============
+creatorSearchInput.addEventListener("blur", () => {
+    setTimeout(() => creatorResultsBox.classList.add("d-none"), 200);
 });
 
-searchInput.addEventListener("input", async function () {
+creatorSearchInput.addEventListener("input", async function () {
     const query = this.value.trim();
-    resultsBox.innerHTML = "";
+    creatorResultsBox.innerHTML = "";
 
     if (!query) {
-        resultsBox.classList.add("d-none");
+        creatorResultsBox.classList.add("d-none");
         return;
     }
 
     try {
-        const res = await fetch(`/api/creators/search?lastName=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/creators/searchCreator?lastName=${encodeURIComponent(query)}`);
         const creators = await res.json();
 
         if (creators.length > 0) {
-            creators.forEach(c => {
+            creators.forEach(creator => {
                 const li = document.createElement("li");
                 li.className = "list-group-item list-group-item-action";
-                li.textContent = `${c.firstName} ${c.lastName}`;
+                li.textContent = `${creator.firstName} ${creator.lastName}`;
                 li.onclick = () => {
-                    document.getElementById("creatorId").value = c.id;
-                    document.getElementById("creatorFirstName").value = c.firstName;
-                    document.getElementById("creatorLastName").value = c.lastName;
-                    searchInput.value = `${c.firstName} ${c.lastName}`;
-                    resultsBox.innerHTML = "";
-                    resultsBox.classList.add("d-none");
+                    document.getElementById("creatorId").value = creator.id;
+                    document.getElementById("creatorFirstName").value = creator.firstName;
+                    document.getElementById("creatorLastName").value = creator.lastName;
+                    creatorSearchInput.value = `${creator.firstName} ${creator.lastName}`;
+                    creatorResultsBox.innerHTML = "";
+                    creatorResultsBox.classList.add("d-none");
                 };
-                resultsBox.appendChild(li);
+                creatorResultsBox.appendChild(li);
             });
         } else {
             const li = document.createElement("li");
             li.className = "list-group-item d-flex justify-content-between align-items-center text-muted";
             li.innerHTML = `
-                    <span>No match found.</span>
-                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="openNewCreatorModal()">Add New</button>
-                `;
-            resultsBox.appendChild(li);
+                <span>No match found.</span>
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="openNewCreatorModal()">Add New</button>
+            `;
+            creatorResultsBox.appendChild(li);
         }
 
-        resultsBox.classList.remove("d-none");
-
+        creatorResultsBox.classList.remove("d-none");
     } catch (error) {
-        console.error("Search failed:", error);
-        resultsBox.classList.add("d-none");
+        console.error("Creator search failed:", error);
+        creatorResultsBox.classList.add("d-none");
     }
 });
 
-function addCreatorToPreview() {
-    const roleInput = document.getElementById("creatorRole");
-    const nameInput = document.getElementById("searchCreator");
+// =============== ROLE SEARCH ===============
+roleSearchInput.addEventListener("blur", () => {
+    setTimeout(() => roleResultsBox.classList.add("d-none"), 200);
+});
 
-    const role = roleInput.value.trim();
-    const id = document.getElementById("creatorId").value;
+roleSearchInput.addEventListener("input", async function () {
+    const query = this.value.trim();
+    roleResultsBox.innerHTML = "";
+
+    if (!query) {
+        roleResultsBox.classList.add("d-none");
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/creators/searchRole?roleName=${encodeURIComponent(query)}`);
+        const roles = await res.json();
+
+        if (roles.length > 0) {
+            roles.slice(0, 5).forEach(role => {
+                const li = document.createElement("li");
+                li.className = "list-group-item list-group-item-action";
+                li.textContent = role.creatorRoleName;
+                li.onclick = () => {
+                    document.getElementById("creatorRoleId").value = role.id;
+                    document.getElementById("creatorRole").value = role.creatorRoleName;
+                    roleSearchInput.value = role.creatorRoleName;
+                    roleResultsBox.innerHTML = "";
+                    roleResultsBox.classList.add("d-none");
+                };
+                roleResultsBox.appendChild(li);
+            });
+        } else {
+            const li = document.createElement("li");
+            li.className = "list-group-item d-flex justify-content-between align-items-center text-muted";
+            li.innerHTML = `
+                <span>No match found.</span>
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="openNewRoleModal('${query}')">Add New</button>
+            `;
+            roleResultsBox.appendChild(li);
+        }
+
+        roleResultsBox.classList.remove("d-none");
+    } catch (err) {
+        console.error("Role search failed:", err);
+        roleResultsBox.classList.add("d-none");
+    }
+});
+
+// =============== ADD CREATOR WITH ROLE TO PREVIEW ===============
+function addCreatorToPreview() {
+    const creatorRole = roleSearchInput.value.trim();
     const firstName = document.getElementById("creatorFirstName").value;
     const lastName = document.getElementById("creatorLastName").value;
     const index = parseInt(document.getElementById("creatorIndex").value);
 
-    if (!role || !firstName || !lastName) {
+    if (!creatorRole || !firstName || !lastName) {
         alert("Please select a creator and provide a role.");
         return;
     }
@@ -69,60 +118,123 @@ function addCreatorToPreview() {
     const wrapper = document.createElement("div");
     wrapper.className = "selected-tag";
     wrapper.innerHTML = `
-            ${firstName} ${lastName} — ${role}
-            <button type="button" onclick="this.parentElement.remove()">×</button>
-            <input type="hidden" name="creators[${index}].id" value="${id}">
-            <input type="hidden" name="creators[${index}].firstName" value="${firstName}">
-            <input type="hidden" name="creators[${index}].lastName" value="${lastName}">
-            <input type="hidden" name="creators[${index}].role" value="${role}">
-        `;
+        ${firstName} ${lastName} — ${creatorRole}
+        <button type="button" onclick="this.parentElement.remove()">×</button>
+        <input type="hidden" name="creators[${index}].firstName" value="${firstName}">
+        <input type="hidden" name="creators[${index}].lastName" value="${lastName}">
+        <input type="hidden" name="creators[${index}].role" value="${creatorRole}">
+    `;
 
     document.getElementById("creatorsPreview").appendChild(wrapper);
 
-    nameInput.value = "";
-    roleInput.value = "";
+
+    creatorSearchInput.value = "";
+    roleSearchInput.value = "";
     document.getElementById("creatorId").value = "";
     document.getElementById("creatorFirstName").value = "";
     document.getElementById("creatorLastName").value = "";
+    document.getElementById("creatorRoleId").value = "";
+    document.getElementById("creatorRole").value = "";
+
     document.getElementById("creatorIndex").value = index + 1;
 
-    nameInput.removeAttribute("required");
-    roleInput.removeAttribute("required");
+    creatorSearchInput.removeAttribute("required");
+    roleSearchInput.removeAttribute("required");
 }
 
-let activeCreatorIndex = null;
 
+
+// =============== MODALS ===============
 function openNewCreatorModal() {
-    activeCreatorIndex = "modal";
     document.getElementById("newFirstName").value = "";
     document.getElementById("newLastName").value = "";
     new bootstrap.Modal(document.getElementById("newCreatorModal")).show();
 }
 
-document.getElementById("newCreatorForm").addEventListener("submit", function (e) {
+document.getElementById("newCreatorForm").addEventListener("submit", async function (e) {
     e.preventDefault();
-    const fn = document.getElementById("newFirstName").value.trim();
-    const ln = document.getElementById("newLastName").value.trim();
 
-    if (!fn || !ln) return;
+    const firstName = document.getElementById("newFirstName").value.trim();
+    const lastName = document.getElementById("newLastName").value.trim();
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
-    document.getElementById("creatorId").value = "";
-    document.getElementById("creatorFirstName").value = fn;
-    document.getElementById("creatorLastName").value = ln;
-    document.getElementById("searchCreator").value = `${fn} ${ln}`;
+    if (!firstName || !lastName) return;
 
-    bootstrap.Modal.getInstance(document.getElementById("newCreatorModal")).hide();
+    try {
+        const response = await fetch("/api/creators/newCreator", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify({firstName, lastName})
+        });
+
+        if (!response.ok) throw new Error("Failed to save new creator.");
+
+        const newCreator = await response.json();
+        document.getElementById("creatorId").value = newCreator.id;
+        document.getElementById("creatorFirstName").value = newCreator.firstName;
+        document.getElementById("creatorLastName").value = newCreator.lastName;
+        creatorSearchInput.value = `${newCreator.firstName} ${newCreator.lastName}`;
+
+        bootstrap.Modal.getInstance(document.getElementById("newCreatorModal")).hide();
+
+    } catch (err) {
+        alert("Error saving new creator.");
+        console.error(err);
+    }
 });
 
-// Warning pop-up: At least one creator should be added before submitting
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('.needs-validation');
-    form.addEventListener('submit', function (event) {
-        const creatorFields = document.querySelectorAll('#creatorsPreview input[type="hidden"]');
-        if (creatorFields.length === 0) {
-            event.preventDefault();
-            event.stopPropagation();
-            alert("Please add at least one creator before submitting.");
-        }
-    });
+function openNewRoleModal(defaultName = "") {
+    document.getElementById("newRoleName").value = defaultName;
+    new bootstrap.Modal(document.getElementById("newRoleModal")).show();
+}
+
+document.getElementById("newRoleForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const roleName = document.getElementById("newRoleName").value.trim();
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+    if (!roleName) return;
+
+    try {
+        const response = await fetch("/api/creators/newRole", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify({creatorRoleName: roleName})
+        });
+
+        if (!response.ok) throw new Error("Failed to save new role.");
+
+        const newRole = await response.json();
+        document.getElementById("creatorRoleId").value = newRole.id;
+        document.getElementById("creatorRole").value = newRole.creatorRoleName;
+        roleSearchInput.value = newRole.creatorRoleName;
+
+        bootstrap.Modal.getInstance(document.getElementById("newRoleModal")).hide();
+    } catch (err) {
+        alert("Error saving new role.");
+        console.error(err);
+    }
 });
+
+// // TODO: proper UI for this validation
+// // Warning pop-up: At least one creator should be added before submitting
+// document.addEventListener('DOMContentLoaded', function () {
+//     const form = document.querySelector('.needs-validation');
+//     form.addEventListener('submit', function (event) {
+//         const creatorFields = document.querySelectorAll('#creatorsPreview input[type="hidden"]');
+//         if (creatorFields.length === 0) {
+//             event.preventDefault();
+//             event.stopPropagation();
+//             alert("Please add at least one creator before submitting.");
+//         }
+//     });
+// });

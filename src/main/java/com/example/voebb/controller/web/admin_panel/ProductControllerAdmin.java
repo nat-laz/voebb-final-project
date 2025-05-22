@@ -3,6 +3,7 @@ package com.example.voebb.controller.web.admin_panel;
 import com.example.voebb.model.dto.product.CreateProductDTO;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.service.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -26,8 +28,8 @@ public class ProductControllerAdmin {
 
     @GetMapping
     public String getAllProducts(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                       Model model,
-                       @RequestParam(value = "success", required = false) String success) {
+                                 Model model,
+                                 @RequestParam(value = "success", required = false) String success) {
 
         Page<Product> page = productService.getAllProducts(pageable);
         model.addAttribute("page", page);
@@ -53,14 +55,22 @@ public class ProductControllerAdmin {
     }
 
     @PostMapping("/new")
-    public String createProduct(@ModelAttribute("createProductDTO") CreateProductDTO dto,
-                                RedirectAttributes ra) {
+    public String createProduct(@Valid @ModelAttribute("createProductDTO") CreateProductDTO dto,
+                                BindingResult bindingResult,
+                                RedirectAttributes ra,
+                                Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("countries", countryService.getAllCountries());
+            model.addAttribute("languages", languageService.getAllLanguages());
+            model.addAttribute("productTypes", productTypeService.getAllProductTypes());
+            model.addAttribute("roles", creatorRoleService.getAllCreatorRoles());
+            return "admin/products/add-product";
+        }
 
         productService.createProduct(dto);
         ra.addFlashAttribute("success", "Product created successfully");
         return "redirect:/admin/products";
     }
-
 
 
 //

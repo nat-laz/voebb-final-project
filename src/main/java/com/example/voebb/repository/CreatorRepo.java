@@ -12,6 +12,6 @@ public interface CreatorRepo extends JpaRepository<Creator, Long> {
 
     Optional<Creator> findByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName);
 
-    List<Creator> findByLastNameContainingIgnoreCase(String firstName);
+    List<Creator> findTop5ByLastNameContainingIgnoreCase(String lastName);
 
 }

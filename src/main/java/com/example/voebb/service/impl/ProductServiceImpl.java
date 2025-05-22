@@ -65,12 +65,20 @@ public class ProductServiceImpl implements ProductService {
             bookDetailsService.saveBookDetails(dto.getBookDetails(), newProduct);
         }
 
-        List<CreatorWithRoleDTO> validCreators = dto.getCreators() == null ? List.of() :
-                dto.getCreators().stream()
-                        .filter(creator -> creator != null
-                                && creator.getRole() != null && !creator.getRole().isBlank()
-                                && creator.getLastName() != null && !creator.getLastName().isBlank())
-                        .toList();
+        if (dto.getCreators() == null || dto.getCreators().isEmpty()) {
+            throw new IllegalArgumentException("At least one creator is required.");
+        }
+
+        List<CreatorWithRoleDTO> validCreators = dto.getCreators().stream()
+                .filter(creator -> creator != null &&
+                        creator.getLastName() != null && !creator.getLastName().isBlank() &&
+                        creator.getRole() != null && !creator.getRole().isBlank())
+                .toList();
+
+        if (validCreators.isEmpty()) {
+            throw new IllegalArgumentException("At least one valid creator with role is required.");
+        }
+
 
         creatorService.assignCreatorsToProduct(validCreators, newProduct);
     }
