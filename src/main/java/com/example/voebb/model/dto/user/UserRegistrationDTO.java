@@ -10,6 +10,9 @@ public record UserRegistrationDTO(
         @Email(message = "Email should match pattern")
         String email,
 
+        @NotNull(message = "Phone Number must be not null")
+        String phoneNumber,
+
         @NotNull(message = "Password must be not null")
         @Size(min = 8, message = "Password must be at least 8 chars long")
         String password,
