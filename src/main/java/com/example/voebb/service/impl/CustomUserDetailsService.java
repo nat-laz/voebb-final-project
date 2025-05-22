@@ -187,6 +187,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
+        user.setPhoneNumber(dto.phoneNumber());
         user.setEnabled(dto.enabled());
         user.setBorrowedBooksCount(dto.borrowedBooksCount());
         user.setPassword(dto.password());
