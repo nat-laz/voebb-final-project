@@ -32,12 +32,14 @@ class CustomUserServiceTest {
     @Test
     void testCreateUser_success() {
         String email = "test@test.com";
+        String phoneNumber = "+4912312345678";
         String password = "12345678";
         String firstName = "TestFirstName";
         String lastName = "TestLastName";
 
         UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
                 email,
+                phoneNumber,
                 password,
                 firstName,
                 lastName

@@ -40,8 +40,18 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        CustomUser customUser = userRepo.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        CustomUser customUser;
+
+        if (isValidEmail(username)) {
+            customUser = userRepo.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Email not found: " + username));
+        } else if (isValidPhone(username)) {
+            customUser = userRepo.findByPhoneNumber(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Phone number not found: " + username));
+        } else {
+            throw new UsernameNotFoundException("Invalid login identifier: " + username);
+        }
 
         List<SimpleGrantedAuthority> authorities = customUser.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
@@ -56,6 +66,14 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         );
     }
 
+    private boolean isValidPhone(String username) {
+        return username.matches("^\\+[0-9]{10,15}$");
+    }
+
+    private boolean isValidEmail(String username) {
+        return username.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+    }
+
     @Transactional
     public void registerUser(UserRegistrationDTO userRegistrationDTO) {
         CustomUserRole role = customUserRoleRepo.findByName("ROLE_CLIENT")
@@ -64,6 +82,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         CustomUser customUser = new CustomUser();
 
         customUser.setEmail(userRegistrationDTO.getEmail());
+        customUser.setPhoneNumber(userRegistrationDTO.getPhoneNumber());
         customUser.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
         customUser.setFirstName(userRegistrationDTO.getFirstName());
         customUser.setLastName(userRegistrationDTO.getLastName());
@@ -148,6 +167,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         existingUser.setFirstName(userDto.firstName());
         existingUser.setLastName(userDto.lastName());
         existingUser.setEmail(userDto.email());
+        existingUser.setPhoneNumber(userDto.phoneNumber());
         existingUser.setEnabled(userDto.enabled());
         existingUser.setBorrowedBooksCount(userDto.borrowedBooksCount());
 
@@ -191,6 +211,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         return new UserDTO(
                 user.getId(),
                 user.getEmail(),
+                user.getPhoneNumber(),
                 null, // Do not expose password
                 user.getFirstName(),
                 user.getLastName(),
@@ -211,6 +232,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
+        user.setPhoneNumber(dto.phoneNumber());
         user.setEnabled(dto.enabled());
         user.setBorrowedBooksCount(dto.borrowedBooksCount());
         user.setPassword(dto.password());

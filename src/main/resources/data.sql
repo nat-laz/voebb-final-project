@@ -94,14 +94,14 @@ ON CONFLICT(creator_id, product_id, creator_role_id) DO NOTHING;
 
 --  Clients ─────────────────────────────────────────────────
 -- Test password is 12345678
-INSERT INTO custom_users (custom_user_id, first_name, last_name, email, password, is_enabled, borrowed_books_count)
-VALUES (1, 'Admin 1', 'Admin 1', 'admin1@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e',TRUE, 0),
-       (2, 'Admin 2', 'Admin 2', 'admin2@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e',TRUE, 0),
-       (3, 'Client 1', 'Client 1', 'client1@example.com','$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (4, 'Client 2', 'Client 2', 'client2@example.com','$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (5,'Helly ', 'R.', 'helly@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 0),
-       (6,'Mark', 'S', 'mark@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 0),
-       (7,'Ronald', 'B.', 'ronald@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 5)
+INSERT INTO custom_users (custom_user_id, first_name, last_name, email, phone_number, password, is_enabled, borrowed_books_count)
+VALUES (1, 'Admin 1', 'Admin 1', 'admin1@example.com', '+1234567890123451', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (2, 'Admin 2', 'Admin 2', 'admin2@example.com', '+1234567890123452', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (3, 'Client 1', 'Client 1', 'client1@example.com', '+1234567890123453', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (4, 'Client 2', 'Client 2', 'client2@example.com', '+1234567890123454', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (5, 'Helly ', 'R.', 'helly@example.com', '+1234567890123455', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (6, 'Mark', 'S', 'mark@example.com', '+1234567890123456', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (7, 'Ronald', 'B.', 'ronald@example.com', '+1234567890123457', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 5)
 ON CONFLICT (custom_user_id) DO NOTHING;
 SELECT SETVAL('custom_users_custom_user_id_seq', (SELECT MAX(custom_user_id) FROM custom_users));
 
@@ -161,10 +161,10 @@ ON CONFLICT (product_id, language_id) DO NOTHING;
 INSERT INTO libraries (library_id, library_name, library_description, address_city, address_district, address_postcode,
                        address_street, address_house_nr, address_osm_link)
 VALUES (1, 'Central City Library', 'Main public library in the heart of Berlin.', 'Berlin', 'Mitte', '10115', 'Hauptstraße', '123', 'https://www.openstreetmap.org/?mlat=52.5300&mlon=13.3847#map=16/52.5300/13.3847'),
-       (2, 'West End Library', 'A cozy library located in the Charlottenburg district.', 'Berlin','Charlottenburg-Wilmersdorf', '10623', 'Kaiser-Wilhelm-Straße', '45','https://www.openstreetmap.org/?mlat=52.5150&mlon=13.2900#map=16/52.5150/13.2900'),
-       (3, 'East Side Library', 'Library near the East Side Gallery, offering a variety of books.', 'Berlin','Friedrichshain-Kreuzberg', '10243', 'Mühlenstraße', '10','https://www.openstreetmap.org/?mlat=52.5074&mlon=13.4396#map=16/52.5074/13.4396'),
-       (4, 'North Gate Library', 'A library situated in the Reinickendorf district, known for its quiet reading rooms.','Berlin', 'Reinickendorf', '13407', 'Wilhelmsruher Damm', '23','https://www.openstreetmap.org/?mlat=52.5960&mlon=13.2905#map=16/52.5960/13.2905'),
-       (5, 'South Park Library', 'Located near the Tempelhofer Feld, offering a peaceful environment for reading.','Berlin', 'Tempelhof-Schöneberg', '12103', 'Tempelhofer Damm', '89','https://www.openstreetmap.org/?mlat=52.4706&mlon=13.3989#map=16/52.4706/13.3989')
+       (2, 'West End Library', 'A cozy library located in the Charlottenburg district.', 'Berlin', 'Charlottenburg-Wilmersdorf', '10623', 'Kaiser-Wilhelm-Straße', '45', 'https://www.openstreetmap.org/?mlat=52.5150&mlon=13.2900#map=16/52.5150/13.2900'),
+       (3, 'East Side Library', 'Library near the East Side Gallery, offering a variety of books.', 'Berlin', 'Friedrichshain-Kreuzberg', '10243', 'Mühlenstraße', '10', 'https://www.openstreetmap.org/?mlat=52.5074&mlon=13.4396#map=16/52.5074/13.4396'),
+       (4, 'North Gate Library', 'A library situated in the Reinickendorf district, known for its quiet reading rooms.', 'Berlin', 'Reinickendorf', '13407', 'Wilhelmsruher Damm', '23', 'https://www.openstreetmap.org/?mlat=52.5960&mlon=13.2905#map=16/52.5960/13.2905'),
+       (5, 'South Park Library', 'Located near the Tempelhofer Feld, offering a peaceful environment for reading.', 'Berlin', 'Tempelhof-Schöneberg', '12103', 'Tempelhofer Damm', '89', 'https://www.openstreetmap.org/?mlat=52.4706&mlon=13.3989#map=16/52.4706/13.3989')
 ON CONFLICT (library_id) DO NOTHING;
 SELECT SETVAL('libraries_library_id_seq', (SELECT MAX(library_id) FROM libraries));
 
@@ -281,4 +281,4 @@ VALUES (1, 2, 1, DATE '2025-05-10', DATE '2025-05-13'),
        (6, 3, 20, DATE '2025-05-08', DATE '2025-05-11'),
        (7, 4, 12, DATE '2025-05-08', DATE '2025-05-11')
 ON CONFLICT DO NOTHING;
-SELECT setval('reservations_reservation_id_seq', (SELECT MAX(reservation_id) FROM reservations));
+SELECT SETVAL('reservations_reservation_id_seq', (SELECT MAX(reservation_id) FROM reservations));
