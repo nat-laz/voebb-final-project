@@ -25,7 +25,7 @@ public class ProductControllerWeb {
     private final CreatorService creatorService;
 
 
-    @GetMapping
+    @GetMapping("/home")
     public String getIndexPage() {
         return "public/index";
     }
