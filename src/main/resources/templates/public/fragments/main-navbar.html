@@ -15,57 +15,7 @@
         </li>
       </ul>
       
-      <div class="nav-item dropdown ms-auto">
-        <a class="nav-link dropdown-toggle d-flex align-items-center px-3 py-2 rounded-2 text-white hover-bg-light"
-           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-           style="transition: background-color 0.2s ease;">
-          
-          <span th:text="${#authorization.expr('isAuthenticated()')} ? ${#authentication.getName()} : 'Login'"
-                class="fw-semibold me-2"></span>
-          
-          <i class="bi bi-person-circle" style="font-size: 1.5rem; color: #f8f9fa;"></i>
-        </a>
-        
-        <div class="dropdown-menu dropdown-menu-end bg-secondary shadow p-3 mb-5 bg-body rounded" style="width: 280px;">
-          
-          <div th:if="${!#authorization.expr('isAuthenticated()')}" class="container rounded" style="width: 260px;">
-            <form th:action="@{/login}" method="post">
-              <div class="mb-3">
-                <label for="loginUsername" class="form-label">Username</label>
-                <input type="text" class="form-control" name="username" id="loginUsername" required>
-              </div>
-              
-              <div class="mb-3">
-                <label for="loginPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" id="loginPassword" required>
-              </div>
-              
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" name="remember-me" id="dropDownCheck">
-                <label class="form-check-label" for="dropDownCheck">
-                  Remember me
-                </label>
-              </div>
-              
-              <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-            <div class="dropdown-divider"></div>
-            <div class="rounded-2" style="background-color: #f8f9fa">
-              <a class="dropdown-item rounded-2" href="/register">New around here? Sign up</a>
-              <a class="dropdown-item rounded-2" href="/restore-password">Forgot password?</a>
-            </div>
-          </div>
-          
-          <div th:if="${#authorization.expr('isAuthenticated()')}" class="container" style="width: 260px;">
-            <div class="rounded-2" style="background-color: #f8f9fa">
-              <a class="dropdown-item" href="/profile">Profile</a>
-              <form th:action="@{/logout}" method="post">
-                <button class="dropdown-item" type="submit">Logout</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div th:replace="~{public/fragments/login-dropdown :: public-login-dropdown}"></div>
       
     </div>
   </div>
