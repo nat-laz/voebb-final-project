@@ -1,6 +1,7 @@
 package com.example.voebb.model.dto.product;
 
 public record LocationAndItemStatusDTO(
+        Long libraryId,
         String libraryName,
         String district,
         String itemStatus,

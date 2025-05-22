@@ -62,7 +62,12 @@
                     <span th:case="'reserved'" class="badge bg-warning fs-6">Reserved</span>
                 </td>
                 <td th:text="${locationAndItemStatusDTO.district}">District</td>
-                <td th:text="${locationAndItemStatusDTO.libraryName}">Library name</td>
+                <td>
+                    <a th:href="@{/libraries/{id}(id=${locationAndItemStatusDTO.libraryId})}"
+                       th:text="${locationAndItemStatusDTO.libraryName}">
+                        Library Name
+                    </a>
+                </td>
                 <td th:text="${locationAndItemStatusDTO.locationInLibrary()}">Location in library</td>
                 <td>
                     <!-- TODO: Button to borrow item, add logic that hides this button if user is not logged in-->

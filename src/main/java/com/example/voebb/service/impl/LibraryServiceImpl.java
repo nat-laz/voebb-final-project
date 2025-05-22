@@ -1,9 +1,17 @@
 package com.example.voebb.service.impl;
 
+import com.example.voebb.model.dto.library.CreateLibraryDTO;
+import com.example.voebb.model.dto.library.EditLibraryDTO;
+import com.example.voebb.model.dto.library.LibraryDTO;
 import com.example.voebb.model.entity.Library;
+import com.example.voebb.model.mapper.AddressMapper;
+import com.example.voebb.model.mapper.LibraryMapper;
 import com.example.voebb.repository.LibraryRepo;
 import com.example.voebb.service.LibraryService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,30 +22,42 @@ public class LibraryServiceImpl implements LibraryService {
 
     private final LibraryRepo libraryRepo;
 
+    @Transactional
     @Override
-    public void createLibrary(Library library) {
-        this.libraryRepo.save(library);
+    public void createLibrary(CreateLibraryDTO createLibraryDTO) {
+        if(libraryRepo.existsByName(createLibraryDTO.getName())){
+            throw new RuntimeException("Library with this name already exists");
+        }
+        Library newLibrary = LibraryMapper.toNewEntity(createLibraryDTO);
+        libraryRepo.save(newLibrary);
     }
 
     @Override
-    public List<Library> getAllLibraries() {
-        return libraryRepo.findAll();
+    public List<LibraryDTO> getAllLibraries() {
+        return libraryRepo.getAllInDTO();
     }
 
     @Override
-    public Library getLibraryById(Long libraryId) {
-        return libraryRepo.findById(libraryId)
-                .orElseThrow(() -> new RuntimeException("Library not found"));
+    public Page<LibraryDTO> getAllLibraries(Pageable pageable) {
+        return libraryRepo.getLibrariesForAdmin(pageable);
     }
 
     @Override
-    public Library updateLibrary(Long libraryId, Library newLibrary) {
-        Library oldLibrary = getLibraryById(libraryId);
+    public EditLibraryDTO getLibraryById(Long libraryId) {
+        return libraryRepo.getLibraryFullInfo(libraryId);
+    }
 
-        oldLibrary.setAddress(newLibrary.getAddress());
-        oldLibrary.setName(newLibrary.getName());
-        oldLibrary.setDescription(newLibrary.getDescription());
-        return libraryRepo.save(oldLibrary);
+    @Transactional
+    @Override
+    public EditLibraryDTO updateLibrary(Long libraryId, EditLibraryDTO editLibraryDTO) {
+        Library oldLibrary = libraryRepo.findById(libraryId)
+                .orElseThrow(() -> new RuntimeException("Not found"));
+
+        oldLibrary.setAddress(AddressMapper.toEntity(editLibraryDTO));
+        oldLibrary.setName(editLibraryDTO.name());
+        oldLibrary.setDescription(editLibraryDTO.description());
+        Library savedLibrary = libraryRepo.save(oldLibrary);
+        return LibraryMapper.toEditDTO(savedLibrary);
     }
 
     @Override
