@@ -2,6 +2,7 @@ package com.example.voebb.model.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record UserRegistrationDTO(
@@ -11,6 +12,7 @@ public record UserRegistrationDTO(
         String email,
 
         @NotNull(message = "Phone Number must be not null")
+        @Pattern(regexp = "^\\+[0-9]{10,15}$", message = "Invalid phone number format")
         String phoneNumber,
 
         @NotNull(message = "Password must be not null")

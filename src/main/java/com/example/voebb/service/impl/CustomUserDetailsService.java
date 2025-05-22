@@ -61,7 +61,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     }
 
     private boolean isValidPhone(String username) {
-        return username.matches("^\\+|0?[0-9]{10,15}$");
+        return username.matches("^\\+[0-9]{10,15}$");
     }
 
     private boolean isValidEmail(String username) {

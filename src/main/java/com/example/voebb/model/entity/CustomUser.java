@@ -34,10 +34,8 @@ public class CustomUser {
     private String email;
 
     @Column(nullable = false, unique = true, length = 20)
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number format")
-
+    @Pattern(regexp = "^\\+[0-9]{10,15}$", message = "Invalid phone number format")
     private String phoneNumber;
-
 
     @Column(nullable = false)
     private String password;
