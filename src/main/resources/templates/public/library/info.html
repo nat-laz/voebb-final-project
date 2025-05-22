@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/public-layout}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Library info</title>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <!-- General Product Info -->
+    <div class="container mt-4">
+        <h4>Library info</h4>
+        <p th:text="'Name: ' + ${editLibraryDTO.name}"></p>
+        <p th:text="'Id: ' + ${editLibraryDTO.id}"></p>
+        <p th:text="'Type: ' + ${editLibraryDTO.description}"></p>
+    </div>
+
+    <!-- Address section -->
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Library Address Information</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Postcode:</dt>
+                    <dd class="col-sm-9" th:text="${editLibraryDTO.postcode}">12345</dd>
+
+                    <dt class="col-sm-3">City:</dt>
+                    <dd class="col-sm-9" th:text="${editLibraryDTO.city}">Berlin</dd>
+
+                    <dt class="col-sm-3">District:</dt>
+                    <dd class="col-sm-9" th:text="${editLibraryDTO.district}">Mitte</dd>
+
+                    <dt class="col-sm-3">Street:</dt>
+                    <dd class="col-sm-9" th:text="${editLibraryDTO.street}">Alexanderplatz</dd>
+
+                    <dt class="col-sm-3">House Number:</dt>
+                    <dd class="col-sm-9" th:text="${editLibraryDTO.houseNumber}">5A</dd>
+
+                    <dt class="col-sm-3">OpenStreetMap:</dt>
+                    <dd class="col-sm-9">
+                        <a th:href="${editLibraryDTO.osmLink}" target="_blank" th:text="${editLibraryDTO.osmLink}">View
+                            on OSM</a>
+                    </dd>
+                </dl>
+            </div>
+
+        </div>
+    </div>
+</main>
+</body>
+</html>

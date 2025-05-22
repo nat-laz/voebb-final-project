@@ -42,23 +42,17 @@ SELECT SETVAL('languages_language_id_seq', (SELECT MAX(language_id) FROM languag
 
 -- Products
 INSERT INTO products (product_id, product_type_id, product_link_to_emedia, title, release_year, photo, description)
-VALUES (1, 1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1',
-        'First book of Harry Potter series'),
-       (2, 2, 'https://ebooks.voebb.de/hp1', 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1',
-        'First book of Harry Potter series'),
+VALUES (1, 1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1', 'First book of Harry Potter series'),
+       (2, 2, 'https://ebooks.voebb.de/hp1', 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1', 'First book of Harry Potter series'),
        (3, 1, NULL, 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'Second book in the series'),
-       (4, 2, 'https://ebooks.voebb.de/hp2', 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2',
-        'Second book in the series'),
+       (4, 2, 'https://ebooks.voebb.de/hp2', 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'Second book in the series'),
        (5, 1, NULL, 'Harry Potter and the Prisoner of Azkaban', '1999', 'photo_url_3', 'Third book in the series'),
-       (6, 2, 'https://ebooks.voebb.de/hp3', 'Harry Potter and the Goblet of Fire', '2000', 'photo_url_4',
-        'Fourth book in the series'),
+       (6, 2, 'https://ebooks.voebb.de/hp3', 'Harry Potter and the Goblet of Fire', '2000', 'photo_url_4', 'Fourth book in the series'),
        (7, 1, NULL, 'Harry Potter and the Order of the Phoenix', '2003', 'photo_url_5', 'Fifth book in the series'),
-       (8, 2, 'https://ebooks.voebb.de/hp4', 'Harry Potter and the Half-Blood Prince', '2005', 'photo_url_6',
-        'Sixth book in the series'),
+       (8, 2, 'https://ebooks.voebb.de/hp4', 'Harry Potter and the Half-Blood Prince', '2005', 'photo_url_6', 'Sixth book in the series'),
        (9, 1, NULL, 'Harry Potter and the Deathly Hallows', '2007', 'photo_url_7', 'Final book in the series'),
        (10, 1, NULL, 'Harry Potter and the Cursed Child', '2016', 'photo_url_8', 'Play based on Harry Potter universe'),
-       (11, 1, NULL, 'Fantastic Beasts and Where to Find Them', '2001', 'photo_url_9',
-        'A companion book to Harry Potter'),
+       (11, 1, NULL, 'Fantastic Beasts and Where to Find Them', '2001', 'photo_url_9', 'A companion book to Harry Potter'),
        (12, 3, NULL, 'The Matrix', '1999', 'photo_url_9', 'DVD format')
 ON CONFLICT (product_id) DO NOTHING;
 SELECT SETVAL('products_product_id_seq', (SELECT MAX(product_id) FROM products));
@@ -101,14 +95,13 @@ ON CONFLICT(creator_id, product_id, creator_role_id) DO NOTHING;
 --  Clients ─────────────────────────────────────────────────
 -- Test password is 12345678
 INSERT INTO custom_users (custom_user_id, first_name, last_name, email, password, is_enabled, borrowed_books_count)
-VALUES (1, 'Admin 1', 'Admin 1', 'admin1@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e',
-        TRUE, 0),
-       (2, 'Admin 2', 'Admin 2', 'admin2@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e',
-        TRUE, 0),
-       (3, 'Client 1', 'Client 1', 'client1@example.com',
-        '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (4, 'Client 2', 'Client 2', 'client2@example.com',
-        '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0)
+VALUES (1, 'Admin 1', 'Admin 1', 'admin1@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e',TRUE, 0),
+       (2, 'Admin 2', 'Admin 2', 'admin2@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e',TRUE, 0),
+       (3, 'Client 1', 'Client 1', 'client1@example.com','$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (4, 'Client 2', 'Client 2', 'client2@example.com','$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (5,'Helly ', 'R.', 'helly@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 0),
+       (6,'Mark', 'S', 'mark@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 0),
+       (7,'Ronald', 'B.', 'ronald@example.com', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', true, 5)
 ON CONFLICT (custom_user_id) DO NOTHING;
 SELECT SETVAL('custom_users_custom_user_id_seq', (SELECT MAX(custom_user_id) FROM custom_users));
 
@@ -117,7 +110,10 @@ INSERT INTO users_roles_relation (custom_user_id, role_id)
 VALUES (1, 1),
        (2, 1),
        (3, 2),
-       (4, 2)
+       (4, 2),
+       (5, 2),
+       (6, 2),
+       (7, 2)
 ON CONFLICT (role_id, custom_user_id) DO NOTHING;
 
 -- Countries ─────────────────────────────────────────────────
@@ -277,6 +273,12 @@ SELECT SETVAL('borrows_borrow_id_seq', (SELECT MAX(borrow_id) FROM borrows));
 
 --  ─────────── mock: client_id = 1 reserves item_id = 1 ───────────
 INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
-VALUES (1, 2, 1, CURRENT_DATE, CURRENT_DATE + INTERVAL '7 day')
+VALUES (1, 2, 1, DATE '2025-05-10', DATE '2025-05-13'),
+       (2, 2, 2, DATE '2025-05-10', DATE '2025-05-13'),
+       (3, 1, 3, DATE '2025-05-08', DATE '2025-05-11'),
+       (4, 1, 3, DATE '2025-05-08', DATE '2025-05-11'),
+       (5, 4, 44, DATE '2025-05-08', DATE '2025-05-11'),
+       (6, 3, 20, DATE '2025-05-08', DATE '2025-05-11'),
+       (7, 4, 12, DATE '2025-05-08', DATE '2025-05-11')
 ON CONFLICT DO NOTHING;
-SELECT SETVAL('reservations_reservation_id_seq', (SELECT MAX(item_id) FROM reservations));
+SELECT setval('reservations_reservation_id_seq', (SELECT MAX(reservation_id) FROM reservations));
