@@ -88,12 +88,12 @@ VALUES
     (3, 10, 2); -- Thorne   CO_AUTHOR
 
 --  Clients ─────────────────────────────────────────────────
-INSERT INTO custom_users (first_name, last_name, email, password, is_enabled, borrowed_books_count)
-VALUES ('User 1', 'One', 'test@gmail.com', '1234', true, 0),
-       ('User 2 ', 'Two', 'test@example.com', '1234', true, 0),
-       ('Helly ', 'R.', 'helly@example.com', '1234', true, 0),
-       ('Mark', 'S', 'mark@example.com', '1234', true, 0),
-       ('Ronald', 'B.', 'ronald@example.com', '1234', true, 5)
+INSERT INTO custom_users (first_name, last_name, email, phone_number, password, is_enabled, borrowed_books_count)
+VALUES ('User 1', 'One', 'test@gmail.com', '+1234567890', '12345678', true, 0),
+       ('User 2 ', 'Two', 'test@example.com', '+1234567891','1234', true, 0),
+       ('Helly ', 'R.', 'helly@example.com', '+1234567892','1234', true, 0),
+       ('Mark', 'S', 'mark@example.com', '+1234567893','1234', true, 0),
+       ('Ronald', 'B.', 'ronald@example.com', '+1234567896','1234', true, 5)
     ON CONFLICT (custom_user_id) DO NOTHING;
 
 -- Join table (same Client -> multiple Roles)
