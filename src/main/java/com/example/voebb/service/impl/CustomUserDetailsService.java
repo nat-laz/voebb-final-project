@@ -111,7 +111,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
                                String oldEmail,
                                HttpServletRequest request,
                                HttpServletResponse response){
-        boolean emailChange = false;
+        boolean loginCredentialsChange = false;
         CustomUser existingUser = userRepo.findByEmail(oldEmail)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + oldEmail + " not found"));
 
@@ -124,7 +124,12 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
 
         if (!userDto.getEmail().equals(oldEmail)) {
             existingUser.setEmail(userDto.getEmail());
-            emailChange = true;
+            loginCredentialsChange = true;
+        }
+
+        if (!userDto.getPhoneNumber().equals(existingUser.getPhoneNumber())) {
+            existingUser.setPhoneNumber(userDto.getPhoneNumber());
+            loginCredentialsChange = true;
         }
 
         if (userDto.getNewPassword() != null && !userDto.getNewPassword().isBlank()) {
@@ -133,7 +138,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
 
         userRepo.save(existingUser);
 
-        if(emailChange){
+        if(loginCredentialsChange){
             new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         }
     }
@@ -244,6 +249,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     private UserUpdateDTO toUpdateDto(CustomUser user) {
         UserUpdateDTO dto = new UserUpdateDTO();
         dto.setEmail(user.getEmail());
+        dto.setPhoneNumber(user.getPhoneNumber());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         return dto;
