@@ -9,49 +9,56 @@ creatorSearchInput.addEventListener("blur", () => {
     setTimeout(() => creatorResultsBox.classList.add("d-none"), 200);
 });
 
+let debounceTimer;
+
 creatorSearchInput.addEventListener("input", async function () {
-    const query = this.value.trim();
-    creatorResultsBox.innerHTML = "";
+    clearTimeout(debounceTimer);
 
-    if (!query) {
-        creatorResultsBox.classList.add("d-none");
-        return;
-    }
+    debounceTimer = setTimeout(async () => {
+        const query = this.value.trim();
+        creatorResultsBox.innerHTML = "";
 
-    try {
-        const res = await fetch(`/api/creators/searchCreator?lastName=${encodeURIComponent(query)}`);
-        const creators = await res.json();
+        if (!query) {
+            creatorResultsBox.classList.add("d-none");
+            return;
+        }
 
-        if (creators.length > 0) {
-            creators.forEach(creator => {
+        try {
+            const res = await fetch(`/api/creators/searchCreator?lastName=${encodeURIComponent(query)}`);
+            const creators = await res.json();
+
+            if (creators.length > 0) {
+                creators.forEach(creator => {
+                    const li = document.createElement("li");
+                    li.className = "list-group-item list-group-item-action";
+                    li.textContent = `${creator.firstName} ${creator.lastName}`;
+                    li.onclick = () => {
+                        document.getElementById("creatorId").value = creator.id;
+                        document.getElementById("creatorFirstName").value = creator.firstName;
+                        document.getElementById("creatorLastName").value = creator.lastName;
+                        creatorSearchInput.value = `${creator.firstName} ${creator.lastName}`;
+                        creatorResultsBox.innerHTML = "";
+                        creatorResultsBox.classList.add("d-none");
+                    };
+                    creatorResultsBox.appendChild(li);
+                });
+            } else {
                 const li = document.createElement("li");
-                li.className = "list-group-item list-group-item-action";
-                li.textContent = `${creator.firstName} ${creator.lastName}`;
-                li.onclick = () => {
-                    document.getElementById("creatorId").value = creator.id;
-                    document.getElementById("creatorFirstName").value = creator.firstName;
-                    document.getElementById("creatorLastName").value = creator.lastName;
-                    creatorSearchInput.value = `${creator.firstName} ${creator.lastName}`;
-                    creatorResultsBox.innerHTML = "";
-                    creatorResultsBox.classList.add("d-none");
-                };
-                creatorResultsBox.appendChild(li);
-            });
-        } else {
-            const li = document.createElement("li");
-            li.className = "list-group-item d-flex justify-content-between align-items-center text-muted";
-            li.innerHTML = `
+                li.className = "list-group-item d-flex justify-content-between align-items-center text-muted";
+                li.innerHTML = `
                 <span>No match found.</span>
                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="openNewCreatorModal()">Add New</button>
             `;
-            creatorResultsBox.appendChild(li);
-        }
+                creatorResultsBox.appendChild(li);
+            }
 
-        creatorResultsBox.classList.remove("d-none");
-    } catch (error) {
-        console.error("Creator search failed:", error);
-        creatorResultsBox.classList.add("d-none");
-    }
+            creatorResultsBox.classList.remove("d-none");
+        } catch (error) {
+            console.error("Creator search failed:", error);
+            creatorResultsBox.classList.add("d-none");
+        }
+    }, 500)
+
 });
 
 // =============== ROLE SEARCH ===============
@@ -141,7 +148,6 @@ function addCreatorToPreview() {
     creatorSearchInput.removeAttribute("required");
     roleSearchInput.removeAttribute("required");
 }
-
 
 
 // =============== MODALS ===============
