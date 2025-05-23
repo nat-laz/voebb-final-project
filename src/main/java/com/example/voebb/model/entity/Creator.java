@@ -13,7 +13,6 @@ import java.util.List;
 @Entity
 @Table(name = "creators")
 public class Creator {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "creator_id")

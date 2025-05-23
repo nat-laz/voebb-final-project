@@ -2,6 +2,8 @@ package com.example.voebb.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +32,10 @@ public class CustomUser {
 
     @Column(nullable = false, unique = true, length = 120)
     private String email;
+
+    @Column(nullable = false, unique = true, length = 20)
+    @Pattern(regexp = "^\\+[0-9]{10,15}$", message = "Invalid phone number format")
+    private String phoneNumber;
 
     @Column(nullable = false)
     private String password;

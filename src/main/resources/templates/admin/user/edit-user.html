@@ -30,6 +30,11 @@
         </div>
 
         <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Phone Number</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
             <label for="borrowedBooksCount" class="form-label">Borrowed Books Count</label>
             <input type="number" id="borrowedBooksCount" name="borrowedBooksCount" th:field="*{borrowedBooksCount}"
                    class="form-control" required>

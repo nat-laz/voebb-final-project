@@ -3,19 +3,24 @@ package com.example.voebb.service.impl;
 import com.example.voebb.exception.UserNotFoundException;
 import com.example.voebb.model.dto.user.UserDTO;
 import com.example.voebb.model.dto.user.UserRegistrationDTO;
+import com.example.voebb.model.dto.user.UserUpdateDTO;
 import com.example.voebb.model.entity.CustomUser;
 import com.example.voebb.model.entity.CustomUserRole;
 import com.example.voebb.repository.CustomUserRepo;
 import com.example.voebb.repository.CustomUserRoleRepo;
 import com.example.voebb.service.CustomUserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,12 +35,23 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     private final CustomUserRoleRepo customUserRoleRepo;
     private final PasswordEncoder passwordEncoder;
     private final CustomUserRepo customUserRepo;
+    private final PasswordEncoder encoder;
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        CustomUser customUser = userRepo.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        CustomUser customUser;
+
+        if (isValidEmail(username)) {
+            customUser = userRepo.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Email not found: " + username));
+        } else if (isValidPhone(username)) {
+            customUser = userRepo.findByPhoneNumber(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Phone number not found: " + username));
+        } else {
+            throw new UsernameNotFoundException("Invalid login identifier: " + username);
+        }
 
         List<SimpleGrantedAuthority> authorities = customUser.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
@@ -50,6 +66,14 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         );
     }
 
+    private boolean isValidPhone(String username) {
+        return username.matches("^\\+[0-9]{10,15}$");
+    }
+
+    private boolean isValidEmail(String username) {
+        return username.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+    }
+
     @Transactional
     public void registerUser(UserRegistrationDTO userRegistrationDTO) {
         CustomUserRole role = customUserRoleRepo.findByName("ROLE_CLIENT")
@@ -57,10 +81,11 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
 
         CustomUser customUser = new CustomUser();
 
-        customUser.setEmail(userRegistrationDTO.email());
-        customUser.setPassword(passwordEncoder.encode(userRegistrationDTO.password()));
-        customUser.setFirstName(userRegistrationDTO.firstName());
-        customUser.setLastName(userRegistrationDTO.lastName());
+        customUser.setEmail(userRegistrationDTO.getEmail());
+        customUser.setPhoneNumber(userRegistrationDTO.getPhoneNumber());
+        customUser.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+        customUser.setFirstName(userRegistrationDTO.getFirstName());
+        customUser.setLastName(userRegistrationDTO.getLastName());
         customUser.setEnabled(true);
         customUser.setRoles(Set.of(role));
 
@@ -72,6 +97,50 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         return userRepo.findAll().stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserUpdateDTO getUserDTOByUsername(String username) {
+        CustomUser user = userRepo.findByEmail(username)
+                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
+        return toUpdateDto(user);
+    }
+
+    @Override
+    public void updateUserInfo(UserUpdateDTO userDto,
+                               String oldEmail,
+                               HttpServletRequest request,
+                               HttpServletResponse response){
+        boolean loginCredentialsChange = false;
+        CustomUser existingUser = userRepo.findByEmail(oldEmail)
+                .orElseThrow(() -> new UserNotFoundException("User with email " + oldEmail + " not found"));
+
+        if(!encoder.matches(userDto.getOldPassword(), existingUser.getPassword())){
+            throw new RuntimeException("Passwords are not matching");
+        }
+
+        existingUser.setFirstName(userDto.getFirstName());
+        existingUser.setLastName(userDto.getLastName());
+
+        if (!userDto.getEmail().equals(oldEmail)) {
+            existingUser.setEmail(userDto.getEmail());
+            loginCredentialsChange = true;
+        }
+
+        if (!userDto.getPhoneNumber().equals(existingUser.getPhoneNumber())) {
+            existingUser.setPhoneNumber(userDto.getPhoneNumber());
+            loginCredentialsChange = true;
+        }
+
+        if (userDto.getNewPassword() != null && !userDto.getNewPassword().isBlank()) {
+            existingUser.setPassword(encoder.encode(userDto.getNewPassword()));
+        }
+
+        userRepo.save(existingUser);
+
+        if(loginCredentialsChange){
+            new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+        }
     }
 
     @Override
@@ -103,6 +172,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         existingUser.setFirstName(userDto.firstName());
         existingUser.setLastName(userDto.lastName());
         existingUser.setEmail(userDto.email());
+        existingUser.setPhoneNumber(userDto.phoneNumber());
         existingUser.setEnabled(userDto.enabled());
         existingUser.setBorrowedBooksCount(userDto.borrowedBooksCount());
 
@@ -146,6 +216,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         return new UserDTO(
                 user.getId(),
                 user.getEmail(),
+                user.getPhoneNumber(),
                 null, // Do not expose password
                 user.getFirstName(),
                 user.getLastName(),
@@ -166,6 +237,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
+        user.setPhoneNumber(dto.phoneNumber());
         user.setEnabled(dto.enabled());
         user.setBorrowedBooksCount(dto.borrowedBooksCount());
         user.setPassword(dto.password());
@@ -173,4 +245,13 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         return user;
     }
 
+
+    private UserUpdateDTO toUpdateDto(CustomUser user) {
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setEmail(user.getEmail());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        return dto;
+    }
 }
