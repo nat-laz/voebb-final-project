@@ -20,7 +20,7 @@ public class LoginController {
 
     @GetMapping("/register")
     public String getRegisterPage(Model model) {
-        model.addAttribute("userRegistrationDTO", new UserRegistrationDTO("", "", "", "", ""));
+        model.addAttribute("userRegistrationDTO", new UserRegistrationDTO());
         return "public/login-register/register-page";
     }
 
