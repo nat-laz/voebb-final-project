@@ -10,8 +10,9 @@ creatorSearchInput.addEventListener("blur", () => {
 });
 
 let debounceTimer;
+let abortController;
 
-creatorSearchInput.addEventListener("input", async function () {
+creatorSearchInput.addEventListener("input", function () {
     clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(async () => {
@@ -28,8 +29,17 @@ creatorSearchInput.addEventListener("input", async function () {
             return;
         }
 
+        if (abortController) {
+            abortController.abort();
+        }
+
+        abortController = new AbortController();
+
         try {
-            const res = await fetch(`/api/creators/searchCreator?lastName=${encodeURIComponent(query)}`);
+            const res = await fetch(
+                `/api/creators/searchCreator?lastName=${encodeURIComponent(query)}`,
+                {signal: abortController.signal});
+
             const creators = await res.json();
 
             if (creators.length > 0) {
