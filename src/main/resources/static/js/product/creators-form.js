@@ -18,6 +18,11 @@ creatorSearchInput.addEventListener("input", async function () {
         const query = this.value.trim();
         creatorResultsBox.innerHTML = "";
 
+        // Start searching only when at lest 2 chars entered
+        if (query.length < 2) {
+            return;
+        }
+
         if (!query) {
             creatorResultsBox.classList.add("d-none");
             return;
