@@ -1,0 +1,117 @@
+
+body {
+    background-color: #f8f9fa;
+}
+
+.content-section {
+    padding: 0 2vw;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.content-section p,
+.content-section span,
+.content-section h3 {
+    text-align: justify;
+}
+.carousel-wrapper,
+.carousel-window,
+.custom-carousel {
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.carousel-wrapper {
+    position: relative;
+    max-width: 60rem;
+    margin: 3rem auto;
+    padding: 1rem;
+    background-color: #f0f0f0;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.carousel-window {
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.custom-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0 auto;
+    gap: 2rem;
+}
+
+.nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 3rem;
+    color: #004080;
+    cursor: pointer;
+    z-index: 10;
+
+}
+
+.nav.left {
+    left: .5rem;
+}
+
+.nav.right {
+    right: .5rem;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 1rem;
+    transition: transform 0.5s ease;
+    padding: 0 1rem;
+    will-change: transform;
+    box-sizing: border-box;
+    width: max-content;
+    flex-wrap: nowrap;
+}
+
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.card {
+    flex: 0 0 18rem;
+    width: 18rem;
+    margin:0;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: none;
+}
+
+.card:hover {
+    background-color: #b1bfcc;
+    transform: translateY(-4px);
+}
+
+.card-title {
+    color: #004080;
+}
+
+.card-text {
+    color: #333333;
+}
+
+.card a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.card a:hover {
+    text-decoration: underline;
+}

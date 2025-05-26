@@ -26,7 +26,7 @@ public class UserControllerAdmin {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("userDTO", new UserDTO(null, "", "", "", "", true, 0, List.of()));
+        model.addAttribute("userDTO", new UserDTO(null, "", "","", "", "", true, 0, List.of()));
         model.addAttribute("allRoles", customUserRoleRepo.findAll());
         return "admin/user/create-user";
     }
