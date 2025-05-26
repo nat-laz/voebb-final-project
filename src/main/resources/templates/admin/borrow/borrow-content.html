@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout}">
+
+<main layout:fragment="content">
+  <div class="container my-4">
+    <h2 class="mb-4">Borrowings Dashboard</h2>
+    
+    <div th:replace="~{admin/fragments/_alerts :: alerts}"></div>
+    
+    <form th:action="@{/admin/borrowings}" method="get" class="row g-3 align-items-end mb-4">
+      <div class="col-md-3">
+        <label for="userIdFilter" class="form-label">User ID</label>
+        <input type="text"
+               id="userIdFilter"
+               name="userId"
+               class="form-control"
+               pattern="[0-9]+"
+               inputmode="numeric"
+               th:value="${userId}"
+               placeholder="Enter User ID">
+      </div>
+      
+      <div class="col-md-3">
+        <label for="itemIdFilter" class="form-label">Item ID</label>
+        <input type="text"
+               id="itemIdFilter"
+               name="itemId"
+               class="form-control"
+               pattern="[0-9]+"
+               inputmode="numeric"
+               th:value="${itemId}"
+               placeholder="Enter Item ID">
+      </div>
+      
+      <div class="col-md-3">
+        <label for="libraryIdFilter" class="form-label">Library</label>
+        <select id="libraryIdFilter" name="libraryId" class="form-control">
+          <option th:value="${null}" th:selected="${libraryId == null}">Filter by Library</option>
+          <option th:each="lib : ${libraries}"
+                  th:value="${lib.id}"
+                  th:text="${lib.name}"
+                  th:selected="${lib.id == libraryId}">
+          </option>
+        </select>
+      </div>
+      
+      <div class="col-md-3 text-end">
+        <button type="submit" class="btn btn-outline-primary w-100">
+          <i class="bi bi-filter"></i> Apply Filters
+        </button>
+      </div>
+    </form>
+    
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+        <tr class="small text-nowrap">
+          <th>ID</th>
+          <th>User</th>
+          <th>Item</th>
+          <th><abbr title="Start Date">Start</abbr></th>
+          <th><abbr title="Due Date">Due</abbr></th>
+          <th><abbr title="Return Date">Returned</abbr></th>
+          <th>Status</th>
+          <th><abbr title="Extensions">Ext.</abbr></th>
+          <th class="text-end">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="borrow : ${borrowings}">
+          <td th:text="${borrow.borrowId}"></td>
+          
+          <td class="text-nowrap">
+            <div class="small text-muted" th:text="'ID: #' + ${borrow.userId}"></div>
+            <div  th:text="${borrow.customUserFullName}"></div>
+          </td>
+          
+          <td class="text-nowrap">
+            <div class="small text-muted" th:text="'ID: #' + ${borrow.itemId}"></div>
+            <div  th:text="${borrow.itemTitle}"></div>
+          </td>
+          
+          <td th:text="${borrow.startDate}"></td>
+          <td th:text="${borrow.dueDate}"></td>
+          <td th:text="${borrow.returnDate != null ? borrow.returnDate : 'N/A'}"></td>
+          
+          <td>
+        <span th:classappend="
+              ${borrow.borrowStatus} == 'Returned' ? 'badge bg-success-subtle text-success-emphasis' :
+              (${borrow.borrowStatus} == 'Overdue' ? 'badge bg-danger-subtle text-danger-emphasis' :
+              'badge bg-primary-subtle text-primary-emphasis')"
+              th:text="${borrow.borrowStatus}">
+        </span>
+          </td>
+          
+          <td th:text="${borrow.extendsCount}"></td>
+          
+          <td class="text-end text-nowrap">
+            <form th:action="@{/admin/borrowings/extend/{id}(id=${borrow.borrowId})}" method="post" class="d-inline">
+              <button type="submit"
+                      class="btn btn-sm btn-primary me-1"
+                      th:disabled="${borrow.extendsCount >= 2}"
+                      th:title="${borrow.extendsCount >= 2 ? 'Max extensions reached' : 'Extend Borrowing'}">
+                Extend
+              </button>
+            </form>
+            
+            <form th:action="@{/admin/borrowings/return/{id}(id=${borrow.borrowId})}" method="post" class="d-inline">
+              <button type="submit"
+                      class="btn btn-sm btn-success"
+                      th:disabled="${borrow.returnDate != null}"
+                      th:title="${borrow.returnDate != null ? 'Already returned' : 'Mark as Returned'}">
+                Return
+              </button>
+            </form>
+          </td>
+        </tr>
+        
+        <tr th:if="${#lists.isEmpty(borrowings)}">
+          <td colspan="8" class="text-center text-muted">No borrowings found.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    
+    <nav th:if="${page.totalPages > 1}">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+          <a class="page-link"
+             th:href="@{/admin/borrowings(page=${page.number - 1}, userId=${userId}, itemId=${itemId}, libraryId=${libraryId})}">Previous</a>
+        </li>
+        
+        <li class="page-item"
+            th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+            th:classappend="${i == page.number} ? 'active'">
+          <a class="page-link"
+             th:href="@{/admin/borrowings(page=${i}, userId=${userId}, itemId=${itemId}, libraryId=${libraryId})}"
+             th:text="${i + 1}">1</a>
+        </li>
+        
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+          <a class="page-link"
+             th:href="@{/admin/borrowings(page=${page.number + 1}, userId=${userId}, itemId=${itemId}, libraryId=${libraryId})}">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</main>
+</html>

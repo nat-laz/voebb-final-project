@@ -1,17 +1,21 @@
 --  Creator Roles
 INSERT INTO creator_roles (creator_role_id, creator_role)
-VALUES (1, 'author'),
-       (2, 'co-author'),
-       (3, 'editor'),
-       (4, 'director')
+VALUES
+    (1, 'Author'),
+    (2, 'Co-Author'),
+    (3, 'Editor'),
+    (4, 'Director'),
+    (5, 'Game Designer')
 ON CONFLICT (creator_role_id) DO NOTHING;
 SELECT SETVAL('creator_roles_creator_role_id_seq', (SELECT MAX(creator_role_id) FROM creator_roles));
 
 -- Product types
-INSERT INTO product_types (product_type_id, name, main_creator_role_id)
-VALUES (1, 'book', 1),
-       (2, 'ebook', 1),
-       (3, 'DVD', 4)
+INSERT INTO product_types (product_type_id , name, display_name, borrow_duration_days, main_creator_role_id)
+VALUES
+    (1, 'book', 'Book', 28, 1),
+    (2, 'ebook', 'E-Book', 28, 1),
+    (3, 'dvd', 'DVD', 14, 4),
+    (4, 'boardgame', 'Board Game', 7, 5)
 ON CONFLICT (product_type_id) DO NOTHING;
 SELECT SETVAL('product_types_product_type_id_seq', (SELECT MAX(product_type_id) FROM product_types));
 
@@ -62,7 +66,8 @@ VALUES (1, 1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_
        (9, 1, NULL, 'Harry Potter and the Deathly Hallows', '2007', 'photo_url_7', 'Final book in the series'),
        (10, 1, NULL, 'Harry Potter and the Cursed Child', '2016', 'photo_url_8', 'Play based on Harry Potter universe'),
        (11, 1, NULL, 'Fantastic Beasts and Where to Find Them', '2001', 'photo_url_9', 'A companion book to Harry Potter'),
-       (12, 3, NULL, 'The Matrix', '1999', 'photo_url_9', 'DVD format')
+       (12, 3, NULL, 'The Matrix', '1999', 'photo_url_9', 'DVD format'),
+       (13, 4, NULL, 'Monopoly', '1935', 'photo_url_13', 'Holds the Guinness World Record for being played by the most people' )
 ON CONFLICT (product_id) DO NOTHING;
 SELECT SETVAL('products_product_id_seq', (SELECT MAX(product_id) FROM products));
 
@@ -85,7 +90,8 @@ ON CONFLICT DO NOTHING;
 INSERT INTO creators (creator_id, creator_first_name, creator_last_name)
 VALUES (1, 'J. K.', 'Rowling'),
        (2, 'John', 'Tiffany'),
-       (3, 'Jack', 'Thorne')
+       (3, 'Jack', 'Thorne'),
+       (4, 'Elizabeth' ,  'Magie')
 ON CONFLICT (creator_id) DO NOTHING;
 SELECT SETVAL('creators_creator_id_seq', (SELECT MAX(creator_id) FROM creators));
 
@@ -98,7 +104,9 @@ VALUES
 
     -- Cursed Child still has two co-authors
     (2, 10, 2), -- Tiffany  CO_AUTHOR
-    (3, 10, 2) -- Thorne   CO_AUTHOR
+    (3, 10, 2), -- Thorne   CO_AUTHOR
+
+    (4, 13, 5)
 ON CONFLICT(creator_id, product_id, creator_role_id) DO NOTHING;
 
 --  Clients ─────────────────────────────────────────────────
@@ -221,7 +229,8 @@ VALUES (1, 1, 1),
        (41, 11, 1),
        (42, 11, 4),
        (43, 11, 5),
-       (44, 11, 5)
+       (44, 11, 5),
+       (45, 13, 5)
 ON CONFLICT (item_id) DO NOTHING;
 SELECT SETVAL('product_items_item_id_seq', (SELECT MAX(item_id) FROM product_items));
 
@@ -273,13 +282,37 @@ VALUES (1, 1, 'Shelf A-12'),
        (44, 5, 'Top Rack-9')
 ON CONFLICT (item_id) DO NOTHING;
 
---  ─────────── mock: client_id = 1 borrows item_id = 1 ───────────
+--  ─────────── mock: BORROWINGS  ───────────
+-- CASE 1: Active borrow (due in 7 days)
 INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 1, 1, CURRENT_DATE, CURRENT_DATE + INTERVAL '14 day', NULL, 0)
-ON CONFLICT DO NOTHING;
+VALUES (1, 5 , 45, CURRENT_DATE - INTERVAL '3 days', CURRENT_DATE + INTERVAL '7 days', NULL, 0);
+
+-- CASE 2: Overdue borrow (due 5 days ago)
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (2, 6, 43, CURRENT_DATE - INTERVAL '20 days', CURRENT_DATE - INTERVAL '5 days', NULL, 1);
+
+-- CASE 3: Returned borrow (returned yesterday)
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (3, 7, 42, CURRENT_DATE - INTERVAL '15 days', CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE - INTERVAL '1 day', 2);
+
+-- CASE 4: Active borrow, max extensions
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (4, 2, 41, CURRENT_DATE - INTERVAL '10 days', CURRENT_DATE + INTERVAL '4 days', NULL, 2);
+
+-- CASE 5: Returned early
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (5, 3, 40, CURRENT_DATE - INTERVAL '3 days', CURRENT_DATE + INTERVAL '10 days', CURRENT_DATE - INTERVAL '1 day', 0);
+
+-- CASE 6: Overdue, maxed out extensions
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (6, 4, 39, CURRENT_DATE - INTERVAL '25 days', CURRENT_DATE - INTERVAL '1 day', NULL, 2);
+
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (7, 2, 15, CURRENT_DATE - INTERVAL '25 days', CURRENT_DATE - INTERVAL '12 day', NULL, 2);
+
 SELECT SETVAL('borrows_borrow_id_seq', (SELECT MAX(borrow_id) FROM borrows));
 
---  ─────────── mock: client_id = 1 reserves item_id = 1 ───────────
+--  ─────────── mock: RESERVATIONS ───────────
 INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
 VALUES (1, 2, 1, DATE '2025-05-10', DATE '2025-05-13'),
        (2, 2, 2, DATE '2025-05-10', DATE '2025-05-13'),
