@@ -34,10 +34,19 @@ SELECT SETVAL('user_roles_role_id_seq', (SELECT MAX(role_id) FROM user_roles));;
 
 -- Languages  ─────────────────────────────────────────────────
 INSERT INTO languages (language_id, language_name)
-VALUES (1, 'English'),
-       (2, 'German')
+VALUES
+    (1, 'English'),
+    (2, 'German'),
+    (3, 'Hindi'),
+    (4, 'Chinese'),
+    (5, 'Japanese'),
+    (6, 'French'),
+    (7, 'Spanish'),
+    (8, 'Russian'),
+    (9, 'Arabic'),
+    (10, 'Korean')
 ON CONFLICT (language_id) DO NOTHING;
-SELECT SETVAL('languages_language_id_seq', (SELECT MAX(language_id) FROM languages));
+SELECT setval('languages_language_id_seq', (SELECT MAX(language_id) FROM languages));
 -- DUMMY DATA BELLOW
 
 -- Products
@@ -154,8 +163,7 @@ VALUES (1, 1), -- Philosopher's Stone published in the UK
 -- Join table (product linked to languages)
 INSERT INTO language_relation (product_id, language_id)
 VALUES (1, 1),
-       (1, 2)
-ON CONFLICT (product_id, language_id) DO NOTHING;
+       (1, 2);
 
 -- Libraries ─────────────────────────────────────────────────
 INSERT INTO libraries (library_id, library_name, library_description, address_city, address_district, address_postcode,

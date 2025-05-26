@@ -8,7 +8,6 @@ import com.example.voebb.model.entity.CreatorProductRelation;
 import com.example.voebb.model.entity.CreatorRole;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.CreatorRepo;
-import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.service.CreatorRoleService;
 import com.example.voebb.service.CreatorService;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,7 +15,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +26,6 @@ public class CreatorServiceImpl implements CreatorService {
 
     private final CreatorRepo creatorRepo;
     private final CreatorRoleService creatorRoleService;
-    private final ProductRepo productRepo;
-
 
     @Override
     @Transactional
@@ -36,8 +36,8 @@ public class CreatorServiceImpl implements CreatorService {
         for (CreatorWithRoleDTO dto : creatorDTOs) {
 
             String firstName = dto.getFirstName() == null ? "" : dto.getFirstName().trim();
-            String lastName  = dto.getLastName()  == null ? "" : dto.getLastName().trim();
-            String roleName = dto.getRole()   == null ? "" : dto.getRole().trim();
+            String lastName = dto.getLastName() == null ? "" : dto.getLastName().trim();
+            String roleName = dto.getRole() == null ? "" : dto.getRole().trim();
 
             Creator creator = creatorRepo
                     .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)
@@ -59,6 +59,29 @@ public class CreatorServiceImpl implements CreatorService {
     }
 
     @Override
+    public Set<CreatorResponseDTO> searchByName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Last name cannot be null or empty");
+        }
+
+        String[] nameParts = name.split(" ");
+
+        Set<CreatorResponseDTO> creators = new HashSet<>();
+
+        for (var namePart : nameParts) {
+            creatorRepo.searchByNameNative(namePart)
+                    .stream()
+                    .map(creator -> new CreatorResponseDTO(
+                            creator.getId(),
+                            creator.getFirstName(),
+                            creator.getLastName()
+                    ))
+                    .forEach(creators::add);
+        }
+        return creators;
+    }
+
+    @Override
     public List<CreatorResponseDTO> getAllCreators() {
         return creatorRepo.findAll().stream()
                 .map(c -> new CreatorResponseDTO(c.getId(), c.getFirstName(), c.getLastName()))
@@ -73,6 +96,7 @@ public class CreatorServiceImpl implements CreatorService {
     }
 
     @Override
+    @Transactional
     public CreatorResponseDTO saveCreator(CreatorFullNameDTO dto) {
         Creator newCreator = new Creator();
         newCreator.setFirstName(dto.firstName());

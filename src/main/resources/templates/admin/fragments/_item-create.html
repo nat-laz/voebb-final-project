@@ -31,7 +31,7 @@
                                             aria-disabled="true">
                                         Add Item Location Details
                                     </button>
-</span>
+                           </span>
                         </li>
                     </ul>
 
@@ -44,7 +44,7 @@
                                 <div class="input-group mb-3">
                                     <input type="text" class="form-control" name="searchTitle"
                                            th:value="${searchTitle}" placeholder="Search by product title"/>
-                                    <button type="submit" class="btn btn-outline-primary" id="searchBtn" disabled>
+                                    <button type="submit" class="btn btn-outline-primary" id="searchBtn">
                                         Search
                                     </button>
                                 </div>
@@ -141,11 +141,10 @@
                                         <p class="mb-0 text-muted">No matching products found?</p>
                                         <small class="text-muted">You can create a new one instead.</small>
                                     </div>
-                                    <button class="btn btn-outline-primary d-flex align-items-center"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#addProductModal">
+                                    <a class="btn btn-outline-primary d-flex align-items-center"
+                                       href="/admin/products/new">
                                         <i class="bi bi-plus-circle me-1"></i> Create New Product
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -186,7 +185,6 @@
             </div>
         </div>
     </div>
-
-    <script th:src="@{/static/create-item-modal.js}"></script>
-
+  
+    <script th:src="@{/static/js/item/create-item-modal.js}"></script>
 </div>
