@@ -1,6 +1,6 @@
-<nav class="navbar sticky-top navbar-expand-lg bg-primary" th:fragment="admin-navbar" data-bs-theme="dark">
+<nav class="navbar sticky-top navbar-expand-lg bg-primary" th:fragment="admin-navbar" data-bs-theme="light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/admin/users">Admin panel</a>
+    <a class="navbar-brand text-light" href="/admin">Admin panel</a>
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarColor01" aria-controls="navbarColor01"
@@ -11,36 +11,31 @@
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav me-auto">
         <li class="nav-item" role="presentation">
-          <a class="nav-link active" href="/admin/users">Users</a>
+          <a class="nav-link active text-light" href="/admin/users">Users</a>
         </li>
         
         <li class="nav-item" role="presentation">
-          <a class="nav-link active" href="/admin/libraries">Libraries</a>
+          <a class="nav-link active text-light" href="/admin/libraries">Libraries</a>
         </li>
         
         <li class="nav-item" role="presentation">
-          <a class="nav-link active" href="/admin/products">Products</a>
+          <a class="nav-link active text-light" href="/admin/products">Products</a>
         </li>
         
         <li class="nav-item" role="presentation">
-          <a class="nav-link active" href="/admin/items">Items</a>
+          <a class="nav-link active text-light" href="/admin/items">Items</a>
         </li>
         
         <li class="nav-item" role="presentation">
-          <a class="nav-link active" href="/admin/borrowings">Borrowings</a>
+          <a class="nav-link active text-light" href="/admin/borrowings">Borrowings</a>
         </li>
         
         <li class="nav-item" role="presentation">
-          <a class="nav-link active" href="/admin/reservations">Reservations</a>
+          <a class="nav-link active text-light" href="/admin/reservations">Reservations</a>
         </li>
       </ul>
       
-      <button type="button"
-              class="btn btn-secondary"
-              data-bs-toggle="modal"
-              data-bs-target="#loginModal">
-        Account
-      </button>
+      <div th:replace="~{public/fragments/login-dropdown :: public-login-dropdown}"></div>
     </div>
   
   </div>
