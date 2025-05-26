@@ -11,7 +11,7 @@
     <div class="container my-4">
         <h2 class="mb-3">Item Management</h2>
 
-        <div th:replace="admin/fragments/_alerts :: alerts"></div>
+        <div th:replace="~{admin/fragments/_alerts :: alerts}"></div>
 
         <!-- AddItem button -->
         <button class="btn btn-primary"
@@ -103,15 +103,13 @@
     </nav>
 
     <!-- Create Modal -->
-    <div th:replace="admin/fragments/_item-create :: createItemModal"></div>
+    <div th:replace="~{admin/fragments/_item-create :: createItemModal}"></div>
 
     <!-- Edit Modals -->
     <th:block th:each="item : ${page.content}">
-        <div th:replace="admin/fragments/_item-edit :: editItemModal(item=${item}, statuses=${statuses}, libraries=${libraries})"></div>
+        <div th:replace="~{admin/fragments/_item-edit :: editItemModal(item=${item}, statuses=${statuses}, libraries=${libraries})}"></div>
     </th:block>
-
-    <!--    TODO: Properly re-directing after creating the New Product-->
-<!--    <div th:replace="/admin/fragments/add-product-modal :: addProductModal"></div>div-->
+    
 </main>
 
 <script th:if="${openCreateItemModal}" th:inline="javascript">
