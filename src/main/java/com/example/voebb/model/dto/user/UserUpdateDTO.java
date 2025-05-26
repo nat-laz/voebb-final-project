@@ -15,7 +15,7 @@ public class UserUpdateDTO {
     @Email(message = "Email should match pattern")
     String email;
 
-    @Pattern(regexp = "^\\+[0-9]{10,15}$", message = "Invalid phone number format")
+    @Pattern(regexp = "^\\+[0-9]{10,20}$", message = "Invalid phone number format")
     String phoneNumber;
 
     String firstName;
