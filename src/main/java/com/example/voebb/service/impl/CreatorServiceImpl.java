@@ -69,8 +69,7 @@ public class CreatorServiceImpl implements CreatorService {
         Set<CreatorResponseDTO> creators = new HashSet<>();
 
         for (var namePart : nameParts) {
-            creatorRepo
-                    .searchByNameNative(namePart)
+            creatorRepo.searchByNameNative(namePart)
                     .stream()
                     .map(creator -> new CreatorResponseDTO(
                             creator.getId(),

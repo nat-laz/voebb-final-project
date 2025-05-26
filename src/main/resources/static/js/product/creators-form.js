@@ -82,47 +82,66 @@ roleSearchInput.addEventListener("blur", () => {
 });
 
 roleSearchInput.addEventListener("input", async function () {
-    const query = this.value.trim();
-    roleResultsBox.innerHTML = "";
+    clearTimeout(debounceTimer);
 
-    if (!query) {
-        roleResultsBox.classList.add("d-none");
-        return;
-    }
+    debounceTimer = setTimeout(async () => {
+        const query = this.value.trim();
+        roleResultsBox.innerHTML = "";
 
-    try {
-        const res = await fetch(`/api/creators/searchRole?roleName=${encodeURIComponent(query)}`);
-        const roles = await res.json();
+        // Start searching only when at lest 2 chars entered
+        if (query.length < 2) {
+            return;
+        }
 
-        if (roles.length > 0) {
-            roles.slice(0, 5).forEach(role => {
+        if (!query) {
+            roleResultsBox.classList.add("d-none");
+            return;
+        }
+
+        if (abortController) {
+            abortController.abort();
+        }
+
+        abortController = new AbortController();
+
+        try {
+            const res = await fetch(
+                `/api/creators/searchRole?roleName=${encodeURIComponent(query)}`,
+                {signal: abortController.signal});
+
+            const roles = await res.json();
+
+            if (roles.length > 0) {
+                roles.slice(0, 5).forEach(role => {
+                    const li = document.createElement("li");
+                    li.className = "list-group-item list-group-item-action";
+                    li.textContent = role.creatorRoleName;
+                    li.onclick = () => {
+                        document.getElementById("creatorRoleId").value = role.id;
+                        document.getElementById("creatorRole").value = role.creatorRoleName;
+                        roleSearchInput.value = role.creatorRoleName;
+                        roleResultsBox.innerHTML = "";
+                        roleResultsBox.classList.add("d-none");
+                    };
+                    roleResultsBox.appendChild(li);
+                });
+            } else {
                 const li = document.createElement("li");
-                li.className = "list-group-item list-group-item-action";
-                li.textContent = role.creatorRoleName;
-                li.onclick = () => {
-                    document.getElementById("creatorRoleId").value = role.id;
-                    document.getElementById("creatorRole").value = role.creatorRoleName;
-                    roleSearchInput.value = role.creatorRoleName;
-                    roleResultsBox.innerHTML = "";
-                    roleResultsBox.classList.add("d-none");
-                };
-                roleResultsBox.appendChild(li);
-            });
-        } else {
-            const li = document.createElement("li");
-            li.className = "list-group-item d-flex justify-content-between align-items-center text-muted";
-            li.innerHTML = `
+                li.className = "list-group-item d-flex justify-content-between align-items-center text-muted";
+                li.innerHTML = `
                 <span>No match found.</span>
                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="openNewRoleModal('${query}')">Add New</button>
             `;
-            roleResultsBox.appendChild(li);
-        }
+                roleResultsBox.appendChild(li);
+            }
 
-        roleResultsBox.classList.remove("d-none");
-    } catch (err) {
-        console.error("Role search failed:", err);
-        roleResultsBox.classList.add("d-none");
-    }
+            roleResultsBox.classList.remove("d-none");
+        } catch (err) {
+            console.error("Role search failed:", err);
+            roleResultsBox.classList.add("d-none");
+        }
+    }, 500)
+
 });
 
 // =============== ADD CREATOR WITH ROLE TO PREVIEW ===============
