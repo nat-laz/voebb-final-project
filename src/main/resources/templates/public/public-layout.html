@@ -15,17 +15,24 @@
   
   <div class="w-100 p-2 bg-primary">
     <div class="container">
-      <form th:action="@{/search}" method="GET">
-        <div class="d-flex mb-3" style="gap: 0.5rem;">
-          <div class="form-floating flex-grow-1">
+      <form th:action="@{/search}" method="GET" th:object="${productFilters}">
+        <div class="d-flex justify-content-center gap-3">
+          <div class="form-floating flex-grow-1" style="max-width: 400px">
             <input type="text" class="form-control" id="title" name="title"
-                   th:value="${title}" placeholder="Search for a product">
+                   th:field="*{title}" placeholder="Search for a product">
             <label for="title">Search</label>
           </div>
+          
+          <select class="form-select w-25" th:field="*{libraryId}">
+            <option th:value="''">All Libraries</option>
+            <option th:each="lib : ${libraries}"
+                    th:value="${lib.id}"
+                    th:text="${lib.district} + ': ' + ${lib.name}">Library</option>
+          </select>
+          
           <button type="submit" class="btn btn-secondary">Search</button>
         </div>
       </form>
-    
     </div>
   </div>
 </header>
