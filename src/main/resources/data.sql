@@ -69,13 +69,13 @@ SELECT SETVAL('products_product_id_seq', (SELECT MAX(product_id) FROM products))
 -- Book Details (for both physical books and e-books)
 INSERT INTO book_details (product_id, book_isbn, book_edition, book_pages)
 VALUES (1, '9780747532699', '1st Edition', 223),
-       (2, '9780747532699-E', 'Digital Edition', 223),
+       (2, '9780747532699', 'Digital Edition', 223),
        (3, '9780747538493', '1st Edition', 251),
-       (4, '9780747538493-E', 'Digital Edition', 251),
+       (4, '9780747538493', 'Digital Edition', 251),
        (5, '9780747542155', '1st Edition', 317),
-       (6, '9780747542155-E', 'Digital Edition', 317),
+       (6, '9780747542155', 'Digital Edition', 317),
        (7, '9780747546245', '1st Edition', 607),
-       (8, '9780747546245-E', 'Digital Edition', 607),
+       (8, '9780747546245', 'Digital Edition', 607),
        (9, '9780747595830', '1st Edition', 607),
        (10, '9781338216660', '1st Edition', 320),
        (11, '9781408880715', '1st Edition', 128)

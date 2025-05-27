@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,19 +89,38 @@ public class ProductServiceImpl implements ProductService {
     public Page<CardProductDTO> getProductCardsByTitle(String title, Pageable pageable) {
         Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
 
-        return page.map(product -> new CardProductDTO(
-                product.getId(),
-                product.getType().getName(),
-                product.getTitle(),
-                product.getReleaseYear(),
-                product.getPhoto(),
-                product.getProductLinkToEmedia(),
-                product.getCreatorProductRelations().stream()
-                        .filter(relation -> relation.getCreatorRole().getId().equals(product.getType().getMainCreatorRoleId()))
-                        .map(relation -> relation.getCreator().getFirstName() + " " + relation.getCreator().getLastName())
-                        .collect(Collectors.joining(", ")),
-                productItemService.getLocationsForAvailableItemsByProductId(product.getId())));
-    }
+        return page.map(product ->{
+            String isbn = null;
+            if (product.isBook() && product.getBookDetails() != null) {
+                isbn = product.getBookDetails().getIsbn();
+            }
+
+            String coverUrl;
+            if (StringUtils.hasText(isbn)) {
+                coverUrl = "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg";
+            } else {
+                coverUrl = "/images/default-book.jpg";
+            }
+
+            String mainCreator = product.getCreatorProductRelations().stream()
+                    .filter(relation -> relation.getCreatorRole().getId().equals(product.getType().getMainCreatorRoleId()))
+                    .map(relation -> relation.getCreator().getFirstName() + " " + relation.getCreator().getLastName())
+                    .collect(Collectors.joining(", "));
+
+            return new CardProductDTO(
+                    product.getId(),
+                    product.getType().getName(),
+                    product.getTitle(),
+                    product.getReleaseYear(),
+                    coverUrl,
+                    product.getProductLinkToEmedia(),
+                    mainCreator,
+                    productItemService.getLocationsForAvailableItemsByProductId(product.getId()),
+                    isbn
+            );
+        });
+        }
+
 
     @Override
     public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
