@@ -279,7 +279,8 @@ VALUES (1, 1, 'Shelf A-12'),
        (41, 5, 'Top Rack-9'),
        (42, 3, 'Lower Shelf-1'),
        (43, 4, 'Room 1-18'),
-       (44, 5, 'Top Rack-9')
+       (44, 5, 'Top Rack-9'),
+       (45, 2, 'Next to the Staff Desk')
 ON CONFLICT (item_id) DO NOTHING;
 
 --  ─────────── mock: BORROWINGS  ───────────

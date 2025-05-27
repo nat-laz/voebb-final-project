@@ -13,6 +13,59 @@
     
     <div th:replace="~{admin/fragments/_alerts :: alerts}"></div>
     
+    <div class="card border shadow-sm mb-4">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <strong>New Borrowing</strong>
+        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse"
+                data-bs-target="#createBorrowForm">
+          <i class="bi bi-plus-circle"></i> Show/Hide Borrow Form
+        </button>
+      </div>
+      
+      <div id="createBorrowForm" class="collapse">
+        <form th:action="@{/admin/borrowings}" method="post" class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="userIdForm" class="form-label">User ID</label>
+              <input type="text"
+                     name="userId"
+                     id="userIdForm"
+                     class="form-control"
+                     inputmode="numeric"
+                     pattern="[0-9]+"
+                     th:value="${userId}"
+                     placeholder="Enter User ID"
+                     required
+                     oninvalid="this.setCustomValidity('Please enter a valid numeric User ID')"
+                     oninput="this.setCustomValidity('')">
+            </div>
+            
+            <div class="col-md-6">
+              <label for="itemIdForm" class="form-label">Item ID</label>
+              <input type="text"
+                     name="itemId"
+                     id="itemIdForm"
+                     class="form-control"
+                     inputmode="numeric"
+                     pattern="[0-9]+"
+                     th:value="${itemId}"
+                     placeholder="Enter Item ID"
+                     required
+                     oninvalid="this.setCustomValidity('Please enter a valid numeric Item ID')"
+                     oninput="this.setCustomValidity('')">
+            </div>
+            
+            <div class="col-12 text-end">
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> Borrow
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    
     <form th:action="@{/admin/borrowings}" method="get" class="row g-3 align-items-end mb-4">
       <div class="col-md-3">
         <label for="userIdFilter" class="form-label">User ID</label>
@@ -39,7 +92,6 @@
       </div>
       
       <div class="col-md-3">
-        <label for="libraryIdFilter" class="form-label">Library</label>
         <select id="libraryIdFilter" name="libraryId" class="form-control">
           <option th:value="${null}" th:selected="${libraryId == null}">Filter by Library</option>
           <option th:each="lib : ${libraries}"
@@ -78,12 +130,19 @@
           
           <td class="text-nowrap">
             <div class="small text-muted" th:text="'ID: #' + ${borrow.userId}"></div>
-            <div  th:text="${borrow.customUserFullName}"></div>
+            <div th:text="${borrow.customUserFullName}"></div>
           </td>
           
-          <td class="text-nowrap">
+          <td class="text-nowrap" style="max-width: 220px;">
             <div class="small text-muted" th:text="'ID: #' + ${borrow.itemId}"></div>
-            <div  th:text="${borrow.itemTitle}"></div>
+            <div class="d-flex align-items-center gap-1">
+             <span class="text-truncate d-inline-block"
+                   style="max-width: 160px;"
+                   th:text="${borrow.itemTitle}"
+                   th:attr="data-bs-toggle='tooltip', title=${borrow.itemTitle}">
+</span>
+            
+            </div>
           </td>
           
           <td th:text="${borrow.startDate}"></td>
@@ -104,7 +163,7 @@
           <td class="text-end text-nowrap">
             <form th:action="@{/admin/borrowings/extend/{id}(id=${borrow.borrowId})}" method="post" class="d-inline">
               <button type="submit"
-                      class="btn btn-sm btn-primary me-1"
+                      class="btn btn-sm btn-info me-1"
                       th:disabled="${borrow.extendsCount >= 2}"
                       th:title="${borrow.extendsCount >= 2 ? 'Max extensions reached' : 'Extend Borrowing'}">
                 Extend

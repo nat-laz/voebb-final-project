@@ -1,5 +1,6 @@
 package com.example.voebb.controller.web.admin_panel;
 
+import com.example.voebb.model.dto.borrow.CreateBorrowDTO;
 import com.example.voebb.model.dto.borrow.GetBorrowingsDTO;
 import com.example.voebb.service.BorrowService;
 import com.example.voebb.service.LibraryService;
@@ -11,9 +12,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("admin/borrowings")
@@ -28,7 +28,7 @@ public class BorrowControllerAdmin {
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Long itemId,
             @RequestParam(required = false) Long libraryId,
-            @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+            @PageableDefault(size = 5,sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model,
             HttpServletRequest request
     ) {
@@ -43,6 +43,19 @@ public class BorrowControllerAdmin {
         model.addAttribute("requestURI", request.getRequestURI());
 
         return "admin/borrow/borrow-content";
+    }
+
+    @PostMapping
+    public String borrowItem(@ModelAttribute CreateBorrowDTO dto,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            borrowService.createBorrow(dto);
+            redirectAttributes.addFlashAttribute("success", "New borrow created successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/admin/borrowings";
     }
 
 }

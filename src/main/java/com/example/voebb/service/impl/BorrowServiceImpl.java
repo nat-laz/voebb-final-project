@@ -1,11 +1,15 @@
 package com.example.voebb.service.impl;
 
+import com.example.voebb.exception.*;
+import com.example.voebb.model.dto.borrow.CreateBorrowDTO;
 import com.example.voebb.model.dto.borrow.GetBorrowingsDTO;
 import com.example.voebb.model.entity.Borrow;
 import com.example.voebb.model.entity.CustomUser;
+import com.example.voebb.model.entity.ItemStatus;
 import com.example.voebb.model.entity.ProductItem;
 import com.example.voebb.repository.BorrowRepo;
 import com.example.voebb.repository.CustomUserRepo;
+import com.example.voebb.repository.ItemStatusRepo;
 import com.example.voebb.repository.ProductItemRepo;
 import com.example.voebb.service.BorrowService;
 import jakarta.transaction.Transactional;
@@ -21,22 +25,58 @@ import java.time.LocalDate;
 public class BorrowServiceImpl implements BorrowService {
 
     private final BorrowRepo borrowRepo;
-    private final CustomUserRepo customUserRepo;
-    private final ProductItemRepo productItemRepo;
+    private final CustomUserRepo userRepo;
+    private final ProductItemRepo itemRepo;
+    private final ItemStatusRepo statusRepo;
 
-    @Transactional
     @Override
-    public Borrow createBorrow(Long clientId, Long itemId) {
-        CustomUser customUser = customUserRepo.findById(clientId).orElseThrow();
-        ProductItem item = productItemRepo.findById(itemId).orElseThrow();
+    @Transactional
+    public void createBorrow(CreateBorrowDTO dto) {
 
-        Borrow b = new Borrow();
-        b.setCustomUser(customUser);
-        b.setItem(item);
-        b.setStartDate(LocalDate.now());
-        b.setDueDate(LocalDate.now().plusWeeks(2));
+        if (dto.userId() == null || dto.itemId() == null) {
+            throw new IllegalArgumentException("Both User ID and Item ID are required.");
+        }
 
-        return borrowRepo.save(b);
+        CustomUser user = userRepo.findById(dto.userId())
+                .orElseThrow(() -> new UserNotFoundException(dto.userId()));
+
+        ProductItem item = itemRepo.findById(dto.itemId())
+                .orElseThrow(() -> new ItemNotFoundException(dto.itemId()));
+
+        if (!item.getStatus().getName().equalsIgnoreCase("available")) {
+            throw new ItemNotAvailableException(item.getProduct().getTitle(), item.getId(), item.getStatus().getName());
+        }
+
+        if (user.getBorrowedBooksCount() >= 5) {
+            throw new UserBorrowLimitExceededException(user.getId(), user.getFirstName(), user.getLastName());
+        }
+
+        if (item.getProduct() == null || item.getProduct().getType() == null) {
+            throw new IllegalStateException("Item's product or product type is not properly set.");
+        }
+
+        int borrowDurationDays = item.getProduct().getType().getBorrowDurationDays();
+
+        LocalDate startDate = LocalDate.now();
+        LocalDate dueDate = startDate.plusDays(borrowDurationDays);
+
+        Borrow borrow = new Borrow();
+        borrow.setCustomUser(user);
+        borrow.setItem(item);
+        borrow.setStartDate(startDate);
+        borrow.setDueDate(dueDate);
+        borrow.setExtendsCount(0);
+
+        borrowRepo.save(borrow);
+
+        ItemStatus borrowedStatus = statusRepo.findByNameIgnoreCase("borrowed")
+                .orElseThrow(() -> new ItemStatusNotFoundException("borrowed"));
+        item.setStatus(borrowedStatus);
+        itemRepo.save(item);
+
+        user.setBorrowedBooksCount(user.getBorrowedBooksCount() + 1);
+        userRepo.save(user);
+
     }
 
     @Override

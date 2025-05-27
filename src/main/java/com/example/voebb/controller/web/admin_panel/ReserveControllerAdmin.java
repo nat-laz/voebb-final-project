@@ -29,7 +29,7 @@ public class ReserveControllerAdmin {
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Long itemId,
             @RequestParam(required = false) Long libraryId,
-            @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+            @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model,
             HttpServletRequest request
     ) {
