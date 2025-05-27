@@ -3,6 +3,7 @@ package com.example.voebb.controller.web.admin_panel;
 import com.example.voebb.model.dto.product.CreateProductDTO;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,12 +30,14 @@ public class ProductControllerAdmin {
     @GetMapping
     public String getAllProducts(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                  Model model,
+                                 HttpServletRequest request,
                                  @RequestParam(value = "success", required = false) String success) {
 
         Page<Product> page = productService.getAllProducts(pageable);
         model.addAttribute("page", page);
         model.addAttribute("products", page.getContent());
         model.addAttribute("countries", countryService.getAllCountries());
+        model.addAttribute("requestURI", request.getRequestURI());
 
         if (success != null && !success.isBlank()) {
             model.addAttribute("success", success);

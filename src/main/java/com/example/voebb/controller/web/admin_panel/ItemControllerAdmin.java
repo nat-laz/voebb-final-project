@@ -9,6 +9,7 @@ import com.example.voebb.service.LibraryService;
 import com.example.voebb.service.ProductItemService;
 import com.example.voebb.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,10 +34,12 @@ public class ItemControllerAdmin {
     @GetMapping
     public String getAllItems(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                               Model model,
+                              HttpServletRequest request,
                               @RequestParam(value = "success", required = false) String success,
                               @RequestParam(value = "error", required = false) String error) {
 
         populateItemPageAndModels(model, pageable);
+        model.addAttribute("requestURI", request.getRequestURI());
 
         if (success != null) model.addAttribute("success", success);
         if (error != null) model.addAttribute("error", error);
