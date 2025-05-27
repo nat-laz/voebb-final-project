@@ -134,14 +134,22 @@
           </td>
           
           <td class="text-nowrap" style="max-width: 220px;">
-            <div class="small text-muted" th:text="'ID: #' + ${borrow.itemId}"></div>
-            <div class="d-flex align-items-center gap-1">
-             <span class="text-truncate d-inline-block"
-                   style="max-width: 160px;"
-                   th:text="${borrow.itemTitle}"
-                   th:attr="data-bs-toggle='tooltip', title=${borrow.itemTitle}">
-</span>
+            <div class="small text-muted d-flex align-items-center gap-2">
+              
+              <span th:text="'ID: #' + ${borrow.itemId}"></span>
+              
+              <span class="badge bg-light"
+                    th:text="${borrow.productType}"
+                    title="Product Type">
+              </span>
+            </div>
             
+            <div class="d-flex align-items-center gap-1">
+              <span class="text-truncate d-inline-block"
+                    style="max-width: 160px;"
+                    th:text="${borrow.itemTitle}"
+                    th:attr="data-bs-toggle='tooltip', title=${borrow.itemTitle}">
+              </span>
             </div>
           </td>
           

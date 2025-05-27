@@ -46,6 +46,12 @@ public class GlobalExceptionHandler {
         return getRedirectPathFromRequest(request);
     }
 
+    @ExceptionHandler(BorrowNotFoundException.class)
+    public String handleBorrowNotFoundException(RuntimeException ex, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        return getRedirectPathFromRequest(request);
+    }
+
     private String getRedirectPathFromRequest(HttpServletRequest request) {
         String uri = request.getRequestURI();
         if (uri.contains("/borrowings")) {

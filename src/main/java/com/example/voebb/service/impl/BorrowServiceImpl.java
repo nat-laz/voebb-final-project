@@ -89,6 +89,7 @@ public class BorrowServiceImpl implements BorrowService {
                 dto.customUserFullName(),
                 dto.itemId(),
                 dto.itemTitle(),
+                dto.productType(),
                 dto.startDate(),
                 dto.dueDate(),
                 dto.returnDate(),
@@ -96,6 +97,39 @@ public class BorrowServiceImpl implements BorrowService {
                 calculateBorrowStatus(dto.dueDate(), dto.returnDate())
         ));
     }
+
+    @Override
+    @Transactional
+    public String returnBorrow(Long borrowId) {
+        Borrow borrow = borrowRepo.findById(borrowId)
+                .orElseThrow(() -> new BorrowNotFoundException(borrowId));
+
+        if (borrow.getReturnDate() != null) {
+            throw new IllegalStateException("This item is already returned.");
+        }
+
+
+        borrow.setReturnDate(LocalDate.now());
+        borrowRepo.save(borrow);
+
+        ProductItem item = borrow.getItem();
+        ItemStatus availableStatus = statusRepo.findByNameIgnoreCase("available")
+                .orElseThrow(() -> new ItemStatusNotFoundException("available"));
+        item.setStatus(availableStatus);
+        itemRepo.save(item);
+
+        CustomUser user = borrow.getCustomUser();
+
+        user.setBorrowedBooksCount(Math.max(0, user.getBorrowedBooksCount() - 1));
+
+        userRepo.save(user);
+
+        String userFullName = user.getFirstName() + " " + user.getLastName();
+        String productTitle = item.getProduct().getTitle();
+        return "User with ID: [#" + user.getId() + "] " + userFullName + " successfully returned the item \"" + productTitle + "\".";
+    }
+
+
 
     private String calculateBorrowStatus(LocalDate dueDate, LocalDate returnDate) {
         if (returnDate != null) return "Returned";

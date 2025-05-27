@@ -230,7 +230,9 @@ VALUES (1, 1, 1),
        (42, 11, 4),
        (43, 11, 5),
        (44, 11, 5),
-       (45, 13, 5)
+       (45, 13, 5),
+       (46, 13, 1),
+       (47, 13, 1)
 ON CONFLICT (item_id) DO NOTHING;
 SELECT SETVAL('product_items_item_id_seq', (SELECT MAX(item_id) FROM product_items));
 
@@ -280,7 +282,9 @@ VALUES (1, 1, 'Shelf A-12'),
        (42, 3, 'Lower Shelf-1'),
        (43, 4, 'Room 1-18'),
        (44, 5, 'Top Rack-9'),
-       (45, 2, 'Next to the Staff Desk')
+       (45, 2, 'Next to the Staff Desk'),
+       (46, 1, 'Main Library at the Entrance'),
+       (47, 3, 'Top Rack-6')
 ON CONFLICT (item_id) DO NOTHING;
 
 --  ─────────── mock: BORROWINGS  ───────────

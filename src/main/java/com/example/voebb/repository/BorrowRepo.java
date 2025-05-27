@@ -19,6 +19,7 @@ public interface BorrowRepo extends JpaRepository<Borrow, Long> {
                     CONCAT(u.firstName, ' ', u.lastName),
                     i.id,
                     p.title,
+                    p.type.name,
                     b.startDate,
                     b.dueDate,
                     b.returnDate,
@@ -41,4 +42,5 @@ public interface BorrowRepo extends JpaRepository<Borrow, Long> {
             @Param("libraryId") Long libraryId,
             Pageable pageable
     );
+
 }

@@ -8,6 +8,7 @@ public record GetBorrowingsDTO(
         String customUserFullName,
         Long itemId,
         String itemTitle,
+        String productType,
         LocalDate startDate,
         LocalDate dueDate,
         LocalDate returnDate,
