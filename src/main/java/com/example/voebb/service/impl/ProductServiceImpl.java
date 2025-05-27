@@ -99,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.hasText(isbn)) {
                 coverUrl = "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg";
             } else {
-                coverUrl = "/images/default-book.jpg";
+                coverUrl = product.getType().getDefaultCoverUrl();
             }
 
             String mainCreator = product.getCreatorProductRelations().stream()

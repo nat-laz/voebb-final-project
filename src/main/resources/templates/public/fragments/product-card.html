@@ -1,44 +1,44 @@
-<div class="card mb-3" th:fragment="card(card)" style="width: 50rem;">
-    <div class="card-header" th:text="'id: ' + ${card.id}"></div>
+<div class="card mb-3" th:fragment="card(cardProductDTO)" style="width: 50rem;">
+    <div class="card-header" th:text="'id: ' + ${cardProductDTO.id}"></div>
     <div class="card-body">
         
         <!-- ✅ Book Cover Image -->
         <div style="text-align: center;">
-            <img th:src="${card.photo}"
+            <img th:src="${cardProductDTO.photo}"
                  alt="Book cover"
                  style="max-height: 250px; object-fit: contain; margin-bottom: 1rem;"
                  onerror="this.onerror=null; this.src='/images/default-book.jpg';" />
         </div>
         
-        <a th:href="@{/products/{id}(id=${card.id})}"
+        <a th:href="@{/products/{id}(id=${cardProductDTO.id})}"
            style="text-decoration: none; color: inherit;">
-            <h4 class="card-title" th:text="${card.title}"></h4>
+            <h4 class="card-title" th:text="${cardProductDTO.title}"></h4>
         </a>
         
         <p class="card-text"
-           th:if="${card.mainCreators != null}"
-           th:text="${card.mainCreators}"></p>
+           th:if="${cardProductDTO.mainCreators != null}"
+           th:text="${cardProductDTO.mainCreators}"></p>
         
-        <p class="card-text" th:text="'productType: ' + ${card.productType}"></p>
+        <p class="card-text" th:text="'productType: ' + ${cardProductDTO.productType}"></p>
         
         <!-- Accordion -->
-        <div class="accordion" th:id="'accordionProduct__' + ${card.id}">
+        <div class="accordion" th:id="'accordionProduct__' + ${cardProductDTO.id}">
             <div class="accordion-item">
-                <h2 class="accordion-header" th:id="'headerLibrary__' + ${card.id}">
+                <h2 class="accordion-header" th:id="'headerLibrary__' + ${cardProductDTO.id}">
                     <button class="accordion-button collapsed"
                             type="button"
                             data-bs-toggle="collapse"
-                            th:data-bs-target="'#collapseLibrary__' + ${card.id}"
-                            th:aria-controls="'collapseLibrary__' + ${card.id}"
-                            th:text="'Available in ' + ${card.locations.size()} + ' ' + (${card.locations.size() == 1} ? 'library' : 'libraries')">
+                            th:data-bs-target="'#collapseLibrary__' + ${cardProductDTO.id}"
+                            th:aria-controls="'collapseLibrary__' + ${cardProductDTO.id}"
+                            th:text="'Available in ' + ${cardProductDTO.locations.size()} + ' ' + (${cardProductDTO.locations.size() == 1} ? 'library' : 'libraries')">
                         Locations
                     </button>
                 </h2>
                 <div class="accordion-collapse collapse"
-                     th:id="'collapseLibrary__' + ${card.id}"
-                     th:attr="aria-labelledby='headerLibrary__' + ${card.id}">
+                     th:id="'collapseLibrary__' + ${cardProductDTO.id}"
+                     th:attr="aria-labelledby='headerLibrary__' + ${cardProductDTO.id}">
                     <div class="accordion-body">
-                        <div th:each="location : ${card.locations}">
+                        <div th:each="location : ${cardProductDTO.locations}">
                             <p th:text="'Location: ' + ${location.district} + ', ' + ${location.libraryName} + ', available items: ' + ${location.itemsCount}"></p>
                         </div>
                     </div>

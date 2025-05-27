@@ -8,10 +8,10 @@ ON CONFLICT (creator_role_id) DO NOTHING;
 SELECT SETVAL('creator_roles_creator_role_id_seq', (SELECT MAX(creator_role_id) FROM creator_roles));
 
 -- Product types
-INSERT INTO product_types (product_type_id, name, main_creator_role_id)
-VALUES (1, 'book', 1),
-       (2, 'ebook', 1),
-       (3, 'DVD', 4)
+INSERT INTO product_types (product_type_id, name, main_creator_role_id, default_cover_url)
+VALUES (1, 'book', 1,'/images/default-book.jpg' ),
+       (2, 'ebook', 1, '/images/default-ebook.jpg'),
+       (3, 'DVD', 4, '/images/default-dvd.jpg')
 ON CONFLICT (product_type_id) DO NOTHING;
 SELECT SETVAL('product_types_product_type_id_seq', (SELECT MAX(product_type_id) FROM product_types));
 
