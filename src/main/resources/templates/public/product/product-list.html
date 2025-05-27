@@ -15,7 +15,7 @@
           box-shadow: 0 4px 20px rgba(13, 110, 253, 0.3);
           transform: translateY(-2px);
       }
-      
+
       .page-wrapper {
           width: 100vw;
           min-height: 100vh;
@@ -37,10 +37,10 @@
       }
 
       .filters-sidebar {
-          flex-shrink: 1;       /* allow sidebar to shrink if needed */
-          flex-grow: 0;         /* no growing */
-          max-width: 300px;     /* limit max width */
-          width: 100%;          /* default to full width of its container */
+          flex-shrink: 1; /* allow sidebar to shrink if needed */
+          flex-grow: 0; /* no growing */
+          max-width: 300px; /* limit max width */
+          width: 100%; /* default to full width of its container */
           margin-right: 20px;
           background-color: #f9f9f9;
           border: 1px solid #ddd;
@@ -66,26 +66,44 @@
     transform: translateY(-50%);
     width: 250px;
     margin-right: 20px;
-    height: fit-content;
-">
+    height: fit-content;">
+      
       <h5>Filters</h5>
-      <form>
-        <div class="mb-3">
-          <label for="productType" class="form-label">Product Type</label>
-          <select id="productType" name="productType" class="form-select">
-            <option value="">All</option>
-            <option value="Book">Book</option>
-            <option value="DVD">DVD</option>
-          </select>
-        </div>
-        
-        <div class="mb-3">
-          <label for="creator" class="form-label">Creator</label>
-          <input type="text" id="creator" name="creator" class="form-control">
-        </div>
-        
-        <button type="submit" class="btn btn-primary w-100">Apply</button>
-      </form>
+      <div class="mb-3">
+        <label for="productType" class="form-label">Product Type</label>
+        <select id="productType" name="productType" class="form-select">
+          <option value="">All</option>
+          <option th:each="type : ${productTypes}"
+                  th:value="${type.id}"
+                  th:text="${type.name}">Type
+          </option>
+        </select>
+      </div>
+      
+      <div class="mb-3">
+        <label for="creator" class="form-label">Creator</label>
+        <input type="text" id="creator" name="creator" class="form-control">
+      </div>
+      
+      <div class="dropdown w-100 mb-3">
+        <label for="dropdownMenuButton" class="form-label">Library</label>
+        <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          Select Library
+        </button>
+        <ul class="dropdown-menu mt-2 shadow-lg" aria-labelledby="dropdownMenuButton"
+            style="max-height: 200px; overflow-y: auto;">
+          <li><a class="dropdown-item" href="#" data-value="">All Libraries</a></li>
+          <li th:each="lib : ${libraries}">
+            <a class="dropdown-item" href="#"
+               th:text="${lib.district} + ': ' + ${lib.name}"
+               th:attr="data-value=${lib.id}"></a>
+          </li>
+        </ul>
+      </div>
+      
+      <button type="submit" class="btn btn-primary w-100">Apply</button>
     </aside>
     
     <div class="cards-container d-flex container align-items-stretch">
@@ -105,7 +123,7 @@
     </div>
   
   </div>
-  
+
 </main>
 
 
