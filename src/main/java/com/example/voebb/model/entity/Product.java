@@ -79,6 +79,10 @@ public class Product {
         creatorProductRelation.setProduct(this);
     }
     public String getPhoto() {
+        if(photo != null && !photo.isBlank()){
+            return photo;
+        }
+
         if (this.isBook() && bookDetails != null) {
             String isbn = bookDetails.getIsbn();
             if (isbn != null && !isbn.isBlank()) {
