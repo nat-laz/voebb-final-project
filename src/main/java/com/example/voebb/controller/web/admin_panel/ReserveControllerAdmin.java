@@ -30,8 +30,7 @@ public class ReserveControllerAdmin {
             @RequestParam(required = false) Long itemId,
             @RequestParam(required = false) Long libraryId,
             @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-            Model model,
-            HttpServletRequest request
+            Model model
     ) {
         Page<GetReservationDTO> page = reservationService.getFilteredReservations(userId, itemId, libraryId, pageable);
 
@@ -41,7 +40,6 @@ public class ReserveControllerAdmin {
         model.addAttribute("itemIdFilter", itemId);
         model.addAttribute("libraryId", libraryId);
         model.addAttribute("libraries", libraryService.getAllLibraries());
-        model.addAttribute("requestURI", request.getRequestURI());
 
         return "admin/reservations/reservation-content";
     }

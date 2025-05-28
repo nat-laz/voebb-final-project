@@ -4,7 +4,6 @@ import com.example.voebb.model.dto.borrow.CreateBorrowDTO;
 import com.example.voebb.model.dto.borrow.GetBorrowingsDTO;
 import com.example.voebb.service.BorrowService;
 import com.example.voebb.service.LibraryService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +28,7 @@ public class BorrowControllerAdmin {
             @RequestParam(required = false) Long itemId,
             @RequestParam(required = false) Long libraryId,
             @PageableDefault(size = 5,sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-            Model model,
-            HttpServletRequest request
+            Model model
     ) {
         Page<GetBorrowingsDTO> page = borrowService.getFilteredBorrowings(userId, itemId, libraryId, pageable);
 
@@ -40,7 +38,6 @@ public class BorrowControllerAdmin {
         model.addAttribute("itemIdFilter", itemId);
         model.addAttribute("libraryId", libraryId);
         model.addAttribute("libraries", libraryService.getAllLibraries());
-        model.addAttribute("requestURI", request.getRequestURI());
 
         return "admin/borrow/borrow-content";
     }

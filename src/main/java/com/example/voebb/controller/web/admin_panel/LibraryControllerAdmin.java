@@ -4,7 +4,6 @@ import com.example.voebb.model.dto.library.CreateLibraryDTO;
 import com.example.voebb.model.dto.library.EditLibraryDTO;
 import com.example.voebb.model.dto.library.LibraryDTO;
 import com.example.voebb.service.LibraryService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +21,10 @@ public class LibraryControllerAdmin {
 
     @GetMapping
     public String getIndexPage(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-                               Model model,
-                               HttpServletRequest request) {
+                               Model model) {
         Page<LibraryDTO> page = libraryService.getAllLibraries(pageable);
         model.addAttribute("page", page);
         model.addAttribute("libraries", page.getContent());
-        model.addAttribute("requestURI", request.getRequestURI());
         return "admin/library/index";
     }
 

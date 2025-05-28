@@ -21,9 +21,9 @@ public class UserControllerAdmin {
 
     // TODO: get paginated Users
     @GetMapping
-    public String listUsers(Model model, HttpServletRequest request) {
+    public String listUsers(Model model) {
         model.addAttribute("userDTOs", customUserService.getAllUsers());
-        model.addAttribute("requestURI", request.getRequestURI());
+
         return "admin/user/user-management";
     }
 

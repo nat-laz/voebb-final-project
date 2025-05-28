@@ -12,34 +12,34 @@
       <ul class="nav nav-underline me-auto">
         <li class="nav-item">
           <a class="nav-link text-white pb-0"
-             th:classappend="${requestURI.startsWith('/admin/users')} ? ' active border-bottom border-white' : ''"
+             th:classappend="${requestURI != null and requestURI.startsWith('/admin/users')} ? ' active border-bottom border-white' : ''"
              href="/admin/users">Users</a>
         
         </li>
         <li class="nav-item">
           <a class="nav-link text-white  pb-0"
-             th:classappend="${requestURI.startsWith('/admin/libraries')} ? ' active border-bottom border-white' : ''"
+             th:classappend="${requestURI != null and requestURI.startsWith('/admin/libraries')} ? ' active border-bottom border-white' : ''"
              href="/admin/libraries">Libraries</a>
         
         </li>
         <li class="nav-item">
           <a class="nav-link text-white  pb-0"
-             th:classappend="${requestURI.startsWith('/admin/products')} ? ' active  border-bottom border-white' : ''"
+             th:classappend="${requestURI != null and requestURI.startsWith('/admin/products')} ? ' active  border-bottom border-white' : ''"
              href="/admin/products">Products</a>
         </li>
         <li class="nav-item">
           <a class="nav-link text-white  pb-0"
-             th:classappend="${requestURI.startsWith('/admin/items')} ? ' active border-bottom border-white' : ''"
+             th:classappend="${requestURI != null and requestURI.startsWith('/admin/items')} ? ' active border-bottom border-white' : ''"
              href="/admin/items">Items</a>
         </li>
         <li class="nav-item">
           <a class="nav-link text-white  pb-0"
-             th:classappend="${requestURI.startsWith('/admin/borrowings')} ? ' active  border-bottom border-white' : ''"
+             th:classappend="${requestURI != null and requestURI.startsWith('/admin/borrowings')} ? ' active  border-bottom border-white' : ''"
              href="/admin/borrowings">Borrowings</a>
         </li>
         <li class="nav-item">
           <a class="nav-link text-white  pb-0"
-             th:classappend="${requestURI.startsWith('/admin/reservations')} ? ' active border-bottom border-white' : ''"
+             th:classappend="${requestURI != null and requestURI.startsWith('/admin/reservations')} ? ' active border-bottom border-white' : ''"
              href="/admin/reservations">Reservations</a>
         </li>
       </ul>
