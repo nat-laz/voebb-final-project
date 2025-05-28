@@ -59,6 +59,7 @@
 
 <main layout:fragment="content">
   <div class="page-wrapper d-flex">
+    
     <aside class="filters-sidebar card p-4"
            style="
     position: sticky;
@@ -69,47 +70,84 @@
     height: fit-content;">
       
       <h5>Filters</h5>
-      <div class="mb-3">
-        <label for="productType" class="form-label">Product Type</label>
-        <select id="productType" name="productType" class="form-select">
-          <option value="">All</option>
-          <option th:each="type : ${productTypes}"
-                  th:value="${type.id}"
-                  th:text="${type.name}">Type
-          </option>
-        </select>
-      </div>
       
-      <div class="mb-3">
-        <label for="creator" class="form-label">Creator</label>
-        <input type="text" id="creator" name="creator" class="form-control">
-      </div>
+      <hr style="border: none; height: 1px; background-color: black;"/>
       
-      <div class="dropdown w-100 mb-3">
-        <label for="dropdownMenuButton" class="form-label">Library</label>
-        <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton"
+      <label for="productTypeDropdown" class="form-label">Product Type</label>
+      <div class="dropdown w-auto" id="productTypeDropdown">
+        <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
+                id="productTypeDropdownButton"
                 data-bs-toggle="dropdown" aria-expanded="false"
                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          Select Library
+          All
         </button>
-        <ul class="dropdown-menu mt-2 shadow-lg" aria-labelledby="dropdownMenuButton"
+        <ul class="dropdown-menu mt-2 shadow-lg" aria-labelledby="productTypeDropdownButton"
             style="max-height: 200px; overflow-y: auto;">
-          <li><a class="dropdown-item" href="#" data-value="">All Libraries</a></li>
-          <li th:each="lib : ${libraries}">
-            <a class="dropdown-item" href="#"
-               th:text="${lib.district} + ': ' + ${lib.name}"
-               th:attr="data-value=${lib.id}"></a>
+          <li><a class="dropdown-item" data-value="">All</a></li>
+          <li th:each="type : ${productTypes}">
+            <a class="dropdown-item"
+               th:text="${type.name}"
+               th:attr="data-value=${type.id}"></a>
           </li>
         </ul>
       </div>
       
-      <button type="submit" class="btn btn-primary w-100">Apply</button>
+      <hr style="border: none; height: 1px; background-color: black;"/>
+      
+      <div>
+        <label for="creator" class="form-label">Creator</label>
+        <input type="text" id="creator" name="creator" class="form-control" th:value="${productFilters.author}">
+      </div>
+      
+      <hr style="border: none; height: 1px; background-color: black;"/>
+      
+      <label for="languageDropdown" class="form-label">Product language</label>
+      <div class="dropdown w-auto" id="languageDropdown">
+        <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
+                id="languageDropdownButton"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          All
+        </button>
+        <ul class="dropdown-menu mt-2 shadow-lg" aria-labelledby="languageDropdownButton"
+            style="max-height: 200px; overflow-y: auto;">
+          <li><a class="dropdown-item" data-value="">All</a></li>
+          <li th:each="language : ${productLanguages}">
+            <a class="dropdown-item"
+               th:text="${language.name}"
+               th:attr="data-value=${language.id}"></a>
+          </li>
+        </ul>
+      </div>
+      
+      <hr style="border: none; height: 1px; background-color: black;"/>
+      
+      <label for="countryDropdown" class="form-label">Product country</label>
+      <div class="dropdown w-auto" id="countryDropdown">
+        <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
+                id="countryDropdownButton"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          All
+        </button>
+        <ul class="dropdown-menu mt-2 shadow-lg" aria-labelledby="countryDropdownButton"
+            style="max-height: 200px; overflow-y: auto;">
+          <li><a class="dropdown-item" data-value="">All</a></li>
+          <li th:each="country : ${productCountries}">
+            <a class="dropdown-item"
+               th:text="${country.name}"
+               th:attr="data-value=${country.id}"></a>
+          </li>
+        </ul>
+      </div>
+      
+      <hr style="border: none; height: 1px; background-color: black;"/>
+      
+      <button id="applyFiltersBtn" class="btn btn-primary w-100 m-1">Apply filters</button>
+      <button id="resetFiltersBtn" class="btn btn-danger w-100 m-1">Reset filters</button>
     </aside>
     
     <div class="cards-container d-flex container align-items-stretch">
-      <!-- Filters -->
-      
-      
       <!-- Card List -->
       <div class="flex-fill">
         <div th:replace="~{public/fragments/search-by-title-pagination:: pagination}"></div>
@@ -123,9 +161,7 @@
     </div>
   
   </div>
-
+  <script th:src="@{/js/product/synchronizeProductFiltersAndHiddenInput.js}"></script>
 </main>
-
-
 </body>
 </html>

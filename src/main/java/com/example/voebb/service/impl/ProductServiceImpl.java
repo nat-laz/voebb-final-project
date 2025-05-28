@@ -68,8 +68,8 @@ public class ProductServiceImpl implements ProductService {
 
         List<CreatorWithRoleDTO> validCreators = dto.getCreators().stream()
                 .filter(creator -> creator != null &&
-                        creator.getLastName() != null && !creator.getLastName().isBlank() &&
-                        creator.getRole() != null && !creator.getRole().isBlank())
+                                   creator.getLastName() != null && !creator.getLastName().isBlank() &&
+                                   creator.getRole() != null && !creator.getRole().isBlank())
                 .toList();
 
         if (validCreators.isEmpty()) {
@@ -86,10 +86,17 @@ public class ProductServiceImpl implements ProductService {
         System.out.println("title - " + filters.getTitle());
         System.out.println("author - " + filters.getAuthor());
         System.out.println("libraryId - " + filters.getLibraryId());
+        System.out.println("type - " + filters.getProductType());
+        System.out.println("language - " + filters.getLanguageId());
+        System.out.println("country - " + filters.getCountryId());
+
         Page<Product> page = productRepo.searchWithFilters(
                 filters.getTitle(),
-                filters.getLibraryId(),
                 filters.getAuthor(),
+                filters.getLibraryId(),
+                filters.getProductType(),
+                filters.getLanguageId(),
+                filters.getCountryId(),
                 pageable);
 
         return page.map(product -> new CardProductDTO(
@@ -108,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
-        Page<Product> page = productRepo.searchWithFilters(title, null, null, pageable);
+        Page<Product> page = productRepo.searchWithFilters(title, null, null, null, null, null, pageable);
         return page.map(ProductMapper::toProductInfoDTO);
     }
 
@@ -161,6 +168,16 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Product not found");
         }
         productRepo.deleteById(productId);
+    }
+
+    // TODO: Ask help (isn't working properly)
+    private void normalizeFilters(ProductFilters filters) {
+        if (filters.getTitle().isBlank()) {
+            filters.setTitle(null);
+        }
+        if (filters.getAuthor().isBlank()) {
+            filters.setAuthor(null);
+        }
     }
 
 }
