@@ -22,9 +22,7 @@
           display: flex;
           justify-content: center; /* center cards container */
           align-items: flex-start;
-          padding: 20px;
           box-sizing: border-box;
-          gap: 20px; /* spacing between sidebar and cards */
       }
 
 
@@ -35,40 +33,24 @@
           align-items: center;
           flex-shrink: 0; /* don't shrink */
       }
-
+      
       .filters-sidebar {
-          flex-shrink: 1; /* allow sidebar to shrink if needed */
-          flex-grow: 0; /* no growing */
-          max-width: 300px; /* limit max width */
-          width: 100%; /* default to full width of its container */
-          margin-right: 20px;
-          background-color: #f9f9f9;
-          border: 1px solid #ddd;
-          padding: 20px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          height: 100vh;
+          width: 250px;
+          height: fit-content;
+          position: fixed;
+          left: 15px;
+          top: 160px;
+          bottom: 0;
           box-sizing: border-box;
       }
-  
   </style>
 
 </head>
 <body>
 
-<main layout:fragment="content">
+<div layout:fragment="content">
   <div class="page-wrapper d-flex">
-    
-    <aside class="filters-sidebar card p-4"
-           style="
-    position: sticky;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 250px;
-    margin-right: 20px;
-    height: fit-content;">
-      
+    <aside class="filters-sidebar card p-3">
       <h5>Filters</h5>
       
       <hr style="border: none; height: 1px; background-color: black;"/>
@@ -147,10 +129,9 @@
       <button id="resetFiltersBtn" class="btn btn-danger w-100 m-1">Reset filters</button>
     </aside>
     
-    <div class="cards-container d-flex container align-items-stretch">
+    <main class="cards-container d-flex container align-items-stretch mt-3">
       <!-- Card List -->
       <div class="flex-fill">
-        <div th:replace="~{public/fragments/search-by-title-pagination:: pagination}"></div>
         
         <div th:each="cardProductDTO : ${cardProductDTOs}" class="d-flex justify-content-center mb-4">
           <a th:replace="~{public/fragments/product-card :: card(${cardProductDTO})}"></a>
@@ -158,10 +139,10 @@
         
         <div th:replace="~{public/fragments/search-by-title-pagination:: pagination}"></div>
       </div>
-    </div>
+    </main>
   
   </div>
   <script th:src="@{/js/product/synchronizeProductFiltersAndHiddenInput.js}"></script>
-</main>
+</div>
 </body>
 </html>
