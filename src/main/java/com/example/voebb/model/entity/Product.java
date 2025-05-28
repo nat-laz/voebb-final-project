@@ -78,5 +78,15 @@ public class Product {
         creatorProductRelations.add(creatorProductRelation);
         creatorProductRelation.setProduct(this);
     }
+    public String getPhoto() {
+        if (this.isBook() && bookDetails != null) {
+            String isbn = bookDetails.getIsbn();
+            if (isbn != null && !isbn.isBlank()) {
+                return "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg";
+            }
+        }
+        return null;
+    }
+
 
 }

@@ -14,11 +14,16 @@
     <!-- General Product Info -->
     <div class="container mt-4">
         <h4>General info</h4>
+        <img th:src="${productInfoDTO.photo != null && !#strings.isEmpty(productInfoDTO.photo)
+                ? productInfoDTO.photo
+                : productInfoDTO.defaultPhoto}"
+             alt="Product Cover Photo"
+             style="max-width: 300px; height: auto; margin-bottom: 1rem;" />
         <p th:text="'Title: ' + ${productInfoDTO.title}"></p>
         <p th:text="'Id: ' + ${productInfoDTO.id}"></p>
         <p th:text="'Type: ' + ${productInfoDTO.productType}"></p>
         <p th:text="'Release: ' + ${productInfoDTO.releaseYear}"></p>
-        <p th:text="'Photo: ' + ${productInfoDTO.photo}"></p>
+        
         <p th:text="'Description: ' + ${productInfoDTO.description}"></p>
         <p th:text="'Link: ' + ${productInfoDTO.productLinkToEmedia}"></p>
     </div>

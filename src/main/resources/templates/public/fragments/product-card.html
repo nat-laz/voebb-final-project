@@ -4,19 +4,17 @@
         
         <!-- ✅ Book Cover Image -->
         <div style="text-align: center;">
-            <img th:src="${cardProductDTO.photo}"
+            <img th:src="${cardProductDTO.photo != null ? cardProductDTO.photo : cardProductDTO.defaultPhoto}"
                  alt="Book cover"
                  style="max-height: 250px; object-fit: contain; margin-bottom: 1rem;"
-                 onerror="this.onerror=null; this.src='/images/default-book.jpg';" />
+                 th:attr="onerror='this.onerror=null; this.src=\'' + ${cardProductDTO.defaultPhoto} + '\';'" />
+        
         </div>
         
         <a th:href="@{/products/{id}(id=${cardProductDTO.id})}"
            style="text-decoration: none; color: inherit;">
             <h4 class="card-title" th:text="${cardProductDTO.title}"></h4>
         </a>
-        <p class="card-text"
-           th:if="${cardProductDTO.isbn != null}"
-           th:text="'ISBN: ' + ${cardProductDTO.isbn}"></p>
         
         <p class="card-text"
            th:if="${cardProductDTO.mainCreators != null}"

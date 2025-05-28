@@ -89,19 +89,7 @@ public class ProductServiceImpl implements ProductService {
     public Page<CardProductDTO> getProductCardsByTitle(String title, Pageable pageable) {
         Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
 
-        return page.map(product ->{
-            String isbn = null;
-            if (product.isBook() && product.getBookDetails() != null) {
-                isbn = product.getBookDetails().getIsbn();
-            }
-
-            String coverUrl;
-            if (StringUtils.hasText(isbn)) {
-                coverUrl = "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg";
-            } else {
-                coverUrl = product.getType().getDefaultCoverUrl();
-            }
-
+        return page.map(product -> {
             String mainCreator = product.getCreatorProductRelations().stream()
                     .filter(relation -> relation.getCreatorRole().getId().equals(product.getType().getMainCreatorRoleId()))
                     .map(relation -> relation.getCreator().getFirstName() + " " + relation.getCreator().getLastName())
@@ -112,20 +100,33 @@ public class ProductServiceImpl implements ProductService {
                     product.getType().getName(),
                     product.getTitle(),
                     product.getReleaseYear(),
-                    coverUrl,
+                    product.getPhoto(),
+                    product.getType().getDefaultCoverUrl(),
                     product.getProductLinkToEmedia(),
                     mainCreator,
-                    productItemService.getLocationsForAvailableItemsByProductId(product.getId()),
-                    isbn
+                    productItemService.getLocationsForAvailableItemsByProductId(product.getId())
             );
         });
-        }
+    }
 
 
     @Override
     public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
         Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
-        return page.map(ProductMapper::toProductInfoDTO);
+
+        return page.map(product -> new ProductInfoDTO(
+                product.getId(),
+                product.getType().getName(),
+                product.getTitle(),
+                product.getReleaseYear(),
+                product.getPhoto(), // actual photo from product
+                product.getType().getDefaultCoverUrl(), // fallback/default image
+                product.getDescription(),
+                product.getProductLinkToEmedia(),
+                product.getCountries().stream().map(Country::getName).collect(Collectors.toSet()),
+                product.isBook() ? ProductMapper.toBookDetailsDTO(product.getBookDetails()) : null,
+                creatorService.getCreatorsWithRolesByProductId(product.getId())
+        ));
     }
 
     @Override
