@@ -43,4 +43,6 @@ public interface BorrowRepo extends JpaRepository<Borrow, Long> {
             Pageable pageable
     );
 
+    int countByCustomUserIdAndReturnDateIsNull(Long userId);
+
 }

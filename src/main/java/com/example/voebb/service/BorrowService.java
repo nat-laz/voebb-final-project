@@ -12,4 +12,6 @@ public interface BorrowService {
     Page<GetBorrowingsDTO> getFilteredBorrowings(Long userId, Long itemId, Long libraryId, Pageable pageable);
 
     String returnBorrow(Long borrowId);
+
+    String extendBorrow(Long borrowId);
 }

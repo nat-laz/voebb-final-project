@@ -52,6 +52,12 @@ public class GlobalExceptionHandler {
         return getRedirectPathFromRequest(request);
     }
 
+    @ExceptionHandler(BorrowExtensionLimitReachedException.class)
+    public String handleBorrowExtensionLimitReachedException(RuntimeException ex, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        return getRedirectPathFromRequest(request);
+    }
+
     private String getRedirectPathFromRequest(HttpServletRequest request) {
         String uri = request.getRequestURI();
         if (uri.contains("/borrowings")) {

@@ -7,10 +7,7 @@ import com.example.voebb.model.entity.Borrow;
 import com.example.voebb.model.entity.CustomUser;
 import com.example.voebb.model.entity.ItemStatus;
 import com.example.voebb.model.entity.ProductItem;
-import com.example.voebb.repository.BorrowRepo;
-import com.example.voebb.repository.CustomUserRepo;
-import com.example.voebb.repository.ItemStatusRepo;
-import com.example.voebb.repository.ProductItemRepo;
+import com.example.voebb.repository.*;
 import com.example.voebb.service.BorrowService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +21,13 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class BorrowServiceImpl implements BorrowService {
 
+    private static final int BORROW_EXTENSION_DAYS = 14;
+
     private final BorrowRepo borrowRepo;
     private final CustomUserRepo userRepo;
     private final ProductItemRepo itemRepo;
     private final ItemStatusRepo statusRepo;
+    private final ReservationRepo reservationRepo;
 
     @Override
     @Transactional
@@ -47,7 +47,10 @@ public class BorrowServiceImpl implements BorrowService {
             throw new ItemNotAvailableException(item.getProduct().getTitle(), item.getId(), item.getStatus().getName());
         }
 
-        if (user.getBorrowedBooksCount() >= 5) {
+        int activeBorrowCount = borrowRepo.countByCustomUserIdAndReturnDateIsNull(user.getId());
+        int activeReservationCount = reservationRepo.countByCustomUserId(user.getId());
+
+        if (activeBorrowCount + activeReservationCount >= 5) {
             throw new UserBorrowLimitExceededException(user.getId(), user.getFirstName(), user.getLastName());
         }
 
@@ -74,7 +77,7 @@ public class BorrowServiceImpl implements BorrowService {
         item.setStatus(borrowedStatus);
         itemRepo.save(item);
 
-        user.setBorrowedBooksCount(user.getBorrowedBooksCount() + 1);
+        user.setBorrowedProductsCount(user.getBorrowedProductsCount() + 1);
         userRepo.save(user);
 
     }
@@ -119,16 +122,44 @@ public class BorrowServiceImpl implements BorrowService {
         itemRepo.save(item);
 
         CustomUser user = borrow.getCustomUser();
-
-        user.setBorrowedBooksCount(Math.max(0, user.getBorrowedBooksCount() - 1));
-
+        user.setBorrowedProductsCount(Math.max(0, user.getBorrowedProductsCount() - 1));
         userRepo.save(user);
 
-        String userFullName = user.getFirstName() + " " + user.getLastName();
+        String userName = user.getFirstName() + " " + user.getLastName();
         String productTitle = item.getProduct().getTitle();
-        return "User with ID: [#" + user.getId() + "] " + userFullName + " successfully returned the item \"" + productTitle + "\".";
+
+        return "[User ID: #" + user.getId() + "] " + userName +
+                " successfully returned the item \"" + productTitle + "\" [Item ID: #" + item.getId() + "].";
+
     }
 
+    @Override
+    @Transactional
+    public String extendBorrow(Long borrowId) {
+        Borrow borrow = borrowRepo.findById(borrowId)
+                .orElseThrow(() -> new BorrowNotFoundException(borrowId));
+
+        if (borrow.getReturnDate() != null) {
+            throw new RuntimeException("Returned items cannot be extended.");
+        }
+
+        if (borrow.getExtendsCount() >= 2) {
+            throw new BorrowExtensionLimitReachedException(borrowId);
+        }
+
+        borrow.setDueDate(borrow.getDueDate().plusDays(BORROW_EXTENSION_DAYS));
+        borrow.setExtendsCount(borrow.getExtendsCount() + 1);
+        borrowRepo.save(borrow);
+
+        ProductItem item = borrow.getItem();
+        CustomUser user = borrow.getCustomUser();
+        String userName = user.getFirstName() + " " + user.getLastName();
+        String productTitle = item.getProduct().getTitle();
+
+        return "[User ID: #" + user.getId() + "] " + userName +
+                " successfully extended the item \"" + productTitle + "\" [Item ID: #" + item.getId() + "] until " +
+                borrow.getDueDate() + ".";
+    }
 
 
     private String calculateBorrowStatus(LocalDate dueDate, LocalDate returnDate) {

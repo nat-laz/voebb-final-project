@@ -66,4 +66,15 @@ public class BorrowControllerAdmin {
         return "redirect:/admin/borrowings";
     }
 
+    @PostMapping("/extend/{id}")
+    public String extendBorrowing(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            String message = borrowService.extendBorrow(id);
+            redirectAttributes.addFlashAttribute("success", message);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/borrowings";
+    }
+
 }

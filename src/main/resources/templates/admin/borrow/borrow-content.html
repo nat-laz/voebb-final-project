@@ -170,21 +170,28 @@
           
           <td class="text-end text-nowrap">
             <form th:action="@{/admin/borrowings/extend/{id}(id=${borrow.borrowId})}" method="post" class="d-inline">
-              <button type="submit"
-                      class="btn btn-sm btn-info me-1"
-                      th:disabled="${borrow.extendsCount >= 2}"
-                      th:title="${borrow.extendsCount >= 2 ? 'Max extensions reached' : 'Extend Borrowing'}">
+              <span data-bs-toggle="tooltip"
+                    th:attr="title=${borrow.returnDate != null ? 'Already returned'
+                  : (borrow.extendsCount >= 2 ? 'Max extensions reached'
+                  : 'Extend Borrowing')}">
+                <button type="submit"
+                        class="btn btn-sm btn-info me-1"
+                        th:disabled="${borrow.returnDate != null || borrow.extendsCount >= 2}">
                 Extend
               </button>
+              </span>
+            
             </form>
             
             <form th:action="@{/admin/borrowings/return/{id}(id=${borrow.borrowId})}" method="post" class="d-inline">
-              <button type="submit"
-                      class="btn btn-sm btn-success"
-                      th:disabled="${borrow.returnDate != null}"
-                      th:title="${borrow.returnDate != null ? 'Already returned' : 'Mark as Returned'}">
+              <span data-bs-toggle="tooltip"
+                    th:attr="title=${borrow.returnDate != null ? 'Already returned' : 'Mark as Returned'}">
+                <button type="submit"
+                        class="btn btn-sm btn-success"
+                        th:disabled="${borrow.returnDate != null}">
                 Return
               </button>
+              </span>
             </form>
           </td>
         </tr>
