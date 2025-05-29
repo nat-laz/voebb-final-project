@@ -138,8 +138,16 @@
                 <tbody>
                 <tr th:each="res : ${reservations}">
                     <td th:text="${res.id}"></td>
-                    <td th:text="${res.customUserFullName}"></td>
-                    <td th:text="${res.itemTitle}"></td>
+                    <td class="text-nowrap">
+                        <div class="small text-muted" th:text="'ID: #' + ${res.userId}"></div>
+                        <div th:text="${res.customUserFullName}"></div>
+                    </td>
+                    
+                    <td class="text-nowrap">
+                        <div class="small text-muted" th:text="'ID: #' + ${res.itemId}"></div>
+                        <div th:text="${res.itemTitle}"></div>
+                    </td>
+                    
                     <td th:text="${res.startDate}"></td>
                     <td th:text="${res.dueDate}"></td>
                     <td class="text-end" style="white-space: nowrap;">
@@ -171,30 +179,26 @@
         </div>
         
         <nav th:if="${page.totalPages > 1}" class="mt-3">
-            <ul class="pagination justify-content-center small">
+            <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${page.first} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/admin/borrowings(page=${page.number - 1}, userId=${userId}, itemId=${itemId}, libraryId=${libraryId}, status=${status})}">
-                        Previous
-                    </a>
+                       th:href="@{/admin/reservations(page=${page.number - 1}, userId=${userId}, itemId=${itemId}, libraryId=${libraryId})}">Previous</a>
                 </li>
+                
                 <li class="page-item"
                     th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
                     th:classappend="${i == page.number} ? 'active'">
                     <a class="page-link"
-                       th:href="@{/admin/borrowings(page=${i}, userId=${userId}, itemId=${itemId}, libraryId=${libraryId}, status=${status})}"
-                       th:text="${i + 1}">
-                    </a>
+                       th:href="@{/admin/reservations(page=${i}, userId=${userId}, itemId=${itemId}, libraryId=${libraryId})}"
+                       th:text="${i + 1}">1</a>
                 </li>
+                
                 <li class="page-item" th:classappend="${page.last} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/admin/borrowings(page=${page.number + 1}, userId=${userId}, itemId=${itemId}, libraryId=${libraryId}, status=${status})}">
-                        Next
-                    </a>
+                       th:href="@{/admin/reservations(page=${page.number + 1}, userId=${userId}, itemId=${itemId}, libraryId=${libraryId})}">Next</a>
                 </li>
             </ul>
         </nav>
-        
     </div>
 </main>
 </html>
