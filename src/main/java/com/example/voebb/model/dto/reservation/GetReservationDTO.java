@@ -9,5 +9,6 @@ public record GetReservationDTO(
         Long itemId,
         String itemTitle,
         LocalDate startDate,
-        LocalDate dueDate
+        LocalDate dueDate,
+        long daysUntilDue
 ) {}

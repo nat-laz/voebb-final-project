@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +31,19 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Page<GetReservationDTO> getFilteredReservations(Long userId, Long itemId, Long libraryId, Pageable pageable) {
-        return reservationRepo.findFilteredReservations(userId, itemId, libraryId, pageable);
-    }
+        Page<GetReservationDTO> rawPage = reservationRepo.findFilteredReservations(userId, itemId, libraryId, pageable);
 
+        return rawPage.map(dto -> new GetReservationDTO(
+                dto.id(),
+                dto.userId(),
+                dto.customUserFullName(),
+                dto.itemId(),
+                dto.itemTitle(),
+                dto.startDate(),
+                dto.dueDate(),
+                ChronoUnit.DAYS.between(LocalDate.now(), dto.dueDate())
+        ));
+    }
 
     @Override
     @Transactional
