@@ -83,22 +83,8 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     @Override
-    public Page<GetBorrowingsDTO> getFilteredBorrowings(Long userId, Long itemId, Long libraryId, Pageable pageable) {
-        Page<GetBorrowingsDTO> rawResults = borrowRepo.findFilteredBorrows(userId, itemId, libraryId, pageable);
-
-        return rawResults.map(dto -> new GetBorrowingsDTO(
-                dto.borrowId(),
-                dto.userId(),
-                dto.customUserFullName(),
-                dto.itemId(),
-                dto.itemTitle(),
-                dto.productType(),
-                dto.startDate(),
-                dto.dueDate(),
-                dto.returnDate(),
-                dto.extendsCount(),
-                calculateBorrowStatus(dto.dueDate(), dto.returnDate())
-        ));
+    public Page<GetBorrowingsDTO> getFilteredBorrowings(Long userId, Long itemId, Long libraryId, String status, Pageable pageable) {
+        return borrowRepo.findFilteredBorrows(userId, itemId, libraryId, status, pageable);
     }
 
     @Override
@@ -162,9 +148,4 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
 
-    private String calculateBorrowStatus(LocalDate dueDate, LocalDate returnDate) {
-        if (returnDate != null) return "Returned";
-        if (dueDate.isBefore(LocalDate.now())) return "Overdue";
-        return "Active";
-    }
 }

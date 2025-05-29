@@ -9,7 +9,7 @@ public interface BorrowService {
 
     void createBorrow(CreateBorrowDTO dto);
 
-    Page<GetBorrowingsDTO> getFilteredBorrowings(Long userId, Long itemId, Long libraryId, Pageable pageable);
+    Page<GetBorrowingsDTO> getFilteredBorrowings(Long userId, Long itemId, Long libraryId, String status, Pageable pageable);
 
     String returnBorrow(Long borrowId);
 

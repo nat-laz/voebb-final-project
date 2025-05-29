@@ -24,22 +24,35 @@ public interface BorrowRepo extends JpaRepository<Borrow, Long> {
                     b.dueDate,
                     b.returnDate,
                     b.extendsCount,
-                    ''
+                    CASE
+                        WHEN b.returnDate IS NOT NULL THEN 'Returned'
+                        WHEN b.dueDate < CURRENT_DATE THEN 'Overdue'
+                        ELSE 'Active'
+                    END
                 )
                 FROM Borrow b
                 JOIN b.customUser u
                 JOIN b.item i
                 JOIN i.product p
-                JOIN i.location loc
-                JOIN loc.library l
+                LEFT JOIN i.location loc
+                LEFT JOIN loc.library l
                 WHERE (:userId IS NULL OR u.id = :userId)
                   AND (:itemId IS NULL OR i.id = :itemId)
-                  AND (:libraryId IS NULL OR l.id = :libraryId)
+                  AND (
+                     :libraryId IS NULL OR l.id = :libraryId
+                   )
+                  AND (
+                    :status IS NULL OR
+                    (:status = 'Returned' AND b.returnDate IS NOT NULL) OR
+                    (:status = 'Overdue' AND b.returnDate IS NULL AND b.dueDate < CURRENT_DATE) OR
+                    (:status = 'Active' AND b.returnDate IS NULL AND b.dueDate >= CURRENT_DATE)
+                  )
             """)
     Page<GetBorrowingsDTO> findFilteredBorrows(
             @Param("userId") Long userId,
             @Param("itemId") Long itemId,
             @Param("libraryId") Long libraryId,
+            @Param("status") String status,
             Pageable pageable
     );
 
