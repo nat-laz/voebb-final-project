@@ -89,19 +89,29 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    // TODO: decide what should be updated real-life scenario
-    public void updateReservation(Long id, CreateReservationDTO dto) {
-        Reservation reservation = reservationRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+    public String fulfillReservation(Long reservationId) {
+        Reservation reservation = reservationRepo.findById(reservationId)
+                .orElseThrow(() -> new ReservationNotFoundException(reservationId));
 
-        CustomUser user = userRepo.findById(dto.userId())
-                .orElseThrow(() -> new UserNotFoundException(dto.userId()));
+        CustomUser user = reservation.getCustomUser();
+        ProductItem item = reservation.getItem();
 
-        ProductItem item = itemRepo.findById(dto.itemId())
-                .orElseThrow(() -> new ItemNotFoundException(dto.itemId()));
+        ItemStatus borrowedStatus = statusRepo.findByNameIgnoreCase("borrowed")
+                .orElseThrow(() -> new ItemStatusNotFoundException("borrowed"));
 
-        reservation.setCustomUser(user);
-        reservation.setItem(item);
+        item.setStatus(borrowedStatus);
+        itemRepo.save(item);
+
+        user.setBorrowedProductsCount(user.getBorrowedProductsCount() + 1);
+        userRepo.save(user);
+
+        reservationRepo.delete(reservation);
+
+        String userName = user.getFirstName() + " " + user.getLastName();
+        String productTitle = item.getProduct().getTitle();
+
+        return "Item \"" + productTitle + "\" [ID: #" + item.getId() + "] was borrowed by User [ID: #" + user.getId() + "] " + userName + ".";
+
     }
 
 
