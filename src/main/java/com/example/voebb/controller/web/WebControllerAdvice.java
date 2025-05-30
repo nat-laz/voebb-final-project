@@ -49,9 +49,4 @@ public class WebControllerAdvice {
         return countryService.getAllCountries();
     }
 
-    @ModelAttribute("globalAttr")
-    public String globalAttr() {
-        return "productCountries";
-    }
-
 }
