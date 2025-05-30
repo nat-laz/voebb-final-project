@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const hiddenProductType = document.getElementById("productTypeHidden");
     const hiddenCreator = document.getElementById("creatorHidden");
     const hiddenLanguage = document.getElementById("languageHidden");
-    const hiddenCountry = document.getElementById("languageHidden");
+    const hiddenCountry = document.getElementById("countryHidden");
 
 
 
@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
         hiddenProductType.value = '';
         hiddenCreator.value = '';
         hiddenLanguage.value = '';
+        hiddenCountry.value = '';
         mainForm.submit();
     });
 

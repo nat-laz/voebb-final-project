@@ -16,13 +16,13 @@
   <div th:replace="~{public/fragments/main-navbar.html :: main-navbar}"></div>
   <div class="w-100 p-2 bg-primary">
     <div class="container">
-      <form th:action="@{/search}" method="GET" th:object="${productFilters}" id="searchForm">
+      <form th:action="@{/search}" method="POST" th:object="${productFilters}" id="searchForm">
         
         <input type="hidden" th:field="*{author}" id="creatorHidden">
         <input type="hidden" th:field="*{productType}" id="productTypeHidden">
         <input type="hidden" th:field="*{languageId}" id="languageHidden">
         <input type="hidden" th:field="*{libraryId}" id="libraryHidden">
-        <input type="hidden" th:field="*{countryId}" id="libraryHidden">
+        <input type="hidden" th:field="*{countryId}" id="countryHidden">
         
         <div class="d-flex justify-content-center gap-3">
           <div class="form-floating flex-grow-1" style="max-width: 400px">
