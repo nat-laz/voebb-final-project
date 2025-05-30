@@ -9,6 +9,7 @@ import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Language;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.model.entity.ProductType;
+import com.example.voebb.model.mapper.BookDetailsMapper;
 import com.example.voebb.model.mapper.ProductMapper;
 import com.example.voebb.repository.CountryRepo;
 import com.example.voebb.repository.ProductRepo;
@@ -19,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -119,12 +119,12 @@ public class ProductServiceImpl implements ProductService {
                 product.getType().getName(),
                 product.getTitle(),
                 product.getReleaseYear(),
-                product.getPhoto(), // actual photo from product
-                product.getType().getDefaultCoverUrl(), // fallback/default image
+                product.getPhoto(),
+                product.getType().getDefaultCoverUrl(),
                 product.getDescription(),
                 product.getProductLinkToEmedia(),
                 product.getCountries().stream().map(Country::getName).collect(Collectors.toSet()),
-                product.isBook() ? ProductMapper.toBookDetailsDTO(product.getBookDetails()) : null,
+                product.isBook() ? BookDetailsMapper.toDto(product.getBookDetails()) : null,
                 creatorService.getCreatorsWithRolesByProductId(product.getId())
         ));
     }
