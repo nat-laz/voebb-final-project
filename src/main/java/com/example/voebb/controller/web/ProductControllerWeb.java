@@ -40,7 +40,7 @@ public class ProductControllerWeb {
     }
 
     @GetMapping("/search")
-    public String getSearchResultPage(@PageableDefault(size = 10) Pageable pageable,
+    public String getSearchResultPage(@PageableDefault(size = 20) Pageable pageable,
                                       @ModelAttribute(name = "productFilters") ProductFilters productFilters,
                                       Model model) {
         Page<CardProductDTO> resultProducts = productService.getProductCardsByFilters(productFilters, pageable);

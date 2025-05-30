@@ -16,9 +16,9 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
     @Query(value = """
                    SELECT  distinct p
                    FROM Product p
-                   JOIN ProductItem pi ON pi.product = p
-                   JOIN ItemLocation il ON il.item = pi
-                   JOIN Library lib ON il.library = lib
+                   LEFT JOIN ProductItem pi ON pi.product = p
+                   LEFT JOIN ItemLocation il ON il.item = pi
+                   LEFT JOIN Library lib ON il.library = lib
                    LEFT JOIN CreatorProductRelation cpr ON cpr.product = p
                    LEFT JOIN Creator c on cpr.creator = c
                    LEFT JOIN p.countries co
