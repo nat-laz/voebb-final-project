@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,12 +18,13 @@ import java.util.List;
 public class ReservationCleanupJob {
 
     private final ReservationRepo reservationRepo;
+    private final Clock clock;
 
     // For testing replace with: @Scheduled(cron = "0 * * * * *") // every minute
     @Scheduled(cron = "0 0 2 * * *") // every day at 02:00 AM
     @Transactional
     public void removeExpiredReservations() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(clock); // predictable for testing
         List<Reservation> expired = reservationRepo.findByDueDateBefore(today);
 
         if (expired.isEmpty()) {
