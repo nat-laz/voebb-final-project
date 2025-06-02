@@ -115,7 +115,7 @@ public class BorrowServiceImpl implements BorrowService {
         String productTitle = item.getProduct().getTitle();
 
         return "[User ID: #" + user.getId() + "] " + userName +
-                " successfully returned the item \"" + productTitle + "\" [Item ID: #" + item.getId() + "].";
+               " successfully returned the item \"" + productTitle + "\" [Item ID: #" + item.getId() + "].";
 
     }
 
@@ -143,8 +143,8 @@ public class BorrowServiceImpl implements BorrowService {
         String productTitle = item.getProduct().getTitle();
 
         return "[User ID: #" + user.getId() + "] " + userName +
-                " successfully extended the item \"" + productTitle + "\" [Item ID: #" + item.getId() + "] until " +
-                borrow.getDueDate() + ".";
+               " successfully extended the item \"" + productTitle + "\" [Item ID: #" + item.getId() + "] until " +
+               borrow.getDueDate() + ".";
     }
 
 
