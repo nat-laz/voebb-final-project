@@ -7,10 +7,7 @@ import com.example.voebb.model.entity.CustomUser;
 import com.example.voebb.model.entity.ItemStatus;
 import com.example.voebb.model.entity.ProductItem;
 import com.example.voebb.model.entity.Reservation;
-import com.example.voebb.repository.CustomUserRepo;
-import com.example.voebb.repository.ItemStatusRepo;
-import com.example.voebb.repository.ProductItemRepo;
-import com.example.voebb.repository.ReservationRepo;
+import com.example.voebb.repository.*;
 import com.example.voebb.service.ReservationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -28,13 +26,24 @@ public class ReservationServiceImpl implements ReservationService {
     private final CustomUserRepo userRepo;
     private final ProductItemRepo itemRepo;
     private final ItemStatusRepo statusRepo;
+    private final BorrowRepo borrowRepo;
 
 
     @Override
     public Page<GetReservationDTO> getFilteredReservations(Long userId, Long itemId, Long libraryId, Pageable pageable) {
-        return reservationRepo.findFilteredReservations(userId, itemId, libraryId, pageable);
-    }
+        Page<GetReservationDTO> rawPage = reservationRepo.findFilteredReservations(userId, itemId, libraryId, pageable);
 
+        return rawPage.map(dto -> new GetReservationDTO(
+                dto.id(),
+                dto.userId(),
+                dto.customUserFullName(),
+                dto.itemId(),
+                dto.itemTitle(),
+                dto.startDate(),
+                dto.dueDate(),
+                ChronoUnit.DAYS.between(LocalDate.now(), dto.dueDate())
+        ));
+    }
 
     @Override
     @Transactional
@@ -54,7 +63,10 @@ public class ReservationServiceImpl implements ReservationService {
             throw new ItemNotAvailableException(item.getProduct().getTitle(), item.getId(), item.getStatus().getName());
         }
 
-        if (user.getBorrowedBooksCount() >= 5) {
+        int activeBorrowCount = borrowRepo.countByCustomUserIdAndReturnDateIsNull(user.getId());
+        int activeReservationCount = reservationRepo.countByCustomUserId(user.getId());
+
+        if (activeBorrowCount + activeReservationCount >= 5) {
             throw new UserBorrowLimitExceededException(user.getId(), user.getFirstName(), user.getLastName());
         }
 
@@ -71,25 +83,35 @@ public class ReservationServiceImpl implements ReservationService {
         item.setStatus(reservedStatus);
         itemRepo.save(item);
 
-        user.setBorrowedBooksCount(user.getBorrowedBooksCount() + 1);
+        user.setBorrowedProductsCount(user.getBorrowedProductsCount() + 1);
         userRepo.save(user);
     }
 
     @Override
     @Transactional
-    // TODO: decide what should be updated real-life scenario
-    public void updateReservation(Long id, CreateReservationDTO dto) {
-        Reservation reservation = reservationRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+    public String fulfillReservation(Long reservationId) {
+        Reservation reservation = reservationRepo.findById(reservationId)
+                .orElseThrow(() -> new ReservationNotFoundException(reservationId));
 
-        CustomUser user = userRepo.findById(dto.userId())
-                .orElseThrow(() -> new UserNotFoundException(dto.userId()));
+        CustomUser user = reservation.getCustomUser();
+        ProductItem item = reservation.getItem();
 
-        ProductItem item = itemRepo.findById(dto.itemId())
-                .orElseThrow(() -> new ItemNotFoundException(dto.itemId()));
+        ItemStatus borrowedStatus = statusRepo.findByNameIgnoreCase("borrowed")
+                .orElseThrow(() -> new ItemStatusNotFoundException("borrowed"));
 
-        reservation.setCustomUser(user);
-        reservation.setItem(item);
+        item.setStatus(borrowedStatus);
+        itemRepo.save(item);
+
+        user.setBorrowedProductsCount(user.getBorrowedProductsCount() + 1);
+        userRepo.save(user);
+
+        reservationRepo.delete(reservation);
+
+        String userName = user.getFirstName() + " " + user.getLastName();
+        String productTitle = item.getProduct().getTitle();
+
+        return "Item \"" + productTitle + "\" [ID: #" + item.getId() + "] was borrowed by User [ID: #" + user.getId() + "] " + userName + ".";
+
     }
 
 
@@ -104,7 +126,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.getItem().setStatus(available);
 
         CustomUser user = reservation.getCustomUser();
-        user.setBorrowedBooksCount(user.getBorrowedBooksCount() - 1);
+        user.setBorrowedProductsCount(user.getBorrowedProductsCount() - 1);
 
         userRepo.save(user);
         itemRepo.save(reservation.getItem());
