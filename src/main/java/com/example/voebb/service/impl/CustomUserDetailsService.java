@@ -12,6 +12,7 @@ import com.example.voebb.repository.CustomUserRoleRepo;
 import com.example.voebb.service.BorrowService;
 import com.example.voebb.service.CustomUserService;
 import com.example.voebb.service.ReservationService;
+import jakarta.servlet.Filter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -42,7 +43,6 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     private final PasswordEncoder encoder;
     private final ReservationService reservationService;
     private final BorrowService borrowService;
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -99,7 +99,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
                         .toList());
 
         activityDTOS.addAll(
-                borrowService.getFilteredBorrowings(customUser.getId(), null, null, null, null).stream()
+                borrowService.getFilteredBorrowings(customUser.getId(), null, null, "Active", null).stream()
                         .map(getBorrowingsDTO -> new ItemActivityDTO(
                                 getBorrowingsDTO.borrowId(),
                                 "Borrow",
