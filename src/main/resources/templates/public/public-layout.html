@@ -13,8 +13,8 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 
 <header class="sticky-top" style="max-height: 150px">
-  <div th:if="${borrowExpiresSoon}" class="bg-dark text-white py-1 text-center">
-    <small>🔔 You have borrows that expires soon! Check your borrows in profile and return them at time.</small>
+  <div th:if="${borrowExpiresSoon}" class="bg-dark text-white py-1 text-center v-middle py-2">
+    <small>🔔 You have borrows that expires soon! Check your borrows in profile and return them at time. 🔔</small>
   </div>
   
   <div th:replace="~{public/fragments/main-navbar.html :: main-navbar}"></div>
