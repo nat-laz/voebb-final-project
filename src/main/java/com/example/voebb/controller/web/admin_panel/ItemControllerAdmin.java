@@ -2,8 +2,10 @@ package com.example.voebb.controller.web.admin_panel;
 
 import com.example.voebb.model.dto.item.CreateItemDTO;
 import com.example.voebb.model.dto.item.ItemAdminDTO;
+import com.example.voebb.model.dto.item.ItemFilters;
 import com.example.voebb.model.dto.item.UpdateItemDTO;
 import com.example.voebb.model.dto.product.ProductInfoDTO;
+import com.example.voebb.model.dto.reservation.GetReservationDTO;
 import com.example.voebb.service.ItemStatusService;
 import com.example.voebb.service.LibraryService;
 import com.example.voebb.service.ProductItemService;
@@ -25,50 +27,31 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ItemControllerAdmin {
 
     private final ProductItemService productItemService;
-    private final ItemStatusService itemStatusService;
-    private final LibraryService libraryService;
     private final ProductService productService;
 
 
     @GetMapping
-    public String getAllItems(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-                              Model model,
+    public String getAllItems(Model model,
+                              @ModelAttribute("itemFilters") ItemFilters filters,
+                              @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+                              @RequestParam(required = false) String searchTitle,
+                              @RequestParam(required = false) String action,
                               @RequestParam(value = "success", required = false) String success,
                               @RequestParam(value = "error", required = false) String error) {
 
-        Page<ItemAdminDTO> page = productItemService.getAllItems(pageable);
-        model.addAttribute("page", page);
+        Page<ItemAdminDTO> itemPage = productItemService.getFilteredItems(filters, pageable);
+        model.addAttribute("page", itemPage);
+        model.addAttribute("items", itemPage.getContent());
 
-        model.addAttribute("libraries", libraryService.getAllLibraries());
-        model.addAttribute("statuses", itemStatusService.filterEditableStatusesForItemManagement());
+        if ("search".equals(action) && searchTitle != null && !searchTitle.isBlank()) {
+            Page<ProductInfoDTO> matching = productService.getAllByTitleAdmin(searchTitle, pageable);
+            model.addAttribute("matchingProducts", matching);
+
+            model.addAttribute("openCreateItemModal", true);
+        }
 
         if (success != null) model.addAttribute("success", success);
         if (error != null) model.addAttribute("error", error);
-
-        return "admin/item/item-list";
-    }
-
-    @GetMapping("/create")
-    public String openItemCreateModel(@PageableDefault(size = 5) Pageable pageable,
-                                      @RequestParam(required = false) String searchTitle,
-                                      @RequestParam(defaultValue = "search") String action,
-                                      Model model) {
-
-        if ("search".equals(action)) {
-            Page<ProductInfoDTO> matching = productService.getAllByTitleAdmin(searchTitle, pageable);
-
-            model.addAttribute("matchingProducts", matching);
-            model.addAttribute("searchTitle", searchTitle);
-        }
-
-        Page<ItemAdminDTO> page = productItemService.getAllItems(pageable);
-        model.addAttribute("page", page);
-        model.addAttribute("items", page.getContent());
-        model.addAttribute("pageTitle", "Item Management");
-        model.addAttribute("libraries", libraryService.getAllLibraries());
-        model.addAttribute("statuses", itemStatusService.filterEditableStatusesForItemManagement());
-
-        model.addAttribute("openCreateItemModal", true);
 
         return "admin/item/item-list";
     }
@@ -110,10 +93,6 @@ public class ItemControllerAdmin {
         }
 
         return "redirect:/admin/items";
-    }
-
-    private void populateItemPageAndModels(Model model, Pageable pageable) {
-
     }
 
 }

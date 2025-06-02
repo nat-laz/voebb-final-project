@@ -22,7 +22,7 @@
                     <div class="mb-3">
                         <label for="statusId" class="form-label">Status</label>
                         <select class="form-select" name="statusId" required>
-                            <option th:each="status : ${statuses}"
+                            <option th:each="status : ${itemStatuses}"
                                     th:value="${status.id}"
                                     th:text="${status.name.toUpperCase()}"
                                     th:selected="${status.name == item.itemStatus}">
