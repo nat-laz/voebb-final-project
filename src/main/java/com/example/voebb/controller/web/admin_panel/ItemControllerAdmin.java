@@ -33,22 +33,24 @@ public class ItemControllerAdmin {
     @GetMapping
     public String getAllItems(Model model,
                               @ModelAttribute("itemFilters") ItemFilters filters,
-                              @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+                              @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                               @RequestParam(required = false) String searchTitle,
                               @RequestParam(required = false) String action,
                               @RequestParam(value = "success", required = false) String success,
                               @RequestParam(value = "error", required = false) String error) {
 
-        Page<ItemAdminDTO> itemPage = productItemService.getFilteredItems(filters, pageable);
-        model.addAttribute("page", itemPage);
-        model.addAttribute("items", itemPage.getContent());
+
 
         if ("search".equals(action) && searchTitle != null && !searchTitle.isBlank()) {
             Page<ProductInfoDTO> matching = productService.getAllByTitleAdmin(searchTitle, pageable);
             model.addAttribute("matchingProducts", matching);
-
+            model.addAttribute("searchTitle", searchTitle);
             model.addAttribute("openCreateItemModal", true);
         }
+
+        Page<ItemAdminDTO> itemPage = productItemService.getFilteredItems(filters, pageable);
+        model.addAttribute("page", itemPage);
+        model.addAttribute("items", itemPage.getContent());
 
         if (success != null) model.addAttribute("success", success);
         if (error != null) model.addAttribute("error", error);
