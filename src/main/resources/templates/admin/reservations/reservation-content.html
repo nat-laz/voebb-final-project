@@ -140,12 +140,12 @@
         <tr th:each="res : ${reservations}">
           <td th:text="${res.id}"></td>
           <td class="text-nowrap">
-            <div class="small text-muted" th:text="'ID: #' + ${res.userId}"></div>
+            <small class="text-muted" style="font-size: 0.75rem;" th:text="'ID: ' + ${res.userId}"></small>
             <div th:text="${res.customUserFullName}"></div>
           </td>
           
           <td class="text-nowrap">
-            <div class="small text-muted" th:text="'ID: #' + ${res.itemId}"></div>
+            <small class="text-muted" style="font-size: 0.75rem;" th:text="'ID: ' + ${res.itemId}"></small>
             <div th:text="${res.itemTitle}"></div>
           </td>
           

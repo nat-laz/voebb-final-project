@@ -31,12 +31,16 @@ public class ItemControllerAdmin {
 
 
     @GetMapping
-    public String getAllItems(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+    public String getAllItems(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
                               Model model,
                               @RequestParam(value = "success", required = false) String success,
                               @RequestParam(value = "error", required = false) String error) {
 
-        populateItemPageAndModels(model, pageable);
+        Page<ItemAdminDTO> page = productItemService.getAllItems(pageable);
+        model.addAttribute("page", page);
+
+        model.addAttribute("libraries", libraryService.getAllLibraries());
+        model.addAttribute("statuses", itemStatusService.filterEditableStatusesForItemManagement());
 
         if (success != null) model.addAttribute("success", success);
         if (error != null) model.addAttribute("error", error);
@@ -57,7 +61,12 @@ public class ItemControllerAdmin {
             model.addAttribute("searchTitle", searchTitle);
         }
 
-        populateItemPageAndModels(model, pageable);
+        Page<ItemAdminDTO> page = productItemService.getAllItems(pageable);
+        model.addAttribute("page", page);
+        model.addAttribute("items", page.getContent());
+        model.addAttribute("pageTitle", "Item Management");
+        model.addAttribute("libraries", libraryService.getAllLibraries());
+        model.addAttribute("statuses", itemStatusService.filterEditableStatusesForItemManagement());
 
         model.addAttribute("openCreateItemModal", true);
 
@@ -104,12 +113,7 @@ public class ItemControllerAdmin {
     }
 
     private void populateItemPageAndModels(Model model, Pageable pageable) {
-        Page<ItemAdminDTO> page = productItemService.getAllItems(pageable);
-        model.addAttribute("page", page);
-        model.addAttribute("items", page.getContent());
-        model.addAttribute("pageTitle", "Item Management");
-        model.addAttribute("libraries", libraryService.getAllLibraries());
-        model.addAttribute("statuses", itemStatusService.filterEditableStatusesForItemManagement());
+
     }
 
 }

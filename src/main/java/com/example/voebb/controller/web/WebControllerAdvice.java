@@ -9,6 +9,7 @@ import com.example.voebb.service.CountryService;
 import com.example.voebb.service.LanguageService;
 import com.example.voebb.service.LibraryService;
 import com.example.voebb.service.ProductTypeService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -47,6 +48,11 @@ public class WebControllerAdvice {
     @ModelAttribute("productCountries")
     public List<Country> productCountries() {
         return countryService.getAllCountries();
+    }
+
+    @ModelAttribute("requestURI")
+    public String requestURI(HttpServletRequest request) {
+        return request.getRequestURI();
     }
 
 }
