@@ -5,91 +5,99 @@
       layout:decorate="~{public/public-layout}"
       xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
 </head>
 <body>
 
 <main layout:fragment="content">
-    <!-- General Product Info -->
-    <div class="container mt-4">
-        <h4>General info</h4>
-        <!-- ✅ Book Cover Image -->
-        <div style="text-align: center;">
-            <img th:src="${productInfoDTO.photo}"
-                 alt="Book cover"
-                 style="height: 250px; object-fit: contain; margin-bottom: 1rem;"
-                 th:attr="onerror='this.onerror=null; this.src=\'' + ${productInfoDTO.defaultPhoto} + '\';'" />
-        </div>
-        
-        <p th:text="'Title: ' + ${productInfoDTO.title}"></p>
-        <p th:text="'Id: ' + ${productInfoDTO.id}"></p>
-        <p th:text="'Type: ' + ${productInfoDTO.productType}"></p>
-        <p th:text="'Release: ' + ${productInfoDTO.releaseYear}"></p>
-        
-        <p th:text="'Description: ' + ${productInfoDTO.description}"></p>
-        <p th:text="'Link: ' + ${productInfoDTO.productLinkToEmedia}"></p>
+  <!-- General Product Info -->
+  <div class="container mt-4">
+    <h4>General info</h4>
+    <!-- ✅ Book Cover Image -->
+    <div style="text-align: center;">
+      <img th:src="${productInfoDTO.photo}"
+           alt="Book cover"
+           style="height: 250px; object-fit: contain; margin-bottom: 1rem;"
+           th:attr="onerror='this.onerror=null; this.src=\'' + ${productInfoDTO.defaultPhoto} + '\';'"/>
     </div>
-
-    <!-- Book details section -->
-    <div class="container mt-4" th:if="${bookDetailsDTO != null}">
-        <h4>Book Details</h4>
-        <p th:text="'ISBN: ' + ${bookDetailsDTO.isbn}"></p>
-        <p th:text="'Edition: ' + ${bookDetailsDTO.edition}"></p>
-        <p th:text="'Pages: ' + ${bookDetailsDTO.pages}"></p>
-    </div>
-
-    <!-- Creators section -->
-    <div class="container mt-4" th:if="${productInfoDTO.creators.size() > 0}">
-        <h4>Creators</h4>
-        <ul th:each="creatorWithRoleDTO : ${productInfoDTO.creators}">
-            <li th:text="${creatorWithRoleDTO.role}
+    
+    <p th:text="'Title: ' + ${productInfoDTO.title}"></p>
+    <p th:text="'Id: ' + ${productInfoDTO.id}"></p>
+    <p th:text="'Type: ' + ${productInfoDTO.productType}"></p>
+    <p th:text="'Release: ' + ${productInfoDTO.releaseYear}"></p>
+    
+    <p th:text="'Description: ' + ${productInfoDTO.description}"></p>
+    <p th:text="'Link: ' + ${productInfoDTO.productLinkToEmedia}"></p>
+  </div>
+  
+  <!-- Book details section -->
+  <div class="container mt-4" th:if="${bookDetailsDTO != null}">
+    <h4>Book Details</h4>
+    <p th:text="'ISBN: ' + ${bookDetailsDTO.isbn}"></p>
+    <p th:text="'Edition: ' + ${bookDetailsDTO.edition}"></p>
+    <p th:text="'Pages: ' + ${bookDetailsDTO.pages}"></p>
+  </div>
+  
+  <!-- Creators section -->
+  <div class="container mt-4" th:if="${productInfoDTO.creators.size() > 0}">
+    <h4>Creators</h4>
+    <ul th:each="creatorWithRoleDTO : ${productInfoDTO.creators}">
+      <li th:text="${creatorWithRoleDTO.role}
         + ': '+ ${creatorWithRoleDTO.firstName}
         + ' ' + ${creatorWithRoleDTO.lastName}"></li>
-        </ul>
-    </div>
-
-    <!-- Locations section -->
-    <div class="container mt-4" th:if="${locationAndItemStatusDTOs.size() > 0}">
-        <h4>Locations</h4>
-        <table class="table table-hover rounded">
-            <thead>
-            <tr>
-                <th scope="col">Status</th>
-                <th scope="col">District</th>
-                <th scope="col">Library</th>
-                <th scope="col">Location in library</th>
-                <th scope="col">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="locationAndItemStatusDTO : ${locationAndItemStatusDTOs}">
-                <td th:switch="${locationAndItemStatusDTO.itemStatus}">
-                    <span th:case="'available'" class="badge bg-success fs-6">Available</span>
-                    <span th:case="'borrowed'" class="badge bg-danger fs-6">Borrowed</span>
-                    <span th:case="'reserved'" class="badge bg-warning fs-6">Reserved</span>
-                </td>
-                <td th:text="${locationAndItemStatusDTO.district}">District</td>
-                <td>
-                    <a th:href="@{/libraries/{id}(id=${locationAndItemStatusDTO.libraryId})}"
-                       th:text="${locationAndItemStatusDTO.libraryName}">
-                        Library Name
-                    </a>
-                </td>
-                <td th:text="${locationAndItemStatusDTO.locationInLibrary()}">Location in library</td>
-                <td>
-                    <!-- TODO: Button to borrow item, add logic that hides this button if user is not logged in-->
-                    <a class="btn btn-sm btn-primary"
-                       href="/register"
-                       sec:authorize="isAnonymous()">Login and borrow</a>
-                    <a class="btn btn-sm btn-primary"
-                       th:href="@{/borrow}"
-                       sec:authorize="isAuthenticated()">Borrow or reserve</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+    </ul>
+  </div>
+  
+  <!-- Locations section -->
+  <div class="container mt-4" th:if="${locationAndItemStatusDTOs.size() > 0}">
+    <h4>Locations</h4>
+    <table class="table table-hover rounded">
+      <thead>
+      <tr>
+        <th scope="col">Status</th>
+        <th scope="col">District</th>
+        <th scope="col">Library</th>
+        <th scope="col">Location in library</th>
+        <th scope="col">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="locationAndItemStatusDTO : ${locationAndItemStatusDTOs}">
+        <td th:switch="${locationAndItemStatusDTO.itemStatus}">
+          <span th:case="'available'" class="badge bg-success fs-6">Available</span>
+          <span th:case="'borrowed'" class="badge bg-danger fs-6">Borrowed</span>
+          <span th:case="'reserved'" class="badge bg-warning fs-6">Reserved</span>
+        </td>
+        <td th:text="${locationAndItemStatusDTO.district}">District</td>
+        <td>
+          <a th:href="@{/libraries/{id}(id=${locationAndItemStatusDTO.libraryId})}"
+             th:text="${locationAndItemStatusDTO.libraryName}">
+            Library Name
+          </a>
+        </td>
+        <td th:text="${locationAndItemStatusDTO.locationInLibrary()}">Location in library</td>
+        <td>
+          <a class="btn btn-sm btn-primary"
+             href="/register"
+             sec:authorize="isAnonymous()">Login to reserve</a>
+          
+          <form sec:authorize="isAuthenticated()"
+                th:action="@{/reserve/{id}(id=${locationAndItemStatusDTO.itemId})}" method="post"
+                class="d-inline">
+              <span data-bs-toggle="tooltip">
+                <button type="submit"
+                        class="btn btn-sm btn-success me-1"
+                        th:disabled="${!locationAndItemStatusDTO.itemStatus.equals('available')}">
+                <i class="bi bi-clock me-1"></i> Reserve
+              </button>
+              </span>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </main>
 </body>
 </html>

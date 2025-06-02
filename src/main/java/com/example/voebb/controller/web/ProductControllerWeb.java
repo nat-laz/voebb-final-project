@@ -4,6 +4,8 @@ import com.example.voebb.model.dto.library.LibraryDTO;
 import com.example.voebb.model.dto.product.CardProductDTO;
 import com.example.voebb.model.dto.product.ProductFilters;
 import com.example.voebb.model.dto.product.ProductInfoDTO;
+import com.example.voebb.model.dto.reservation.CreateReservationDTO;
+import com.example.voebb.model.dto.user.UserDTO;
 import com.example.voebb.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -24,6 +27,8 @@ public class ProductControllerWeb {
     private final ProductItemService productItemService;
     private final CreatorService creatorService;
     private final LibraryService libraryService;
+    private final ReservationService reservationService;
+    private final CustomUserService customUserService;
 
 
     @GetMapping
@@ -59,5 +64,22 @@ public class ProductControllerWeb {
         model.addAttribute("bookDetailsDTO", bookDetailsService.getDetailsDTOByProductId(id));
         model.addAttribute("locationAndItemStatusDTOs", productItemService.getAllLocationsForProduct(id));
         return "public/product/product-full-details";
+    }
+
+    @PostMapping("/reserve/{id}")
+    public String reserveItem(@PathVariable("id") Long id,
+                              Principal principal,
+                              RedirectAttributes redirectAttributes) {
+
+        UserDTO userDTO = customUserService.getUserDTOByUsername(principal.getName());
+        CreateReservationDTO dto = new CreateReservationDTO(userDTO.id(), id);
+
+        try {
+            reservationService.createReservation(dto);
+            redirectAttributes.addFlashAttribute("success", "Reservation created successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/profile#itemActivity";
     }
 }
