@@ -13,6 +13,7 @@ public interface CustomUserService {
     UserUpdateDTO getUserUpdateDTOByUsername(String username);
     UserDTO getUserDTOByUsername(String username);
     List<ItemActivityDTO> getItemActivitiesByUsername(String username);
+    public Boolean isBorrowingExpiresSoon(String username);
     void updateUserInfo(UserUpdateDTO userDto,
                         String oldEmail,
                         HttpServletRequest request,

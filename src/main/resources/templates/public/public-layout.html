@@ -13,7 +13,12 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 
 <header class="sticky-top" style="max-height: 150px">
+  <div th:if="${borrowExpiresSoon}" class="bg-dark text-white py-1 text-center">
+    <small>🔔 You have borrows that expires soon! Check your borrows in profile and return them at time.</small>
+  </div>
+  
   <div th:replace="~{public/fragments/main-navbar.html :: main-navbar}"></div>
+  
   <div class="w-100 p-2 bg-primary">
     <div class="container">
       <form th:action="@{/search}" method="POST" th:object="${productFilters}" id="searchForm">

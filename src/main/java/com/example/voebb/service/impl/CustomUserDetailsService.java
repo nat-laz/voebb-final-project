@@ -12,7 +12,6 @@ import com.example.voebb.repository.CustomUserRoleRepo;
 import com.example.voebb.service.BorrowService;
 import com.example.voebb.service.CustomUserService;
 import com.example.voebb.service.ReservationService;
-import jakarta.servlet.Filter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -27,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -112,6 +112,18 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
                         .toList());
 
         return activityDTOS;
+    }
+
+    @Override
+    public Boolean isBorrowingExpiresSoon(String username) {
+        CustomUser customUser = getCustomUserByUsername(username);
+
+        return borrowService.getFilteredBorrowings(
+                        customUser.getId(), null, null, "Active", null)
+                .stream()
+                .anyMatch(borrow ->
+                        LocalDate.now().plusDays(3).isAfter(borrow.dueDate())
+                        || LocalDate.now().plusDays(3).isEqual(borrow.dueDate()));
     }
 
     @Transactional
