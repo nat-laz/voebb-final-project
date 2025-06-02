@@ -1,14 +1,12 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
-import com.example.voebb.model.dto.product.CardProductDTO;
-import com.example.voebb.model.dto.product.CreateProductDTO;
-import com.example.voebb.model.dto.product.ProductInfoDTO;
-import com.example.voebb.model.dto.product.UpdateProductDTO;
+import com.example.voebb.model.dto.product.*;
 import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Language;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.model.entity.ProductType;
+import com.example.voebb.model.mapper.BookDetailsMapper;
 import com.example.voebb.model.mapper.ProductMapper;
 import com.example.voebb.repository.CountryRepo;
 import com.example.voebb.repository.ProductRepo;
@@ -71,8 +69,8 @@ public class ProductServiceImpl implements ProductService {
 
         List<CreatorWithRoleDTO> validCreators = dto.getCreators().stream()
                 .filter(creator -> creator != null &&
-                        creator.getLastName() != null && !creator.getLastName().isBlank() &&
-                        creator.getRole() != null && !creator.getRole().isBlank())
+                                   creator.getLastName() != null && !creator.getLastName().isBlank() &&
+                                   creator.getRole() != null && !creator.getRole().isBlank())
                 .toList();
 
         if (validCreators.isEmpty()) {
@@ -85,8 +83,22 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public Page<CardProductDTO> getProductCardsByTitle(String title, Pageable pageable) {
-        Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
+    public Page<CardProductDTO> getProductCardsByFilters(ProductFilters filters, Pageable pageable) {
+        System.out.println("title - " + filters.getTitle());
+        System.out.println("author - " + filters.getAuthor());
+        System.out.println("libraryId - " + filters.getLibraryId());
+        System.out.println("type - " + filters.getProductType());
+        System.out.println("language - " + filters.getLanguageId());
+        System.out.println("country - " + filters.getCountryId());
+
+        Page<Product> page = productRepo.searchWithFilters(
+                filters.getTitle(),
+                filters.getAuthor(),
+                filters.getLibraryId(),
+                filters.getProductType(),
+                filters.getLanguageId(),
+                filters.getCountryId(),
+                pageable);
 
         return page.map(product -> new CardProductDTO(
                 product.getId(),
@@ -94,6 +106,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getTitle(),
                 product.getReleaseYear(),
                 product.getPhoto(),
+                product.getType().getDefaultCoverUrl(),
                 product.getProductLinkToEmedia(),
                 product.getCreatorProductRelations().stream()
                         .filter(relation -> relation.getCreatorRole().getId().equals(product.getType().getMainCreatorRoleId()))
@@ -102,9 +115,10 @@ public class ProductServiceImpl implements ProductService {
                 productItemService.getLocationsForAvailableItemsByProductId(product.getId())));
     }
 
+
     @Override
     public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
-        Page<Product> page = productRepo.findAllByTitleContainsIgnoreCase(title, pageable);
+        Page<Product> page = productRepo.searchWithFilters(title, null, null, null, null, null, pageable);
         return page.map(ProductMapper::toProductInfoDTO);
     }
 
