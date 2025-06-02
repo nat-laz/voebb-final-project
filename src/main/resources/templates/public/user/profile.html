@@ -4,87 +4,147 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{public/public-layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>VOEBB</title>
+  <meta charset="UTF-8">
+  <title>VOEBB</title>
 </head>
 
 <body>
 <div layout:fragment="content" class="container mt-4">
-
-    <h2 th:text="'Hello, '+ ${userUpdateDTO.firstName} + ' ' + ${userUpdateDTO.lastName}"></h2>
-
-    <ul class="nav nav-tabs mb-4" role="tablist">
-        <li class="nav-item" role="presentation">
-            <a class="nav-link active" data-bs-toggle="tab" href="#info" aria-selected="true" role="tab"
-               tabindex="-1">Info</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" data-bs-toggle="tab" href="#changeInfo" aria-selected="false" role="tab">Change info</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" data-bs-toggle="tab" href="#myBorrowings" aria-selected="false" role="tab">My borrowings</a>
-        </li>
-
-    </ul>
-    <div id="myTabContent" class="tab-content">
-        <div class="tab-pane fade active show" id="info" role="tabpanel">
-            <div class="container mt-4">
-                <h2>User info</h2>
-                <p th:text="'Name:' + ${userUpdateDTO.firstName} + ' ' + ${userUpdateDTO.lastName}">full-name</p>
-                <p th:text="'Email:' + ${userUpdateDTO.email}">Email</p>
-                <p th:text="'Phone number: ' + ${userUpdateDTO.phoneNumber}">Phone number</p>
-            </div>
-            <div class="container mt-4">
-                <h2>Membership info</h2>
-                <p th:text="'Membership status: (add membership func)'"></p>
-                <p th:text="'Active till: (add membership func)' "></p>
-            </div>
-            
-        </div>
-        <div class="tab-pane fade" id="changeInfo" role="tabpanel">
-                <form th:action="@{/profile/edit}" th:object="${userUpdateDTO}" method="post" >
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" th:field="*{email}" class="form-control" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="phoneNumber" class="form-label">New Phone Number</label>
-                        <input type="tel" id="phoneNumber" th:field="*{phoneNumber}" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" id="newPassword" th:field="*{newPassword}" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="oldPassword" class="form-label">Enter your old password to confirm changes</label>
-                        <input type="password" id="oldPassword" th:field="*{oldPassword}" class="form-control" required>
-                    </div>
-
-                    <div class="btn-group mb-3 text-center" role="group">
-                        <button type="submit" class="btn btn-success">Submit</button>
-                    </div>
-                </form>
-
-        </div>
-        <div class="tab-pane fade" id="myBorrowings">
-            <p>Add table with all borrowings/reservations here</p>
-        </div>
-    </div>
+  
+  <h2 th:text="'Hello, '+ ${userUpdateDTO.firstName} + ' ' + ${userUpdateDTO.lastName}"></h2>
+  
+  <ul class="nav nav-tabs mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+      <a class="nav-link active" data-bs-toggle="tab" href="#info" aria-selected="true" role="tab"
+         tabindex="-1">Info</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link" data-bs-toggle="tab" href="#changeInfo" aria-selected="false" role="tab">Change info</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link" data-bs-toggle="tab" href="#itemActivity" aria-selected="false" role="tab">My activity</a>
+    </li>
+  
+  </ul>
+  <div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade active show" id="info" role="tabpanel">
+      <div class="container mt-4">
+        <h2>User info</h2>
+        <p th:text="'Name:' + ${userUpdateDTO.firstName} + ' ' + ${userUpdateDTO.lastName}">full-name</p>
+        <p th:text="'Email:' + ${userUpdateDTO.email}">Email</p>
+        <p th:text="'Phone number: ' + ${userUpdateDTO.phoneNumber}">Phone number</p>
+      </div>
+      <div class="container mt-4">
+        <h2>Membership info</h2>
+        <p th:text="'Membership status: (add membership func)'"></p>
+        <p th:text="'Active till: (add membership func)' "></p>
+      </div>
     
+    </div>
+    <div class="tab-pane fade" id="changeInfo" role="tabpanel">
+      <form th:action="@{/profile/edit}" th:object="${userUpdateDTO}" method="post">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="firstName" class="form-label">First Name</label>
+            <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" th:field="*{email}" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+          <label for="phoneNumber" class="form-label">New Phone Number</label>
+          <input type="tel" id="phoneNumber" th:field="*{phoneNumber}" class="form-control">
+        </div>
+        
+        <div class="mb-3">
+          <label for="newPassword" class="form-label">New Password</label>
+          <input type="password" id="newPassword" th:field="*{newPassword}" class="form-control">
+        </div>
+        
+        <div class="mb-3">
+          <label for="oldPassword" class="form-label">Enter your old password to confirm changes</label>
+          <input type="password" id="oldPassword" th:field="*{oldPassword}" class="form-control" required>
+        </div>
+        
+        <div class="btn-group mb-3 text-center" role="group">
+          <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+      </form>
+    </div>
+    <div class="tab-pane fade" id="itemActivity">
+      <div class="table-responsive border rounded shadow-sm mb-0">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+          <tr>
+            <th>Activity</th>
+            <th>Title</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th class="text-end">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="activity : ${activityDTOS}">
+            <td class="text-nowrap">
+              <div th:text="${activity.activityType}"></div>
+            </td>
+            
+            <td class="text-nowrap">
+              <div th:text="${activity.itemTitle}"></div>
+            </td>
+            
+            <td th:text="${activity.startDate}"></td>
+            <td>
+            <span class="text-nowrap"
+                  data-bs-toggle="tooltip"
+                  th:text="${activity.dueDate}">
+            </span>
+            </td>
+            
+            <td class="text-end text-nowrap">
+              
+              <form th:if="${activity.activityType == 'Reservation'}"
+                    th:action="@{/profile/cancel-reservation/{id}(id=${activity.activityId})}" method="post" class="d-inline">
+                <span data-bs-toggle="tooltip" title="Cancel Reservation">
+                  <button type="submit"
+                          onclick="return confirm('Are you sure you want to cancel this reservation?');"
+                          class="btn btn-sm btn-outline-danger d-inline-flex align-items-center">
+                    <i class="bi bi-x-circle me-1"></i> Cancel
+                  </button>
+                </span>
+              </form>
+              
+              <form th:if="${activity.activityType == 'Borrow'}"
+                    th:action="@{/profile/extend-borrow/{id}(id=${activity.activityId})}" method="post" class="d-inline">
+                <span data-bs-toggle="tooltip"
+                      th:attr="title=${(activity.borrowExtendsCount >= 2 ? 'Max extensions reached': 'Extend Borrowing')}">
+                  <button type="submit"
+                          class="btn btn-sm btn-outline-success d-inline-flex align-items-center"
+                          th:disabled="${activity.borrowExtendsCount >= 2}">
+                    <i class="bi bi-clock-history me-1"></i> Extend
+                  </button>
+                </span>
+              </form>
+            
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(activityDTOS)}">
+            <td colspan="6" class="text-center text-muted">No activities found.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 </body>
 </html>

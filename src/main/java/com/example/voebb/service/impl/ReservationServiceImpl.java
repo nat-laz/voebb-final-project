@@ -1,13 +1,16 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.exception.*;
+import com.example.voebb.model.dto.ItemActivityDTO;
 import com.example.voebb.model.dto.reservation.CreateReservationDTO;
 import com.example.voebb.model.dto.reservation.GetReservationDTO;
+import com.example.voebb.model.dto.user.UserDTO;
 import com.example.voebb.model.entity.CustomUser;
 import com.example.voebb.model.entity.ItemStatus;
 import com.example.voebb.model.entity.ProductItem;
 import com.example.voebb.model.entity.Reservation;
 import com.example.voebb.repository.*;
+import com.example.voebb.service.CustomUserService;
 import com.example.voebb.service.ReservationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
