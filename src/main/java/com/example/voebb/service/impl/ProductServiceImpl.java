@@ -6,6 +6,7 @@ import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Language;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.model.entity.ProductType;
+import com.example.voebb.model.mapper.BookDetailsMapper;
 import com.example.voebb.model.mapper.ProductMapper;
 import com.example.voebb.repository.CountryRepo;
 import com.example.voebb.repository.ProductRepo;
@@ -105,6 +106,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getTitle(),
                 product.getReleaseYear(),
                 product.getPhoto(),
+                product.getType().getDefaultCoverUrl(),
                 product.getProductLinkToEmedia(),
                 product.getCreatorProductRelations().stream()
                         .filter(relation -> relation.getCreatorRole().getId().equals(product.getType().getMainCreatorRoleId()))
@@ -112,6 +114,7 @@ public class ProductServiceImpl implements ProductService {
                         .collect(Collectors.joining(", ")),
                 productItemService.getLocationsForAvailableItemsByProductId(product.getId())));
     }
+
 
     @Override
     public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
@@ -168,16 +171,6 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Product not found");
         }
         productRepo.deleteById(productId);
-    }
-
-    // TODO: Ask help (isn't working properly)
-    private void normalizeFilters(ProductFilters filters) {
-        if (filters.getTitle().isBlank()) {
-            filters.setTitle(null);
-        }
-        if (filters.getAuthor().isBlank()) {
-            filters.setAuthor(null);
-        }
     }
 
 }
