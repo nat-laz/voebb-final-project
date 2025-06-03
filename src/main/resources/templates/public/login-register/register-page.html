@@ -84,8 +84,14 @@
           <input type="password" class="form-control bg-dark text-light dci-border-dark" name="registerPassword"
                  id="registerPassword" required
                  th:field="*{password}">
-          <div class="invalid-feedback">
-            Please enter a valid password.
+          <div class="invalid-feedback p-1 mt-2 rounded dci-border-dark" id="passwordFeedback"
+               style="display: none; background-color: #444444">
+            <ul id="passwordCriteria" style="list-style: none; padding-left: 0; margin-bottom: 0;">
+              <li id="passwordLengthCheck">❌ Minimum 8 chars</li>
+              <li id="passwordDigitCheck">❌ At least 1 digit</li>
+              <li id="PasswordSpecialCharsCheck">❌ At least 1 special char</li>
+              <li id="PasswordLetterCheck">❌ At least 1 letter</li>
+            </ul>
           </div>
         </div>
         
@@ -93,8 +99,9 @@
           <label for="confirmPassword" class="form-label">Repeat password</label>
           <input type="password" class="form-control bg-dark text-light dci-border-dark" name="confirmPassword"
                  id="confirmPassword" required>
-          <div class="invalid-feedback">
-            Passwords don't match.
+          <div class="invalid-feedback p-1 mt-2 rounded dci-border-dark" id="passwordMatchFeedback"
+               style="display: none; background-color: #444444">
+            Passwords not match
           </div>
         </div>
         

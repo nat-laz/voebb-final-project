@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+    checkNames();
     validatePhoneInput();
     validateEmailInput();
+    checkPasswordStrength();
+    arePasswordsMatching();
 });
 
 function validatePhoneInput() {
@@ -79,5 +82,132 @@ function validateEmailInput() {
         }
     });
 }
+
+function checkPasswordStrength(){
+    const passwordInput = document.getElementById('registerPassword');
+    const phoneFeedback = document.getElementById('passwordFeedback');
+
+    const checkLength = document.getElementById('passwordLengthCheck');
+    const checkDigit = document.getElementById('passwordDigitCheck');
+    const checkSpecial = document.getElementById('PasswordSpecialCharsCheck');
+    const checkLetter = document.getElementById('PasswordLetterCheck');
+
+    passwordInput.addEventListener('focus', () => {
+        phoneFeedback.style.display = 'block';
+    });
+
+    passwordInput.addEventListener('blur', () => {
+        phoneFeedback.style.display = 'none';
+    });
+
+    passwordInput.addEventListener('input', function () {
+        const value = passwordInput.value;
+
+        const length = value.length > 7;
+        const digit = /\d/.test(value);
+        const letter = /[a-zA-Z]/.test(value);
+        const special = /[^a-zA-Z0-9]/.test(value);
+
+        // Update checklist
+        if (length) {
+            checkLength.textContent = '✅ Minimum 8 chars';
+            checkLength.classList.add("text-success");
+        } else {
+            checkLength.textContent = '❌ Minimum 8 chars';
+            checkLength.classList.remove("text-success");
+        }
+
+        if (digit) {
+            checkDigit.textContent = '✅ At least 1 digit';
+            checkDigit.classList.add("text-success");
+        } else {
+            checkDigit.textContent = '❌ At least 1 digit';
+            checkDigit.classList.remove("text-success");
+        }
+
+        if (special) {
+            checkSpecial.textContent = '✅ At least 1 special char';
+            checkSpecial.classList.add("text-success");
+        } else {
+            checkSpecial.textContent = '❌ At least 1 special char';
+            checkSpecial.classList.remove("text-success");
+        }
+
+        if (letter) {
+            checkLetter.textContent = '✅ At least 1 letter';
+            checkLetter.classList.add("text-success");
+        } else {
+            checkLetter.textContent = '❌ At least 1 letter';
+            checkLetter.classList.remove("text-success");
+        }
+
+        if (length && digit && special && letter) {
+            passwordInput.classList.add('is-valid');
+            passwordInput.classList.remove('is-invalid');
+        } else {
+            passwordInput.classList.add('is-invalid');
+            passwordInput.classList.remove('is-valid');
+        }
+    });
+}
+
+function arePasswordsMatching(){
+    const passwordInput = document.getElementById('registerPassword');
+    const confirmInput = document.getElementById('confirmPassword');
+    const feedback = document.getElementById('passwordMatchFeedback');
+
+    function checkPasswordsMatch() {
+        const password = passwordInput.value;
+        const confirm = confirmInput.value;
+
+        if (confirm === '') {
+            confirmInput.classList.remove('is-valid', 'is-invalid');
+            feedback.style.display = 'none';
+            return;
+        }
+
+        if (password === confirm) {
+            confirmInput.classList.add('is-valid');
+            confirmInput.classList.remove('is-invalid');
+            feedback.style.display = 'none';
+        } else {
+            confirmInput.classList.add('is-invalid');
+            confirmInput.classList.remove('is-valid');
+            feedback.style.display = 'block';
+        }
+    }
+
+    passwordInput.addEventListener('input', checkPasswordsMatch);
+    confirmInput.addEventListener('input', checkPasswordsMatch);
+}
+
+function checkNames(){
+    const firstName = document.getElementById('firstName');
+    const lastName = document.getElementById('lastName');
+
+    firstName.addEventListener('input', () => {
+        highlightInput(firstName.value.length > 0, firstName);
+    })
+
+    lastName.addEventListener('input', () => {
+        highlightInput(lastName.value.length > 0, lastName);
+    })
+
+}
+
+function highlightInput(isValid, input){
+    if(input.value.length < 1){
+        input.classList.remove('is-invalid', 'is-valid');
+        return;
+    }
+    if (isValid) {
+        input.classList.add('is-valid');
+        input.classList.remove('is-invalid');
+    } else {
+        input.classList.add('is-invalid');
+        input.classList.remove('is-valid');
+    }
+}
+
 
 
