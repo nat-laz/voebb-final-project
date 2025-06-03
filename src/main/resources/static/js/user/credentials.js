@@ -24,38 +24,53 @@ function validatePhoneInput() {
 
     phoneInput.addEventListener('input', function () {
         const value = phoneInput.value;
+        phoneInput.value = value.replace(/[^0-9+]/g, '');
 
-        const startsWithPlus = value.startsWith('+');
+        const startsWithPlusOrZero = /(^\+)|(^0)/.test(value);
         const digitsOnly = /^\+?\d+$/.test(value);
-        const digitCount = value.length > 12 && value.length < 15;
+        const digitCountInternational = value.length >= 13 && value.length <= 14;
+        const digitCountLocal = value.length >= 11 && value.length <= 12;
 
         // Update checklist
-        if (startsWithPlus) {
-            checkPlus.textContent = '✅ Starts with a "+" sign';
+        if (startsWithPlusOrZero) {
+            checkPlus.textContent = '✅ Starts with zero or a "+"';
             checkPlus.classList.add("text-success");
         } else {
-            checkPlus.textContent = '❌ Starts with a "+" sign';
+            checkPlus.textContent = '❌ Starts with zero or a "+"';
             checkPlus.classList.remove("text-success");
         }
 
+        if(/(^\+)/.test(value)){
+            phoneInput.removeAttribute('maxLength');
+            phoneInput.setAttribute('maxLength', '14');
+            if (digitCountInternational) {
+                checkLength.textContent = '✅ 12 or 13 digits';
+                checkLength.classList.add("text-success");
+            } else {
+                checkLength.textContent = '❌ 11 or 12 digits';
+                checkLength.classList.remove("text-success");
+            }
+        } else if (/(^0)/.test(value)){
+            phoneInput.removeAttribute('maxLength');
+            phoneInput.setAttribute('maxLength', '12');
+            if (digitCountLocal) {
+                checkLength.textContent = '✅ 11 or 12 digits';
+                checkLength.classList.add("text-success");
+            } else {
+                checkLength.textContent = '❌ 11 or 12 digits';
+                checkLength.classList.remove("text-success");
+            }
+        }
+
         if (digitsOnly) {
-            checkDigits.textContent = '✅ Only contains numbers after "+" sign';
+            checkDigits.textContent = '✅ Contains only numbers';
             checkDigits.classList.add("text-success");
         } else {
-            checkDigits.textContent = '❌ Only contains numbers after "+" sign';
+            checkDigits.textContent = '❌ Contains only numbers';
             checkDigits.classList.remove("text-success");
         }
 
-        // Update checklist
-        if (digitCount) {
-            checkLength.textContent = '✅ 11 or 12 digits';
-            checkLength.classList.add("text-success");
-        } else {
-            checkLength.textContent = '❌ 11 or 12 digits';
-            checkLength.classList.remove("text-success");
-        }
-
-        if (startsWithPlus && digitsOnly && digitCount) {
+        if (startsWithPlusOrZero && digitsOnly && (digitCountLocal || digitCountInternational)) {
             phoneInput.classList.add('is-valid');
             phoneInput.classList.remove('is-invalid');
         } else {
