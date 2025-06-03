@@ -1,30 +1,42 @@
 package com.example.voebb.controller.web;
 
+import com.example.voebb.model.dto.ItemActivityDTO;
 import com.example.voebb.model.dto.user.UserUpdateDTO;
-import com.example.voebb.service.impl.CustomUserDetailsService;
+import com.example.voebb.service.BorrowService;
+import com.example.voebb.service.CustomUserService;
+import com.example.voebb.service.ReservationService;
+import com.example.voebb.service.impl.ReservationServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/profile")
 public class ProfileController {
 
-    private final CustomUserDetailsService userDetailsService;
+    private final CustomUserService userService;
+    private final ReservationService reservationService;
+    private final BorrowService borrowService;
 
     @GetMapping
     public String getProfilePage(Model model, Principal principal) {
-        model.addAttribute("userUpdateDTO", userDetailsService.getUserDTOByUsername(principal.getName()));
+        String userCredentials = principal.getName();
+
+        UserUpdateDTO userUpdateDTO = userService.getUserUpdateDTOByUsername(userCredentials);
+        model.addAttribute("userUpdateDTO", userUpdateDTO);
+
+        List<ItemActivityDTO> activityDTOS = userService.getItemActivitiesByUsername(userCredentials);
+        model.addAttribute("activityDTOS", activityDTOS);
         return "public/user/profile";
     }
 
@@ -35,7 +47,32 @@ public class ProfileController {
                                Principal principal,
                                HttpServletRequest request,
                                HttpServletResponse response) {
-        userDetailsService.updateUserInfo(userUpdateDTO, principal.getName(), request, response);
+        userService.updateUserInfo(userUpdateDTO, principal.getName(), request, response);
         return "redirect:/profile";
     }
+
+    @PostMapping("/cancel-reservation/{id}")
+    public String cancelReservation(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            reservationService.deleteReservation(id);
+            redirectAttributes.addFlashAttribute("success", "Reservation deleted successfully.");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", "Reservation not found.");
+        }
+        return "redirect:/profile#itemActivity";
+    }
+
+    @PostMapping("/extend-borrow/{id}")
+    public String extendBorrow(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            String message = borrowService.extendBorrow(id);
+            redirectAttributes.addFlashAttribute("success", message);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/profile#itemActivity";
+    }
+
 }

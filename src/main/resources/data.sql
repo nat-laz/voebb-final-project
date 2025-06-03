@@ -380,19 +380,19 @@ ON CONFLICT (item_id) DO NOTHING;
 --  ─────────── mock: BORROWINGS  ───────────
 -- CASE 1: Active borrow (due in 3 days)
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 50, CURRENT_DATE - INTERVAL '25 days', CURRENT_DATE + INTERVAL '3 days', NULL, 0);
+VALUES (3, 50, CURRENT_DATE - INTERVAL '25 days', CURRENT_DATE + INTERVAL '3 days', NULL, 0);
 
 -- CASE 2: Overdue borrow (due 5 days ago)
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 49, CURRENT_DATE - INTERVAL '19 days', CURRENT_DATE - INTERVAL '5 days', NULL, 1);
+VALUES (3, 49, CURRENT_DATE - INTERVAL '19 days', CURRENT_DATE - INTERVAL '5 days', NULL, 1);
 
 -- CASE 3: Returned borrow (returned yesterday)
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 48, CURRENT_DATE - INTERVAL '8 days', CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE - INTERVAL '1 day', 0);
+VALUES (3, 48, CURRENT_DATE - INTERVAL '8 days', CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE - INTERVAL '1 day', 0);
 
 -- CASE 4: Active borrow, max extensions
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 44, CURRENT_DATE - INTERVAL '42 days', CURRENT_DATE + INTERVAL '14 days', NULL, 2);
+VALUES (3, 44, CURRENT_DATE - INTERVAL '42 days', CURRENT_DATE + INTERVAL '14 days', NULL, 2);
 
 -- CASE 5: Returned early
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
@@ -409,13 +409,13 @@ SELECT SETVAL('borrows_borrow_id_seq', (SELECT MAX(borrow_id) FROM borrows));
 INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
 VALUES
 -- Starts today, ends in 3 days
-(1, 2, 2, CURRENT_DATE, CURRENT_DATE + INTERVAL '3 days'),
+(1, 3, 2, CURRENT_DATE, CURRENT_DATE + INTERVAL '3 days'),
 
 -- Started yesterday, ends in 2 days
-(2, 2, 12, CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE + INTERVAL '2 days'),
+(2, 3, 12, CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE + INTERVAL '2 days'),
 
 -- Started 2 days ago, ends tomorrow
-(3, 5, 13, CURRENT_DATE - INTERVAL '2 days', CURRENT_DATE + INTERVAL '1 day'),
+(3, 2, 13, CURRENT_DATE - INTERVAL '2 days', CURRENT_DATE + INTERVAL '1 day'),
 
 -- Ends today
 (4, 5, 14, CURRENT_DATE - INTERVAL '3 days', CURRENT_DATE),

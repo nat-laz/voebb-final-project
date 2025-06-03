@@ -10,6 +10,8 @@ import com.example.voebb.model.entity.Language;
 import com.example.voebb.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -24,6 +26,7 @@ public class WebControllerAdvice {
     private final LanguageService languageService;
     private final CountryService countryService;
     private final ItemStatusService itemStatusService;
+    private final CustomUserService customUserService;
 
     @ModelAttribute("productFilters")
     public ProductFilters productFilters() {
@@ -58,5 +61,15 @@ public class WebControllerAdvice {
 
     @ModelAttribute("itemStatuses")
     public List<ItemStatus> statuses() {return itemStatusService.getAllStatuses();}
+
+    @ModelAttribute("borrowExpiresSoon")
+    @PreAuthorize("isAuthenticated()")
+    public Boolean addBorrowWarning(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            return customUserService.isBorrowingExpiresSoon(username);
+        }
+        return null;
+    }
 
 }
