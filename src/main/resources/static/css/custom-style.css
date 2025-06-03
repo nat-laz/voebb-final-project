@@ -4,3 +4,12 @@
     border-radius: 0.5rem;
 }
 
+.dci-border-dark {
+    border: 1px solid #555555;
+}
+
+.btn-outline-secondary:hover, .btn-outline-secondary:focus {
+    color: #fff !important;
+    background-color: #004085 !important;
+    border-color: #004085 !important;
+}
