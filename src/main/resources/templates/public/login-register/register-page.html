@@ -53,15 +53,19 @@
                  autocomplete="off"
                  th:field="*{phoneNumber}"
                  th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid' : ''"
-          
           >
-          <div class="invalid-feedback p-1 mt-2 rounded dci-border-dark" id="phoneFeedback"
-               style="display: none; background-color: #444444">
+          <div
+            class="invalid-feedback p-1 mt-2 rounded dci-border-dark" id="phoneFeedback"
+            style="display: none; background-color: #444444">
             <ul id="phoneCriteria" style="list-style: none; padding-left: 0; margin-bottom: 0;">
               <li id="checkPlus">❌ Starts with zero or a "+"</li>
               <li id="checkDigits">❌ Contains only numbers</li>
               <li id="checkLength">❌ length check</li>
             </ul>
+          </div>
+          <div class="invalid-feedback"
+               th:errors="*{phoneNumber}"
+               th:if="${#fields.hasErrors('phoneNumber')}">
           </div>
         </div>
         

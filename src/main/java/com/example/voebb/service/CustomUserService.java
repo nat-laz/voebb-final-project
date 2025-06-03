@@ -25,4 +25,6 @@ public interface CustomUserService {
     void enableUser(Long id);
     void disableUser(Long id);
     void deleteUser(Long id);
+    boolean emailExists(String email);
+    boolean phoneNumberExists(String email);
 }

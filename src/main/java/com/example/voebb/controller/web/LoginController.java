@@ -26,10 +26,21 @@ public class LoginController {
 
     @PostMapping("/register")
     public String postRegisterPage(@ModelAttribute("userRegistrationDTO") @Valid UserRegistrationDTO userRegistrationDTO,
-                                   BindingResult result) {
-        if (result.hasErrors()) {
+                                   BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             return "public/login-register/register-page";
         }
+
+        if (customUserDetailsService.emailExists(userRegistrationDTO.getEmail())) {
+            bindingResult.rejectValue("email", "error.email", "Email is already taken");
+            return "public/login-register/register-page";
+        }
+
+        if (customUserDetailsService.phoneNumberExists(userRegistrationDTO.getPhoneNumber())) {
+            bindingResult.rejectValue("phoneNumber", "error.phoneNumber", "Phone number is already taken");
+            return "public/login-register/register-page";
+        }
+
         customUserDetailsService.registerUser(userRegistrationDTO);
         return "redirect:/";
     }

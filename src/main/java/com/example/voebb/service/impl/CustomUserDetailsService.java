@@ -264,6 +264,16 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         userRepo.deleteById(id);
     }
 
+    @Override
+    public boolean emailExists(String email) {
+        return userRepo.existsByEmail(email);
+    }
+
+    @Override
+    public boolean phoneNumberExists(String phoneNumber) {
+        return userRepo.existsByPhoneNumber(phoneNumber);
+    }
+
     // Mapping methods
     private UserDTO toDto(CustomUser user) {
         List<Long> roleIds = user.getRoles().stream()
