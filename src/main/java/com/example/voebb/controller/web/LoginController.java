@@ -33,4 +33,9 @@ public class LoginController {
         customUserDetailsService.registerUser(userRegistrationDTO);
         return "redirect:/";
     }
+
+    @GetMapping("/login")
+    public String getLoginPage() {
+        return "public/login-register/login-page";
+    }
 }
