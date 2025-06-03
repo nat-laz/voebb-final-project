@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductFilters {
     // Product filters
+    private Long productId;
     private String title;
     private String author;
     private Long languageId;

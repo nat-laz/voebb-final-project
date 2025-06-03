@@ -15,7 +15,7 @@ public interface ProductService {
 
     UpdateProductDTO getUpdateProductDTOById(Long id);
 
-    Page<Product> getAllProducts(Pageable pageable);
+    Page<GetProductAdminDTO> getFilteredProductsAdmin(ProductFilters filters,Pageable pageable);
 
     ProductInfoDTO getProductInfoDTOById(Long id);
 

@@ -1,6 +1,8 @@
 package com.example.voebb.controller.web.admin_panel;
 
 import com.example.voebb.model.dto.product.CreateProductDTO;
+import com.example.voebb.model.dto.product.GetProductAdminDTO;
+import com.example.voebb.model.dto.product.ProductFilters;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.service.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,11 +30,12 @@ public class ProductControllerAdmin {
     private final CreatorRoleService creatorRoleService;
 
     @GetMapping
-    public String getAllProducts(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+    public String getAllProducts(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
                                  Model model,
+                                 @ModelAttribute ProductFilters productFilters,
                                  @RequestParam(value = "success", required = false) String success) {
 
-        Page<Product> page = productService.getAllProducts(pageable);
+        Page<GetProductAdminDTO> page = productService.getFilteredProductsAdmin(productFilters, pageable);
         model.addAttribute("page", page);
         model.addAttribute("products", page.getContent());
         model.addAttribute("countries", countryService.getAllCountries());

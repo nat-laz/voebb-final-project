@@ -23,14 +23,16 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
                    LEFT JOIN Creator c on cpr.creator = c
                    LEFT JOIN p.countries co
                    LEFT JOIN p.languages lang
-                   WHERE   (:title is null or :title = ''  OR p.title ILIKE '%' || :title || '%')
+                   WHERE   (:productId IS NULL OR p.id = :productId)
+                   AND     (:title is null or :title = ''  OR p.title ILIKE '%' || :title || '%')
                    AND     (:libraryId IS NULL OR lib.id = :libraryId)
                    AND     (:author IS NULL or :author = '' OR c.lastName ILIKE '%' || :author || '%' OR c.firstName ILIKE '%' || :author || '%')
                    AND     (:productType IS NULL OR p.type.id = :productType)
                    AND     (:languageId IS NULL OR lang.id = :languageId)
                    AND     (:countryId IS NULL OR co.id = :countryId)
                    """)
-    Page<Product> searchWithFilters(@Param("title") String title,
+    Page<Product> searchWithFilters(@Param("productId") Long productId,
+                                    @Param("title") String title,
                                     @Param("author") String author,
                                     @Param("libraryId") Long libraryId,
                                     @Param("productType") Long productType,

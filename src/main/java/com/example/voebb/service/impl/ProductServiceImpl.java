@@ -84,14 +84,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<CardProductDTO> getProductCardsByFilters(ProductFilters filters, Pageable pageable) {
-        System.out.println("title - " + filters.getTitle());
-        System.out.println("author - " + filters.getAuthor());
-        System.out.println("libraryId - " + filters.getLibraryId());
-        System.out.println("type - " + filters.getProductType());
-        System.out.println("language - " + filters.getLanguageId());
-        System.out.println("country - " + filters.getCountryId());
+//        System.out.println("title - " + filters.getTitle());
+//        System.out.println("author - " + filters.getAuthor());
+//        System.out.println("libraryId - " + filters.getLibraryId());
+//        System.out.println("type - " + filters.getProductType());
+//        System.out.println("language - " + filters.getLanguageId());
+//        System.out.println("country - " + filters.getCountryId());
 
         Page<Product> page = productRepo.searchWithFilters(
+                null,
                 filters.getTitle(),
                 filters.getAuthor(),
                 filters.getLibraryId(),
@@ -118,7 +119,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
-        Page<Product> page = productRepo.searchWithFilters(title, null, null, null, null, null, pageable);
+        Page<Product> page = productRepo.searchWithFilters(null, title, null, null, null, null, null, pageable);
         return page.map(ProductMapper::toProductInfoDTO);
     }
 
@@ -139,8 +140,41 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> getAllProducts(Pageable pageable) {
-        return productRepo.findAll(pageable);
+    public Page<GetProductAdminDTO> getFilteredProductsAdmin(ProductFilters filters, Pageable pageable) {
+
+        Page<Product> page = productRepo.searchWithFilters(
+                filters.getProductId(),
+                filters.getTitle(),
+                null,
+                null,
+                filters.getProductType(),
+                null,
+                null,
+                pageable);
+
+        return page.map(product -> {
+            String mainCreator = product.getCreatorProductRelations().stream()
+                    .filter(relation -> relation.getCreatorRole().getId().equals(product.getType().getMainCreatorRoleId()))
+                    .map(relation -> relation.getCreator().getFirstName() + " " + relation.getCreator().getLastName())
+                    .collect(Collectors.joining(", "));
+
+            if (mainCreator.isBlank()) {
+                mainCreator = "N/A";
+            }
+
+            String emediaLink = product.getProductLinkToEmedia();
+            if (emediaLink == null || emediaLink.isBlank()) {
+                emediaLink = "N/A";
+            }
+
+            return new GetProductAdminDTO(
+                    product.getId(),
+                    product.getTitle(),
+                    product.getType().getName(),
+                    mainCreator,
+                    emediaLink
+            );
+        });
     }
 
     @Override
