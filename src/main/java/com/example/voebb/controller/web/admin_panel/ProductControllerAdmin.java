@@ -5,6 +5,7 @@ import com.example.voebb.model.dto.product.GetProductAdminDTO;
 import com.example.voebb.model.dto.product.ProductFilters;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.service.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class ProductControllerAdmin {
     private final CreatorRoleService creatorRoleService;
 
     @GetMapping
-    public String getAllProducts(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+    public String getAllProducts(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                  Model model,
                                  @ModelAttribute ProductFilters productFilters,
                                  @RequestParam(value = "success", required = false) String success) {
@@ -77,7 +78,7 @@ public class ProductControllerAdmin {
     }
 
 
-//
+    //
 //    @GetMapping("/edit/{id}")
 //    public String editProduct(@PathVariable("id") Long id, Model model) {
 //        UpdateProductDTO product = productService.getUpdateProductDTOById(id);
@@ -98,12 +99,19 @@ public class ProductControllerAdmin {
 //
 //    }
 //
-//    @PostMapping("/deleteProduct/{id}")
-//    public String deleteProduct(@PathVariable Long id,
-//                                RedirectAttributes ra) {
-//        productService.deleteProductById(id);
-//        ra.addFlashAttribute("success", "Product deleted successfully");
-//        return "redirect:/admin/products";
-//    }
+    @PostMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable Long id,
+                                RedirectAttributes redirectAttributes) {
 
+        try {
+            productService.deleteProductById(id);
+            redirectAttributes.addFlashAttribute("success", "Item deleted successfully.");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (
+                EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", "Item not found.");
+        }
+        return "redirect:/admin/products";
+    }
 }

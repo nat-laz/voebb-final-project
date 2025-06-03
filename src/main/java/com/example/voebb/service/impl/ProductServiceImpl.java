@@ -1,14 +1,16 @@
 package com.example.voebb.service.impl;
 
+import com.example.voebb.exception.ProductDeletionException;
+import com.example.voebb.exception.ProductNotFoundException;
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
 import com.example.voebb.model.dto.product.*;
 import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Language;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.model.entity.ProductType;
-import com.example.voebb.model.mapper.BookDetailsMapper;
 import com.example.voebb.model.mapper.ProductMapper;
 import com.example.voebb.repository.CountryRepo;
+import com.example.voebb.repository.ProductItemRepo;
 import com.example.voebb.repository.ProductRepo;
 import com.example.voebb.repository.ProductTypeRepo;
 import com.example.voebb.service.*;
@@ -33,6 +35,7 @@ public class ProductServiceImpl implements ProductService {
     private final CountryService countryService;
     private final LanguageService languageService;
     private final ProductTypeRepo productTypeRepo;
+    private final ProductItemRepo productItemRepo;
 
     @Override
     @Transactional
@@ -57,12 +60,6 @@ public class ProductServiceImpl implements ProductService {
         newProduct.setCountries(countries);
         newProduct.setLanguages(languages);
 
-        productRepo.save(newProduct);
-
-        if (newProduct.isBook() && dto.getBookDetails() != null) {
-            bookDetailsService.saveBookDetails(dto.getBookDetails(), newProduct);
-        }
-
         if (dto.getCreators() == null || dto.getCreators().isEmpty()) {
             throw new IllegalArgumentException("At least one creator is required.");
         }
@@ -77,8 +74,14 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("At least one valid creator with role is required.");
         }
 
-
         creatorService.assignCreatorsToProduct(validCreators, newProduct);
+
+        productRepo.save(newProduct);
+
+        if (newProduct.isBook() && dto.getBookDetails() != null) {
+            bookDetailsService.saveBookDetails(dto.getBookDetails(), newProduct);
+        }
+
     }
 
 
@@ -199,10 +202,17 @@ public class ProductServiceImpl implements ProductService {
         return updateProductDTO;
     }
 
+    @Transactional
     @Override
     public void deleteProductById(Long productId) {
+
         if (!productRepo.existsById(productId)) {
-            throw new RuntimeException("Product not found");
+            throw new ProductNotFoundException(productId);
+        }
+
+        long copyCount = productItemRepo.countByProductId(productId);
+        if (copyCount > 0) {
+            throw new ProductDeletionException(productId, copyCount);
         }
         productRepo.deleteById(productId);
     }

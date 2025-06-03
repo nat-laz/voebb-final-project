@@ -16,7 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +56,6 @@ public class CreatorServiceImpl implements CreatorService {
             product.addRelation(relation);
             creator.addRelation(relation);
             relation.setCreatorRole(role);
-            creatorRepo.save(creator);
         }
     }
 

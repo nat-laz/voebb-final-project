@@ -1,12 +1,10 @@
 package com.example.voebb.model.entity;
 
-import com.example.voebb.model.dto.product.BookDetailsDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -67,7 +65,7 @@ public class Product {
     )
     private List<Country> countries;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     List<CreatorProductRelation> creatorProductRelations = new ArrayList<>();
 
     public boolean isBook(){

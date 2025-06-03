@@ -87,7 +87,7 @@
           <th>Title</th>
           <th>Type</th>
           <th>Main Creator</th>
-          <th>eMedia Link</th>
+          <th>Link</th>
           <th class="text-end">Actions</th>
         </tr>
         </thead>
@@ -97,7 +97,7 @@
           
           <td class="text-nowrap" style="max-width: 220px;">
             <div class="text-truncate d-inline-block"
-                 style="max-width: 220px;"
+                 style="max-width: 200px;"
                  th:text="${prod.title}"
                  th:attr="data-bs-toggle='tooltip', title=${prod.title}">
             </div>
@@ -116,7 +116,6 @@
                 </i>
                 <span class="fw-semibold text-capitalize" th:text="${prod.productType}">book</span>
               </span>
-          
           </td>
           
           
@@ -124,11 +123,15 @@
             <span th:text="${prod.mainCreator}">N/A</span>
           </td>
           
-          <td>
+          <td class="text-nowrap" style="max-width: 220px;">
             <th:block th:if="${prod.productLinkToEmedia != 'N/A'}">
               <a th:href="${prod.productLinkToEmedia}"
+                 class="d-inline-block text-truncate"
+                 style="max-width: 200px;"
                  th:text="${prod.productLinkToEmedia}"
-                 target="_blank"></a>
+                 th:attr="data-bs-toggle='tooltip', title=${prod.productLinkToEmedia}"
+                 target="_blank">
+              </a>
             </th:block>
             <th:block th:if="${prod.productLinkToEmedia == 'N/A'}">
               <span class="text-muted">N/A</span>
@@ -145,7 +148,7 @@
             </button>
             
             
-            <form th:action="@{/admin/products/deleteProduct/{id}(id=${prod.id})}"
+            <form th:action="@{/admin/products/delete/{id}(id=${prod.id})}"
                   method="post" class="d-inline">
               <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
               <span data-bs-toggle="tooltip" title="Delete Product">
@@ -204,7 +207,6 @@
         </li>
       </ul>
     </nav>
-  
   </div>
 </main>
 </body>

@@ -24,7 +24,7 @@ public class Creator {
     @Column(name = "creator_last_name",  nullable = false, length = 60)
     private String lastName;
 
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CreatorProductRelation> creatorProductRelations = new ArrayList<>();
 
     public void addRelation(CreatorProductRelation creatorProductRelation){
