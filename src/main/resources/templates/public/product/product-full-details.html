@@ -79,7 +79,7 @@
         <td th:text="${locationAndItemStatusDTO.locationInLibrary()}">Location in library</td>
         <td>
           <a class="btn btn-sm btn-primary"
-             href="/register"
+             href="/login"
              sec:authorize="isAnonymous()">Login to reserve</a>
           
           <form sec:authorize="isAuthenticated()"
