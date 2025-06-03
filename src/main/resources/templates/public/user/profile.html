@@ -94,7 +94,8 @@
           </tr>
           </thead>
           <tbody>
-          <tr th:each="activity : ${activityDTOS}">
+          <tr th:each="activity : ${activityDTOS}"
+              th:classappend="${activity.expiresSoon} ? 'table-danger'">
             <td class="text-nowrap">
               <div th:text="${activity.activityType}"></div>
             </td>

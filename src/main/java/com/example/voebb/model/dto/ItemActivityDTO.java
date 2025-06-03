@@ -21,4 +21,6 @@ public class ItemActivityDTO {
 
     private LocalDate startDate;
     private LocalDate dueDate;
+
+    private Boolean expiresSoon;
 }
