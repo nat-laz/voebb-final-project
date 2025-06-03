@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ProductTypeDTO {
     private Long id;
     private String name;
+    private String displayName;
 }

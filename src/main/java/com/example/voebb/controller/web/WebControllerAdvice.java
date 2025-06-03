@@ -1,14 +1,14 @@
 package com.example.voebb.controller.web;
 
+import com.example.voebb.model.dto.item.ItemFilters;
 import com.example.voebb.model.dto.library.LibraryDTO;
 import com.example.voebb.model.dto.product.ProductFilters;
 import com.example.voebb.model.dto.product.ProductTypeDTO;
 import com.example.voebb.model.entity.Country;
+import com.example.voebb.model.entity.ItemStatus;
 import com.example.voebb.model.entity.Language;
-import com.example.voebb.service.CountryService;
-import com.example.voebb.service.LanguageService;
-import com.example.voebb.service.LibraryService;
-import com.example.voebb.service.ProductTypeService;
+import com.example.voebb.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,6 +23,7 @@ public class WebControllerAdvice {
     private final ProductTypeService productTypeService;
     private final LanguageService languageService;
     private final CountryService countryService;
+    private final ItemStatusService itemStatusService;
 
     @ModelAttribute("productFilters")
     public ProductFilters productFilters() {
@@ -48,5 +49,14 @@ public class WebControllerAdvice {
     public List<Country> productCountries() {
         return countryService.getAllCountries();
     }
+
+    @ModelAttribute("requestURI")
+    public String requestURI(HttpServletRequest request) {return request.getRequestURI();}
+
+    @ModelAttribute("itemFilters")
+    public ItemFilters itemFilters() {return new ItemFilters();}
+
+    @ModelAttribute("itemStatuses")
+    public List<ItemStatus> statuses() {return itemStatusService.getAllStatuses();}
 
 }
