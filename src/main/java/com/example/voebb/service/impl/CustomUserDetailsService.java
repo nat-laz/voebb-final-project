@@ -94,7 +94,8 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
                                 getReservationDTO.itemTitle(),
                                 getReservationDTO.itemId(),
                                 getReservationDTO.startDate(),
-                                getReservationDTO.dueDate()
+                                getReservationDTO.dueDate(),
+                                null
                         ))
                         .toList());
 
@@ -107,7 +108,8 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
                                 getBorrowingsDTO.itemTitle(),
                                 getBorrowingsDTO.itemId(),
                                 getBorrowingsDTO.startDate(),
-                                getBorrowingsDTO.dueDate()
+                                getBorrowingsDTO.dueDate(),
+                                !LocalDate.now().plusDays(3).isBefore(getBorrowingsDTO.dueDate())
                         ))
                         .toList());
 
@@ -121,9 +123,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         return borrowService.getFilteredBorrowings(
                         customUser.getId(), null, null, "Active", null)
                 .stream()
-                .anyMatch(borrow ->
-                        LocalDate.now().plusDays(3).isAfter(borrow.dueDate())
-                        || LocalDate.now().plusDays(3).isEqual(borrow.dueDate()));
+                .anyMatch(borrow -> !LocalDate.now().plusDays(3).isBefore(borrow.dueDate()));
     }
 
     @Transactional
