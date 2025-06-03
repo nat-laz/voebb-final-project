@@ -39,7 +39,6 @@ public class ProductControllerAdmin {
         Page<GetProductAdminDTO> page = productService.getFilteredProductsAdmin(productFilters, pageable);
         model.addAttribute("page", page);
         model.addAttribute("products", page.getContent());
-        model.addAttribute("countries", countryService.getAllCountries());
 
         if (success != null && !success.isBlank()) {
             model.addAttribute("success", success);
@@ -48,37 +47,26 @@ public class ProductControllerAdmin {
         return "admin/products/product-list";
     }
 
-
     @GetMapping("/new")
     public String showCreateProductForm(Model model) {
         model.addAttribute("createProductDTO", new CreateProductDTO());
-        model.addAttribute("countries", countryService.getAllCountries());
-        model.addAttribute("languages", languageService.getAllLanguages());
-        model.addAttribute("productTypes", productTypeService.getAllProductTypes());
-        model.addAttribute("roles", creatorRoleService.getAllCreatorRoles());
         return "admin/products/add-product";
     }
 
     @PostMapping("/new")
     public String createProduct(@Valid @ModelAttribute("createProductDTO") CreateProductDTO dto,
                                 BindingResult bindingResult,
-                                RedirectAttributes ra,
-                                Model model) {
+                                RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("countries", countryService.getAllCountries());
-            model.addAttribute("languages", languageService.getAllLanguages());
-            model.addAttribute("productTypes", productTypeService.getAllProductTypes());
-            model.addAttribute("roles", creatorRoleService.getAllCreatorRoles());
             return "admin/products/add-product";
         }
 
         productService.createProduct(dto);
-        ra.addFlashAttribute("success", "Product created successfully");
+        redirectAttributes.addFlashAttribute("success", "Product created successfully");
         return "redirect:/admin/products";
     }
 
 
-    //
 //    @GetMapping("/edit/{id}")
 //    public String editProduct(@PathVariable("id") Long id, Model model) {
 //        UpdateProductDTO product = productService.getUpdateProductDTOById(id);

@@ -49,7 +49,6 @@ public class ProductTypeServiceImpl implements ProductTypeService {
                         productType.getId(),
                         productType.getName(),
                         productType.getDisplayName()
-
                 )).toList();
     }
 

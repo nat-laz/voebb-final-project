@@ -1,14 +1,12 @@
 package com.example.voebb.controller.web;
 
+import com.example.voebb.model.dto.creator.CreatorRoleResponseDTO;
 import com.example.voebb.model.dto.library.LibraryDTO;
 import com.example.voebb.model.dto.product.ProductFilters;
 import com.example.voebb.model.dto.product.ProductTypeDTO;
 import com.example.voebb.model.entity.Country;
 import com.example.voebb.model.entity.Language;
-import com.example.voebb.service.CountryService;
-import com.example.voebb.service.LanguageService;
-import com.example.voebb.service.LibraryService;
-import com.example.voebb.service.ProductTypeService;
+import com.example.voebb.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,6 +21,7 @@ public class WebControllerAdvice {
     private final ProductTypeService productTypeService;
     private final LanguageService languageService;
     private final CountryService countryService;
+    private final CreatorRoleService creatorRoleService;
 
     @ModelAttribute("productFilters")
     public ProductFilters productFilters() {
@@ -49,4 +48,8 @@ public class WebControllerAdvice {
         return countryService.getAllCountries();
     }
 
+    @ModelAttribute("roles")
+    public List<CreatorRoleResponseDTO> roles() {
+        return creatorRoleService.getAllCreatorRoles();
+    }
 }
