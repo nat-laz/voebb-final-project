@@ -8,8 +8,8 @@
         <div class="modal-content">
             <form th:action="@{/admin/items/edit/{id}(id=${item.itemId})}" method="post">
                 <div class="modal-header">
-                    <h5 class="modal-title" th:id="'editItemModalLabel__' + ${item.itemId}">
-                        Edit Item #<span th:text="${item.itemId}"></span>
+                    <h5 class="modal-title">
+                        Edit Item <span class="badge bg-primary-subtle text-dark-emphasis ms-2" th:text="'ID: ' + ${item.itemId}"></span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -22,7 +22,7 @@
                     <div class="mb-3">
                         <label for="statusId" class="form-label">Status</label>
                         <select class="form-select" name="statusId" required>
-                            <option th:each="status : ${statuses}"
+                            <option th:each="status : ${itemStatuses}"
                                     th:value="${status.id}"
                                     th:text="${status.name.toUpperCase()}"
                                     th:selected="${status.name == item.itemStatus}">

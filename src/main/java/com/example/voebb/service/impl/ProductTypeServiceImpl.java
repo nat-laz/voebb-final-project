@@ -47,6 +47,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
         return productTypeRepo.findAll().stream()
                 .map(productType -> new ProductTypeDTO(
                         productType.getId(),
+                        productType.getName(),
                         productType.getDisplayName()
                 )).toList();
     }

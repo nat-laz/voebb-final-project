@@ -39,24 +39,35 @@
 
                         <!-- Tab 1: Search for Product -->
                         <div class="tab-pane fade show active" id="searchTab" role="tabpanel">
-                            <form th:action="@{/admin/items/create}" method="get">
+                            <form th:action="@{/admin/items}" method="get" id="searchForm" class="mb-3">
                                 <input type="hidden" name="action" value="search"/>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" name="searchTitle"
-                                           th:value="${searchTitle}" placeholder="Search by product title"/>
-                                    <button type="submit" class="btn btn-outline-primary" id="searchBtn">
-                                        Search
-                                    </button>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="searchInput" class="form-label fw-semibold mb-0">Search Product</label>
+                                    <div id="clearBtnContainer" th:if="${searchTitle != null}" class="mb-2">
+                                        <button type="button"
+                                                id="clearBtn"
+                                                class="btn btn-outline-secondary ms-2 btn-sm"
+                                                title="Reset search">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                                        </button>
+                                    </div>
                                 </div>
-                                <div id="clearBtnContainer" th:if="${searchTitle}" class="mb-2">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="clearBtn">
-                                        Clear Search
-                                    </button>
+                                
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text"
+                                           class="form-control"
+                                           name="searchTitle"
+                                           id="searchInput"
+                                           th:value="${searchTitle}"
+                                           placeholder="Search by title"/>
+                                    <button type="submit" class="btn btn-outline-primary" id="searchBtn">Search</button>
                                 </div>
-
                             </form>
-
-
+                            
+                            
+                            
                             <!-- Matching Products Table -->
                             <div th:if="${matchingProducts != null}">
 
@@ -67,7 +78,7 @@
 
                                 <div th:if="${matchingProducts.totalElements > 0}">
                                     <form id="productSelectionForm">
-                                        <table class="table table-sm table-hover align-middle mb-2 no-border">
+                                        <table class="table table-hover align-middle table-bordered shadow-sm rounded">
                                             <thead class="table-light">
                                             <tr>
                                                 <th>Select</th>
@@ -124,7 +135,7 @@
 
                                 </div>
 
-                                <div th:if="${matchingProducts.totalElements > 0}">
+                                <div th:if="${searchTitle != null and  matchingProducts != null and  matchingProducts.totalElements > 0}">
                                     <button id="continueBtn"
                                             type="button"
                                             class="btn btn-primary mt-2"
@@ -133,8 +144,7 @@
                                         Continue with Item Details
                                     </button>
                                 </div>
-
-                                <!--    TODO: Properly re-directing after creating the New Product-->
+                                
                                 <div id="createNewProductContainer"
                                      class="alert alert-light border d-flex justify-content-between align-items-center mt-3 p-3 rounded">
                                     <div class="me-3 mb-0">
@@ -165,14 +175,12 @@
                                                 th:text="${lib.name}"></option>
                                     </select>
                                 </div>
-
-
+                                
                                 <div class="mb-3">
                                     <label class="form-label">Location Note</label>
                                     <textarea class="form-control" name="locationNote" rows="2" required></textarea>
                                 </div>
-
-
+                                
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel
                                     </button>
