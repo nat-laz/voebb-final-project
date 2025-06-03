@@ -62,7 +62,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     }
 
     private boolean isValidPhone(String username) {
-        return username.matches("^\\+[0-9]{10,15}$");
+        return username.matches("(^\\+49[0-9]{3}[0-9]{7,8}$)|(^0[0-9]{3}[0-9]{7,8}$)");
     }
 
     private boolean isValidEmail(String username) {
@@ -74,7 +74,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
             return userRepo.findByEmail(username)
                     .orElseThrow(() -> new UsernameNotFoundException("Email not found: " + username));
         } else if (isValidPhone(username)) {
-            return userRepo.findByPhoneNumber(username)
+            return userRepo.findByPhoneNumber(toInternationalPhone(username))
                     .orElseThrow(() -> new UsernameNotFoundException("Phone number not found: " + username));
         } else {
             throw new UsernameNotFoundException("Invalid login identifier: " + username);
@@ -134,7 +134,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         CustomUser customUser = new CustomUser();
 
         customUser.setEmail(userRegistrationDTO.getEmail());
-        customUser.setPhoneNumber(userRegistrationDTO.getPhoneNumber());
+        customUser.setPhoneNumber(toInternationalPhone(userRegistrationDTO.getPhoneNumber()));
         customUser.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
         customUser.setFirstName(userRegistrationDTO.getFirstName());
         customUser.setLastName(userRegistrationDTO.getLastName());
@@ -229,7 +229,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         existingUser.setFirstName(userDto.firstName());
         existingUser.setLastName(userDto.lastName());
         existingUser.setEmail(userDto.email());
-        existingUser.setPhoneNumber(userDto.phoneNumber());
+        existingUser.setPhoneNumber(toInternationalPhone(userDto.phoneNumber()));
         existingUser.setEnabled(userDto.enabled());
         existingUser.setBorrowedProductsCount(userDto.borrowedBooksCount());
 
@@ -274,6 +274,14 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         return userRepo.existsByPhoneNumber(phoneNumber);
     }
 
+    private String toInternationalPhone(String phone) {
+        if (phone.startsWith("0")) {
+            return phone.replaceFirst("^0", "+49");
+        } else if (phone.startsWith("+")) {
+            return phone;
+        } else throw new RuntimeException("Wrong phone format");
+    }
+
     // Mapping methods
     private UserDTO toDto(CustomUser user) {
         List<Long> roleIds = user.getRoles().stream()
@@ -304,7 +312,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
-        user.setPhoneNumber(dto.phoneNumber());
+        user.setPhoneNumber(toInternationalPhone(dto.phoneNumber()));
         user.setEnabled(dto.enabled());
         user.setBorrowedProductsCount(dto.borrowedBooksCount());
         user.setPassword(dto.password());
