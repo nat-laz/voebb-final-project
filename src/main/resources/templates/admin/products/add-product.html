@@ -69,7 +69,7 @@
         <li class="nav-item" role="presentation">
         <span data-bs-toggle="tooltip" data-bs-placement="top" title="Please complete Metadata first">
           <button class="nav-link disabled" id="tab-results-tab" data-bs-toggle="tab" data-bs-target="#tab-results"
-                  type="button" role="tab" tabindex="-1" aria-disabled="true">Results</button>
+                  type="button" role="tab" tabindex="-1" aria-disabled="true">Result</button>
         </span>
         </li>
       </ul>
@@ -178,6 +178,7 @@
             <div class="text-danger mt-2"
                  th:if="${#fields.hasErrors('creators')}"
                  th:errors="*{creators}"></div>
+            
             <div id="creatorsPreview" class="d-flex flex-wrap gap-2 mb-3"></div>
             
             <div class="row g-3 align-items-end">
@@ -205,7 +206,7 @@
               
               <div class="col-md-2">
                 <button type="button" class="btn btn-primary w-100" onclick="addCreatorToPreview()">
-                  Add Creator
+                  <i class="bi bi-plus-circle me-2"></i> Add Creator
                 </button>
               </div>
             </div>
@@ -232,6 +233,7 @@
           <div class="col-12 card p-4 shadow-sm">
             <h5 class="mb-3">Metadata</h5>
             <div class="row">
+              
               <div class="col-md-6 mb-2">
                 <label class="form-label">Publication Countries</label>
                 <div class="text-danger mt-1" id="countryIdsError">
@@ -312,15 +314,16 @@
                   <h5 class="mb-3 fw-semibold text-muted small">General Info</h5>
                   <div class="row gx-4">
                     <div class="col-md-6">
-                      <div class="mb-2"><strong>Product Type:</strong> <span id="revProductType"
-                                                                             class="text-muted small">—</span></div>
-                      <div class="mb-2"><strong>Title:</strong> <span id="revTitle" class="text-muted small">—</span></div>
-                      <div class="mb-2"><strong>Release Year:</strong> <span id="revReleaseYear"
-                                                                             class="text-muted">—</span></div>
-                      <div class="mb-2"><strong>Description:</strong> <span id="revDescription"
-                                                                            class="text-muted small">—</span></div>
-                      <div class="mb-2" id="revEmediaBlock"><strong>Product Link (eMedia):</strong> <span id="revProductLink"
-                                                                                      class="text-muted small">—</span></div>
+                      <div class="mb-2"><strong>Product Type:</strong>
+                        <span id="revProductType" class="text-muted small">—</span></div>
+                      <div class="mb-2"><strong>Title:</strong>
+                        <span id="revTitle" class="text-muted small">—</span></div>
+                      <div class="mb-2"><strong>Release Year:</strong>
+                        <span id="revReleaseYear" class="text-muted">—</span></div>
+                      <div class="mb-2"><strong>Description:</strong>
+                        <span id="revDescription" class="text-muted small">—</span></div>
+                      <div class="mb-2" id="revEmediaBlock"><strong>Product Link (eMedia):</strong>
+                        <span id="revProductLink" class="text-muted small">—</span></div>
                     </div>
                     <div class="col-md-6">
                       <label class="fw-medium mb-2 small">Cover Photo</label>
@@ -346,27 +349,38 @@
                 
                 <section class="py-3 px-2 border-bottom">
                   <h5 class="mb-3 fw-semibold text-muted small">Creators</h5>
-                  <div id="selected_creators_review" class="d-flex flex-wrap gap-2  ps-4 small"></div>
+                  <div  class="d-flex flex-wrap gap-2  ps-4 small">
+                    <ul class="mb-0 list-unstyled" id="selected_creators_review"></ul>
+                  </div>
                 </section>
                 
                 <section class="py-3 px-2">
-                  <h5 class="mb-3 fw-semibold text-muted small">Countries & Languages</h5>
                   <div class="row gx-4">
                     <div class="col-md-6">
-                      <strong class="small">Countries</strong>
-                      <div id="selected_countries_review" class="d-flex flex-wrap gap-2 mt-2  ps-4 small"></div>
+                      <strong class="small text-muted">Countries</strong>
+                      <div  class="d-flex flex-wrap gap-2 mt-2  ps-4 small">
+                        <ul class="mb-0 list-unstyled" id="selected_countries_review"></ul>
+                      </div>
                     </div>
                     <div class="col-md-6">
-                      <strong class="small">Languages</strong>
-                      <div id="selected_languages_review" class="d-flex flex-wrap gap-2 mt-2  ps-4 small"></div>
+                      <strong class="small text-muted">Languages</strong>
+                      <div class="d-flex flex-wrap gap-2 mt-2  ps-4 small">
+                        <ul class="mb-0 list-unstyled" id="selected_languages_review" ></ul>
+                      </div>
                     </div>
                   </div>
                 </section>
-                <div class="d-flex justify-content-between mt-4">
-                  <button type="button" class="btn btn-secondary" onclick="goToTab('tab-metadata-tab', 3, false)">Back
+                
+                <div class="d-flex justify-content-end align-items-center gap-2 mt-4 border-top pt-4">
+                  <button type="button" class="btn btn-outline-secondary"
+                          onclick="goToTab('tab-metadata-tab', 3, false)">
+                    Back
                   </button>
-                  <button type="submit" class="btn btn-success">Submit</button>
+                  <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i> Submit
+                  </button>
                 </div>
+                
               </div>
             </div>
           </div>
@@ -470,7 +484,7 @@
           reviewList.innerHTML = ''; // Clear existing
           selectedCountries.forEach(name => {
               const li = document.createElement('li');
-              li.textContent = name;
+              li.textContent = '• ' + name;
               reviewList.appendChild(li);
           });
       }
@@ -487,7 +501,7 @@
           reviewList.innerHTML = ''; // Clear existing
           selectedLanguages.forEach(name => {
               const li = document.createElement('li');
-              li.textContent = name;
+              li.textContent = '• ' + name;
               reviewList.appendChild(li);
           });
       }
@@ -503,11 +517,10 @@
               const role = div.querySelector('input[name$=".role"]').value;
 
               const li = document.createElement('li');
-              li.textContent = `${firstName} ${lastName} — ${role}`;
+              li.textContent = `• ${firstName} ${lastName} — ${role}`;
               reviewList.appendChild(li);
           });
       }
-
 
       const defaultCoverUrls = {
           1: "/images/default-book.png",

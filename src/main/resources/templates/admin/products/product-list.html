@@ -140,13 +140,12 @@
           
           <td class="text-end text-nowrap">
             
-            <button type="button"
-                    class="btn btn-sm btn-info me-1"
-                    th:onclick=" + ${prod.id} + '\''"
-                    data-bs-toggle="tooltip" title="Edit Product">
+            <a th:href="@{/admin/products/edit/{id}(id=${prod.id})}"
+               class="btn btn-sm btn-info me-1"
+               data-bs-toggle="tooltip"
+               title="Edit Product">
               <i class="bi bi-pencil-square me-1"></i> Edit
-            </button>
-            
+            </a>
             
             <form th:action="@{/admin/products/delete/{id}(id=${prod.id})}"
                   method="post" class="d-inline">

@@ -3,12 +3,14 @@ package com.example.voebb.service.impl;
 import com.example.voebb.model.dto.creator.CreatorFullNameDTO;
 import com.example.voebb.model.dto.creator.CreatorResponseDTO;
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
+import com.example.voebb.model.dto.creator.UpdateCreatorWithRoleDTO;
 import com.example.voebb.model.entity.Creator;
 import com.example.voebb.model.entity.CreatorProductRelation;
 import com.example.voebb.model.entity.CreatorRole;
 import com.example.voebb.model.entity.Product;
 import com.example.voebb.repository.CreatorProductRelationRepo;
 import com.example.voebb.repository.CreatorRepo;
+import com.example.voebb.repository.CreatorRoleRepo;
 import com.example.voebb.service.CreatorRoleService;
 import com.example.voebb.service.CreatorService;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,6 +18,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +31,7 @@ public class CreatorServiceImpl implements CreatorService {
     private final CreatorRepo creatorRepo;
     private final CreatorRoleService creatorRoleService;
     private final CreatorProductRelationRepo creatorProductRelationRepo;
+    private final CreatorRoleRepo creatorRoleRepo;
 
     @Override
     @Transactional
@@ -58,6 +62,64 @@ public class CreatorServiceImpl implements CreatorService {
             relation.setCreatorRole(role);
         }
     }
+
+
+    @Override
+    @Transactional
+    public void updateCreatorWithRolesForProduct(Product product, List<UpdateCreatorWithRoleDTO> dtos) {
+        if (dtos == null || dtos.isEmpty()) {
+            throw new IllegalArgumentException("At least one creator must be assigned.");
+        }
+
+        List<CreatorProductRelation> existingRelations = new ArrayList<>(product.getCreatorProductRelations());
+        List<CreatorProductRelation> updatedRelations = new ArrayList<>();
+
+        for (UpdateCreatorWithRoleDTO dto : dtos) {
+            Long creatorId = dto.getCreatorId();
+            Long roleId = dto.getCreatorRoleId();
+
+            Creator creator = creatorRepo.findById(creatorId)
+                    .orElseThrow(() -> new RuntimeException("Creator not found: " + creatorId));
+
+            CreatorRole role = creatorRoleRepo.findById(roleId)
+                    .orElseThrow(() -> new RuntimeException("CreatorRole not found: " + roleId));
+
+            CreatorProductRelation match = existingRelations.stream()
+                    .filter(relation ->
+                            relation.getCreator().getId().equals(creatorId)
+                            && relation.getCreatorRole().getId().equals(roleId))
+                    .findFirst()
+                    .orElse(null);
+
+            if (match != null) {
+                updatedRelations.add(match);
+            } else {
+                CreatorProductRelation newRel = new CreatorProductRelation();
+                product.addRelation(newRel);
+                creator.addRelation(newRel);
+                newRel.setCreatorRole(role);
+                updatedRelations.add(newRel);
+            }
+        }
+
+        // Remove obsolete relations
+        List<CreatorProductRelation> toRemove = existingRelations.stream()
+                .filter(relation -> updatedRelations.stream().noneMatch(updated ->
+                        updated.getCreator().getId().equals(relation.getCreator().getId())
+                        && updated.getCreatorRole().getId().equals(relation.getCreatorRole().getId())))
+                .toList();
+
+        for (CreatorProductRelation relation : toRemove) {
+            relation.getCreator().getCreatorProductRelations().remove(relation);
+            relation.setCreator(null);
+            relation.setProduct(null);
+            relation.setCreatorRole(null);
+        }
+
+        product.getCreatorProductRelations().removeAll(toRemove);
+        creatorProductRelationRepo.deleteAll(toRemove);
+    }
+
 
     @Override
     public Set<CreatorResponseDTO> searchByName(String name) {

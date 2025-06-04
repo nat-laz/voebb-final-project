@@ -1,9 +1,11 @@
 package com.example.voebb.model.mapper;
 
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
+import com.example.voebb.model.dto.creator.UpdateCreatorWithRoleDTO;
 import com.example.voebb.model.dto.product.ProductInfoDTO;
 import com.example.voebb.model.dto.product.UpdateProductDTO;
 import com.example.voebb.model.entity.Country;
+import com.example.voebb.model.entity.Language;
 import com.example.voebb.model.entity.Product;
 
 import java.util.Set;
@@ -38,18 +40,38 @@ public class ProductMapper {
     }
 
     public static UpdateProductDTO toUpdateProductDTO(Product product) {
-        return new UpdateProductDTO(
-                product.getId(),
-                product.getTitle(),
-                product.getReleaseYear(),
-                product.getPhoto(),
-                product.getDescription(),
-                product.getProductLinkToEmedia(),
-                product.isBook() ? BookDetailsMapper.toDto(product.getBookDetails()) : null,
-                product.getCountries().stream().map(
-                        Country::getId
-                ).toList()
-        );
+        UpdateProductDTO dto = new UpdateProductDTO();
+        dto.setId(product.getId());
+        dto.setProductTypeId(product.getType().getId());
+        dto.setTitle(product.getTitle());
+        dto.setReleaseYear(product.getReleaseYear());
+        dto.setPhoto(product.getPhoto());
+        dto.setDescription(product.getDescription());
+        dto.setProductLinkToEmedia(product.getProductLinkToEmedia());
 
+        if (product.isBook()) {
+            dto.setBookDetails(BookDetailsMapper.toDto(product.getBookDetails()));
+        }
+
+        dto.setCreators(product.getCreatorProductRelations().stream()
+                .map(relation -> new UpdateCreatorWithRoleDTO(
+                        relation.getCreator().getId(),
+                        relation.getCreator().getFirstName(),
+                        relation.getCreator().getLastName(),
+                        relation.getCreatorRole().getId()
+                ))
+                .toList());
+
+        dto.setCountryIds(product.getCountries().stream()
+                .map(Country::getId)
+                .toList());
+
+        dto.setLanguageIds(product.getLanguages().stream()
+                .map(Language::getId)
+                .toList());
+
+        return dto;
     }
+
+
 }

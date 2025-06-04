@@ -13,13 +13,13 @@ public interface ProductService {
 
     Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable);
 
+    UpdateProductDTO updateProduct(Long productId, UpdateProductDTO dto);
+
     UpdateProductDTO getUpdateProductDTOById(Long id);
 
     Page<GetProductAdminDTO> getFilteredProductsAdmin(ProductFilters filters,Pageable pageable);
 
     ProductInfoDTO getProductInfoDTOById(Long id);
-
-    UpdateProductDTO updateProduct(Long productId, UpdateProductDTO updateProductDTO);
 
     void deleteProductById(Long id);
 }

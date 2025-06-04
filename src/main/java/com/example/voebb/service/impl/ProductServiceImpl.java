@@ -4,15 +4,9 @@ import com.example.voebb.exception.ProductDeletionException;
 import com.example.voebb.exception.ProductNotFoundException;
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
 import com.example.voebb.model.dto.product.*;
-import com.example.voebb.model.entity.Country;
-import com.example.voebb.model.entity.Language;
-import com.example.voebb.model.entity.Product;
-import com.example.voebb.model.entity.ProductType;
+import com.example.voebb.model.entity.*;
 import com.example.voebb.model.mapper.ProductMapper;
-import com.example.voebb.repository.CountryRepo;
-import com.example.voebb.repository.ProductItemRepo;
-import com.example.voebb.repository.ProductRepo;
-import com.example.voebb.repository.ProductTypeRepo;
+import com.example.voebb.repository.*;
 import com.example.voebb.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +30,7 @@ public class ProductServiceImpl implements ProductService {
     private final LanguageService languageService;
     private final ProductTypeRepo productTypeRepo;
     private final ProductItemRepo productItemRepo;
+    private final CreatorProductRelationRepo creatorProductRelationRepo;
 
     @Override
     @Transactional
@@ -135,6 +130,33 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    public UpdateProductDTO updateProduct(Long productId, UpdateProductDTO dto) {
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        product.setTitle(dto.getTitle());
+        product.setReleaseYear(dto.getReleaseYear());
+        product.setDescription(dto.getDescription());
+        product.setPhoto(dto.getPhoto());
+        product.setProductLinkToEmedia(dto.getProductLinkToEmedia());
+
+        List<Language> languages = languageService.getLanguagesByIds(dto.getLanguageIds());
+        List<Country> countries = countryRepo.findAllById(dto.getCountryIds());
+        product.setLanguages(languages);
+        product.setCountries(countries);
+
+        creatorService.updateCreatorWithRolesForProduct(product, dto.getCreators());
+
+        if (product.isBook()) {
+            bookDetailsService.updateDetails(product, dto.getBookDetails());
+        }
+
+        productRepo.save(product);
+        return dto;
+    }
+
+    @Override
+    @Transactional
     public UpdateProductDTO getUpdateProductDTOById(Long id) {
         Product product = productRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -180,28 +202,6 @@ public class ProductServiceImpl implements ProductService {
         });
     }
 
-    @Override
-    @Transactional
-    public UpdateProductDTO updateProduct(Long productId, UpdateProductDTO updateProductDTO) {
-        Product existingProduct = productRepo.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        List<Country> countries = countryRepo.findAllById(updateProductDTO.countryIds());
-
-        if (existingProduct.isBook()) {
-            bookDetailsService.updateDetails(existingProduct, updateProductDTO.bookDetails());
-        }
-
-        existingProduct.setTitle(updateProductDTO.title());
-        existingProduct.setReleaseYear(updateProductDTO.releaseYear());
-        existingProduct.setDescription(updateProductDTO.description());
-        existingProduct.setPhoto(updateProductDTO.photo());
-        existingProduct.setProductLinkToEmedia(updateProductDTO.productLinkToEmedia());
-        existingProduct.setCountries(countries);
-        productRepo.save(existingProduct);
-        return updateProductDTO;
-    }
-
     @Transactional
     @Override
     public void deleteProductById(Long productId) {
@@ -216,5 +216,16 @@ public class ProductServiceImpl implements ProductService {
         }
         productRepo.deleteById(productId);
     }
+
+    private String key(String firstName, String lastName, String role) {
+        return (firstName == null ? "" : firstName.trim().toLowerCase()) + "|" +
+               (lastName == null ? "" : lastName.trim().toLowerCase()) + "|" +
+               (role == null ? "" : role.trim().toLowerCase());
+    }
+
+    private String key(Creator creator, CreatorRole role) {
+        return key(creator.getFirstName(), creator.getLastName(), role.getCreatorRoleName());
+    }
+
 
 }

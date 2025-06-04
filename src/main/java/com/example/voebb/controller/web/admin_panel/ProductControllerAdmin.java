@@ -3,10 +3,13 @@ package com.example.voebb.controller.web.admin_panel;
 import com.example.voebb.model.dto.product.CreateProductDTO;
 import com.example.voebb.model.dto.product.GetProductAdminDTO;
 import com.example.voebb.model.dto.product.ProductFilters;
-import com.example.voebb.model.entity.Product;
+import com.example.voebb.model.dto.product.UpdateProductDTO;
+import com.example.voebb.model.entity.CreatorRole;
+import com.example.voebb.repository.CreatorRoleRepo;
 import com.example.voebb.service.*;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.voebb.model.dto.product.ProductTypeDTO;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,16 +22,17 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/admin/products")
 @RequiredArgsConstructor
 public class ProductControllerAdmin {
 
     private final ProductService productService;
-    private final CountryService countryService;
-    private final LanguageService languageService;
+    private final CreatorRoleRepo creatorRoleRepo;
     private final ProductTypeService productTypeService;
-    private final CreatorRoleService creatorRoleService;
 
     @GetMapping
     public String getAllProducts(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
@@ -67,26 +71,40 @@ public class ProductControllerAdmin {
     }
 
 
-//    @GetMapping("/edit/{id}")
-//    public String editProduct(@PathVariable("id") Long id, Model model) {
-//        UpdateProductDTO product = productService.getUpdateProductDTOById(id);
-//
-//        model.addAttribute("updateProductDTO", product);
-//        model.addAttribute("countries", countryService.findAll());
-//        return "edit-product"; // this should point to the Thymeleaf template for editing
-//    }
-//
-//    @PostMapping("/edit/{id}")
-//    public String updateProduct(@PathVariable("id") Long id,
-//                                @ModelAttribute("updateProductDTO") UpdateProductDTO updatedProduct,
-//                                RedirectAttributes ra) {
-//
-//        // Save the updated product
-//        productService.updateProduct(id, updatedProduct);
-//        return "redirect:/admin/products";
-//
-//    }
-//
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        UpdateProductDTO updateProductDTO = productService.getUpdateProductDTOById(id);
+        model.addAttribute("updateProductDTO", updateProductDTO);
+
+        Map<Long, String> roleMap = creatorRoleRepo.findAll().stream()
+                .collect(Collectors.toMap(
+                        CreatorRole::getId,
+                        CreatorRole::getCreatorRoleName
+                ));
+        model.addAttribute("roleMap", roleMap);
+
+        Map<Long, String> productTypesMap = productTypeService.getAllProductTypes().stream()
+                .collect(Collectors.toMap(ProductTypeDTO::getId, ProductTypeDTO::getDisplayName));
+
+        model.addAttribute("productTypesMap", productTypesMap);
+
+
+
+        return "admin/products/edit-product";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editProduct(@PathVariable("id") Long id,
+                                @ModelAttribute("updateProductDTO") UpdateProductDTO updatedProduct,
+                                RedirectAttributes redirectAttributes) {
+
+
+        productService.updateProduct(id, updatedProduct);
+        redirectAttributes.addFlashAttribute("success", "Product updated successfully.");
+        return "redirect:/admin/products";
+
+    }
+
     @PostMapping("/delete/{id}")
     public String deleteProduct(@PathVariable Long id,
                                 RedirectAttributes redirectAttributes) {
