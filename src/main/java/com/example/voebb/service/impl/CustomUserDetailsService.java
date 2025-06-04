@@ -1,6 +1,7 @@
 package com.example.voebb.service.impl;
 
 import com.example.voebb.exception.UserNotFoundException;
+import com.example.voebb.model.dto.ItemActivityDTO;
 import com.example.voebb.model.dto.user.UserDTO;
 import com.example.voebb.model.dto.user.UserRegistrationDTO;
 import com.example.voebb.model.dto.user.UserUpdateDTO;
@@ -8,7 +9,9 @@ import com.example.voebb.model.entity.CustomUser;
 import com.example.voebb.model.entity.CustomUserRole;
 import com.example.voebb.repository.CustomUserRepo;
 import com.example.voebb.repository.CustomUserRoleRepo;
+import com.example.voebb.service.BorrowService;
 import com.example.voebb.service.CustomUserService;
+import com.example.voebb.service.ReservationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -23,6 +26,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,22 +41,12 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     private final PasswordEncoder passwordEncoder;
     private final CustomUserRepo customUserRepo;
     private final PasswordEncoder encoder;
-
+    private final ReservationService reservationService;
+    private final BorrowService borrowService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        CustomUser customUser;
-
-        if (isValidEmail(username)) {
-            customUser = userRepo.findByEmail(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("Email not found: " + username));
-        } else if (isValidPhone(username)) {
-            customUser = userRepo.findByPhoneNumber(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("Phone number not found: " + username));
-        } else {
-            throw new UsernameNotFoundException("Invalid login identifier: " + username);
-        }
+        CustomUser customUser = getCustomUserByUsername(username);
 
         List<SimpleGrantedAuthority> authorities = customUser.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
@@ -72,6 +67,63 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
 
     private boolean isValidEmail(String username) {
         return username.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    private CustomUser getCustomUserByUsername(String username) {
+        if (isValidEmail(username)) {
+            return userRepo.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Email not found: " + username));
+        } else if (isValidPhone(username)) {
+            return userRepo.findByPhoneNumber(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Phone number not found: " + username));
+        } else {
+            throw new UsernameNotFoundException("Invalid login identifier: " + username);
+        }
+    }
+
+    @Override
+    public List<ItemActivityDTO> getItemActivitiesByUsername(String username) {
+        CustomUser customUser = getCustomUserByUsername(username);
+
+        List<ItemActivityDTO> activityDTOS = new ArrayList<>(
+                reservationService.getFilteredReservations(customUser.getId(), null, null, null).stream()
+                        .map(getReservationDTO -> new ItemActivityDTO(
+                                getReservationDTO.id(),
+                                "Reservation",
+                                null,
+                                getReservationDTO.itemTitle(),
+                                getReservationDTO.itemId(),
+                                getReservationDTO.startDate(),
+                                getReservationDTO.dueDate(),
+                                null
+                        ))
+                        .toList());
+
+        activityDTOS.addAll(
+                borrowService.getFilteredBorrowings(customUser.getId(), null, null, "Active", null).stream()
+                        .map(getBorrowingsDTO -> new ItemActivityDTO(
+                                getBorrowingsDTO.borrowId(),
+                                "Borrow",
+                                getBorrowingsDTO.extendsCount(),
+                                getBorrowingsDTO.itemTitle(),
+                                getBorrowingsDTO.itemId(),
+                                getBorrowingsDTO.startDate(),
+                                getBorrowingsDTO.dueDate(),
+                                !LocalDate.now().plusDays(3).isBefore(getBorrowingsDTO.dueDate())
+                        ))
+                        .toList());
+
+        return activityDTOS;
+    }
+
+    @Override
+    public Boolean isBorrowingExpiresSoon(String username) {
+        CustomUser customUser = getCustomUserByUsername(username);
+
+        return borrowService.getFilteredBorrowings(
+                        customUser.getId(), null, null, "Active", null)
+                .stream()
+                .anyMatch(borrow -> !LocalDate.now().plusDays(3).isBefore(borrow.dueDate()));
     }
 
     @Transactional
@@ -100,22 +152,27 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     }
 
     @Override
-    public UserUpdateDTO getUserDTOByUsername(String username) {
-        CustomUser user = userRepo.findByEmail(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
+    public UserUpdateDTO getUserUpdateDTOByUsername(String username) {
+        CustomUser user = getCustomUserByUsername(username);
         return toUpdateDto(user);
+    }
+
+    @Override
+    public UserDTO getUserDTOByUsername(String username) {
+        CustomUser user = getCustomUserByUsername(username);
+        return toDto(user);
     }
 
     @Override
     public void updateUserInfo(UserUpdateDTO userDto,
                                String oldEmail,
                                HttpServletRequest request,
-                               HttpServletResponse response){
+                               HttpServletResponse response) {
         boolean loginCredentialsChange = false;
         CustomUser existingUser = userRepo.findByEmail(oldEmail)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + oldEmail + " not found"));
 
-        if(!encoder.matches(userDto.getOldPassword(), existingUser.getPassword())){
+        if (!encoder.matches(userDto.getOldPassword(), existingUser.getPassword())) {
             throw new RuntimeException("Passwords are not matching");
         }
 
@@ -138,7 +195,7 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
 
         userRepo.save(existingUser);
 
-        if(loginCredentialsChange){
+        if (loginCredentialsChange) {
             new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         }
     }

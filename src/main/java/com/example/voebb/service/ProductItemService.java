@@ -2,6 +2,7 @@ package com.example.voebb.service;
 
 import com.example.voebb.model.dto.item.CreateItemDTO;
 import com.example.voebb.model.dto.item.ItemAdminDTO;
+import com.example.voebb.model.dto.item.ItemFilters;
 import com.example.voebb.model.dto.item.UpdateItemDTO;
 import com.example.voebb.model.dto.product.LocationAndItemStatusDTO;
 import com.example.voebb.model.dto.product.LocationAndItemsCountDTO;
@@ -19,7 +20,7 @@ public interface ProductItemService {
 
     List<LocationAndItemStatusDTO> getAllLocationsForProduct(Long productId);
 
-    Page<ItemAdminDTO> getAllItems(Pageable pageable);
+    Page<ItemAdminDTO> getFilteredItems(ItemFilters filters, Pageable pageable);
 
     void createItem(CreateItemDTO dto);
 

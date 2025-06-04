@@ -28,7 +28,6 @@ public class ReservationServiceImpl implements ReservationService {
     private final ItemStatusRepo statusRepo;
     private final BorrowRepo borrowRepo;
 
-
     @Override
     public Page<GetReservationDTO> getFilteredReservations(Long userId, Long itemId, Long libraryId, Pageable pageable) {
         Page<GetReservationDTO> rawPage = reservationRepo.findFilteredReservations(userId, itemId, libraryId, pageable);
@@ -110,8 +109,7 @@ public class ReservationServiceImpl implements ReservationService {
         String userName = user.getFirstName() + " " + user.getLastName();
         String productTitle = item.getProduct().getTitle();
 
-        return "Item \"" + productTitle + "\" [ID: #" + item.getId() + "] was borrowed by User [ID: #" + user.getId() + "] " + userName + ".";
-
+        return "Item \"" + productTitle + "\" [ID: " + item.getId() + "] was borrowed by User [ID: " + user.getId() + "] " + userName + ".";
     }
 
 

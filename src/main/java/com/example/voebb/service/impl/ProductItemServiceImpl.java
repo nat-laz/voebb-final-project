@@ -2,6 +2,7 @@ package com.example.voebb.service.impl;
 
 import com.example.voebb.model.dto.item.CreateItemDTO;
 import com.example.voebb.model.dto.item.ItemAdminDTO;
+import com.example.voebb.model.dto.item.ItemFilters;
 import com.example.voebb.model.dto.item.UpdateItemDTO;
 import com.example.voebb.model.dto.product.LocationAndItemStatusDTO;
 import com.example.voebb.model.dto.product.LocationAndItemsCountDTO;
@@ -49,8 +50,14 @@ public class ProductItemServiceImpl implements ProductItemService {
     }
 
     @Override
-    public Page<ItemAdminDTO> getAllItems(Pageable pageable) {
-        return productItemRepo.findAllItemsForAdmin(pageable);
+    public Page<ItemAdminDTO> getFilteredItems(ItemFilters filters, Pageable pageable) {
+        return productItemRepo.findFilteredItemsForAdmin(
+                filters.getItemId(),
+                filters.getProductTypeId(),
+                filters.getStatusId(),
+                filters.getLibraryId(),
+                pageable
+        );
     }
 
     @Override

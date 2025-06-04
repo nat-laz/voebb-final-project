@@ -15,4 +15,5 @@ public interface ReservationService {
     String fulfillReservation(Long reservationId);
 
     void deleteReservation(Long id);
+
 }

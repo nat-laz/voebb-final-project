@@ -47,7 +47,10 @@ document.addEventListener('DOMContentLoaded', function () {
         clearBtn.addEventListener('click', function () {
             searchInput.value = '';
             if (productSelectionForm) productSelectionForm.innerHTML = '';
-            if (continueBtn) continueBtn.disabled = true;
+            if (continueBtn) {
+                continueBtn.disabled = true;
+                continueBtn.style.display = 'none';
+            }
             if (selectedProductId) selectedProductId.value = '';
             if (searchBtn) searchBtn.disabled = true;
             if (clearBtnContainer) clearBtnContainer.remove();
@@ -62,26 +65,28 @@ document.addEventListener('DOMContentLoaded', function () {
         modalEl.addEventListener('hidden.bs.modal', function () {
             if (searchInput) searchInput.value = '';
             if (productSelectionForm) productSelectionForm.innerHTML = '';
-            if (continueBtn) continueBtn.disabled = true;
+            if (continueBtn) {
+                continueBtn.disabled = true;
+                continueBtn.style.display = 'none';
+            }
             if (selectedProductId) selectedProductId.value = '';
+            if (searchBtn) searchBtn.disabled = true;
             if (searchTab) new bootstrap.Tab(searchTab).show();
 
             if (detailsTab) {
                 detailsTab.classList.add('disabled');
                 detailsTab.setAttribute('aria-disabled', 'true');
                 detailsTab.setAttribute('tabindex', '-1');
-
                 bootstrap.Tooltip.getOrCreateInstance(detailsTab).enable();
             }
 
-            //  Clean up URL after closing Modal
-            const url = new URL(window.location);
-            if (url.pathname === '/admin/items/create') {
-                url.searchParams.delete('action');
-                url.searchParams.delete('searchTitle');
-                url.searchParams.delete('page');
-                window.history.replaceState({}, document.title, url.pathname);
-            }
+            if (clearBtnContainer) clearBtnContainer.remove();
+            if (paginationContainer) paginationContainer.remove();
+            if (noMatchWarning) noMatchWarning.remove();
+            if (createNewProductContainer) createNewProductContainer.remove();
+
+            const baseUrl = window.location.origin + '/admin/items';
+            window.history.replaceState({}, document.title, baseUrl);
         });
     }
 });

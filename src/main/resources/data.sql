@@ -270,46 +270,46 @@ VALUES (1, 1, 1),
        (2, 1, 2),
        (3, 1, 1),
        (4, 1, 1),
-       (5, 2, 2),
+       (5, 2, 1),
        (6, 2, 1),
-       (7, 2, 2),
+       (7, 2, 4),
        (8, 3, 1),
        (9, 3, 1),
        (10, 3, 4),
-       (11, 3, 2),
-       (12, 3, 5),
-       (13, 4, 1),
+       (11, 3, 3),
+       (12, 3, 2),
+       (13, 4, 2),
        (14, 4, 2),
-       (15, 4, 2),
+       (15, 4, 1),
        (16, 5, 4),
        (17, 5, 1),
-       (18, 5, 2),
+       (18, 5, 1),
        (19, 5, 1),
        (20, 6, 2),
-       (21, 6, 2),
+       (21, 6, 1),
        (22, 6, 1),
        (23, 7, 1),
        (24, 7, 4),
        (25, 7, 4),
-       (26, 7, 2),
+       (26, 7, 1),
        (27, 8, 1),
        (28, 8, 1),
-       (29, 8, 2),
-       (30, 9, 2),
+       (29, 8, 1),
+       (30, 9, 1),
        (31, 9, 5),
        (32, 9, 1),
-       (33, 9, 2),
+       (33, 9, 1),
        (34, 10, 1),
-       (35, 10, 2),
+       (35, 10, 1),
        (36, 10, 1),
        (37, 10, 1),
-       (38, 10, 2),
+       (38, 10, 1),
        (39, 11, 4),
-       (40, 11, 2),
+       (40, 11, 1),
        (41, 11, 1),
        (42, 11, 4),
        (43, 11, 5),
-       (44, 11, 3),
+       (44, 11, 2),
        (45, 13, 3),
        -- available items
        (46, 13, 1),
@@ -380,19 +380,19 @@ ON CONFLICT (item_id) DO NOTHING;
 --  ─────────── mock: BORROWINGS  ───────────
 -- CASE 1: Active borrow (due in 3 days)
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 50, CURRENT_DATE - INTERVAL '25 days', CURRENT_DATE + INTERVAL '3 days', NULL, 0);
+VALUES (3, 50, CURRENT_DATE - INTERVAL '25 days', CURRENT_DATE + INTERVAL '3 days', NULL, 0);
 
 -- CASE 2: Overdue borrow (due 5 days ago)
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 49, CURRENT_DATE - INTERVAL '19 days', CURRENT_DATE - INTERVAL '5 days', NULL, 1);
+VALUES (3, 49, CURRENT_DATE - INTERVAL '19 days', CURRENT_DATE - INTERVAL '5 days', NULL, 1);
 
 -- CASE 3: Returned borrow (returned yesterday)
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 48, CURRENT_DATE - INTERVAL '8 days', CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE - INTERVAL '1 day', 0);
+VALUES (3, 48, CURRENT_DATE - INTERVAL '8 days', CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE - INTERVAL '1 day', 0);
 
 -- CASE 4: Active borrow, max extensions
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 44, CURRENT_DATE - INTERVAL '42 days', CURRENT_DATE + INTERVAL '14 days', NULL, 2);
+VALUES (3, 44, CURRENT_DATE - INTERVAL '42 days', CURRENT_DATE + INTERVAL '14 days', NULL, 2);
 
 -- CASE 5: Returned early
 INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
@@ -409,16 +409,16 @@ SELECT SETVAL('borrows_borrow_id_seq', (SELECT MAX(borrow_id) FROM borrows));
 INSERT INTO reservations (reservation_id, custom_user_id, item_id, reservation_start, reservation_due)
 VALUES
 -- Starts today, ends in 3 days
-(1, 2, 1, CURRENT_DATE, CURRENT_DATE + INTERVAL '3 days'),
+(1, 3, 2, CURRENT_DATE, CURRENT_DATE + INTERVAL '3 days'),
 
 -- Started yesterday, ends in 2 days
-(2, 2, 2, CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE + INTERVAL '2 days'),
+(2, 3, 12, CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE + INTERVAL '2 days'),
 
 -- Started 2 days ago, ends tomorrow
-(3, 5, 3, CURRENT_DATE - INTERVAL '2 days', CURRENT_DATE + INTERVAL '1 day'),
+(3, 2, 13, CURRENT_DATE - INTERVAL '2 days', CURRENT_DATE + INTERVAL '1 day'),
 
 -- Ends today
-(4, 5, 3, CURRENT_DATE - INTERVAL '3 days', CURRENT_DATE),
+(4, 5, 14, CURRENT_DATE - INTERVAL '3 days', CURRENT_DATE),
 
 -- Started 3 days ago, expired yesterday (simulate overdue for deletion job)
 (5, 1, 44, CURRENT_DATE - INTERVAL '4 days', CURRENT_DATE - INTERVAL '1 day'),
