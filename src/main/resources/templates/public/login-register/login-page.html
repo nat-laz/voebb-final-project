@@ -26,7 +26,7 @@
         <div class="mb-3">
           <label for="usernameInput" class="form-label">Email or phone number</label>
           <input type="text" id="usernameInput" name="username" required
-                 class="form-control bg-dark text-light dci-border-dark" oninput="handleInput(this)"
+                 class="form-control bg-dark text-light dci-border-dark"
                  autocomplete="off"
           >
           <div class="invalid-feedback">
@@ -37,7 +37,10 @@
         <div class="mb-3">
           <label for="loginPassword" class="form-label">Password</label>
           <input type="password" class="form-control bg-dark text-light dci-border-dark" name="password"
-                 id="loginPassword" required>
+                 id="loginPassword" minlength="8" required>
+          <div class="invalid-feedback">
+            Enter a valid password
+          </div>
         </div>
         
         <div class="form-check mb-3">
@@ -58,7 +61,6 @@
   
   </div>
 </main>
-
 
 <section layout:fragment="footer"></section>
 

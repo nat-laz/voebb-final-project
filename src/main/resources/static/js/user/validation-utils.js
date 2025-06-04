@@ -1,204 +1,160 @@
-document.addEventListener("DOMContentLoaded", () => {
-    checkNames();
-    validatePhoneInput();
-    validateEmailInput();
-    checkPasswordStrength();
-    arePasswordsMatching();
-});
+function isPhoneValid(value) {
+    const startsWithPlus = /(^\+)/.test(value);
+    const startsWithZero = /(^0)/.test(value);
+    const digitsOnly = /^\+?\d+$/.test(value);
+    const digitCountInternational = value.length >= 13 && value.length <= 14;
+    const digitCountLocal = value.length >= 11 && value.length <= 12;
 
-function validatePhoneInput() {
-    const phoneInput = document.getElementById('phoneNumber');
-    const phoneFeedback = document.getElementById('phoneFeedback');
+    const isValid = (startsWithPlus || startsWithZero) && digitsOnly && (digitCountInternational || digitCountLocal);
+
+    return {
+        isValid,
+        startsWithPlus,
+        startsWithZero,
+        digitsOnly,
+        digitCountInternational,
+        digitCountLocal,
+    };
+}
+
+function updateRuleCheck(element, passed, message) {
+    if (!element) return;
+    element.textContent = `${passed ? '✅' : '❌'} ${message}`;
+    element.classList.toggle('text-success', passed);
+    element.classList.toggle('text-danger', !passed);
+}
+
+function validatePhoneInputWithFeedback(inputId, feedbackId) {
+    const phoneInput = document.getElementById(inputId);
+    const phoneFeedback = document.getElementById(feedbackId);
 
     const checkPlus = document.getElementById('checkPlus');
     const checkDigits = document.getElementById('checkDigits');
     const checkLength = document.getElementById('checkLength');
 
-    phoneInput.addEventListener('focus', () => {
-        phoneFeedback.style.display = 'block';
-    });
+    if (!phoneInput || !phoneFeedback || !checkPlus || !checkDigits || !checkLength) return;
 
-    phoneInput.addEventListener('blur', () => {
-        phoneFeedback.style.display = 'none';
-    });
+    phoneInput.addEventListener('focus', () => phoneFeedback.style.display = 'block');
+    phoneInput.addEventListener('blur', () => phoneFeedback.style.display = 'none');
 
     phoneInput.addEventListener('input', function () {
-        const value = phoneInput.value;
-        phoneInput.value = value.replace(/[^0-9+]/g, '');
+        let value = phoneInput.value.replace(/[^0-9+]/g, '');
+        phoneInput.value = value;
 
-        const startsWithPlusOrZero = /(^\+)|(^0)/.test(value);
-        const digitsOnly = /^\+?\d+$/.test(value);
-        const digitCountInternational = value.length >= 13 && value.length <= 14;
-        const digitCountLocal = value.length >= 11 && value.length <= 12;
+        const results = isPhoneValid(value);
 
-        // Update checklist
-        if (startsWithPlusOrZero) {
-            checkPlus.textContent = '✅ Starts with zero or a "+"';
-            checkPlus.classList.add("text-success");
-        } else {
-            checkPlus.textContent = '❌ Starts with zero or a "+"';
-            checkPlus.classList.remove("text-success");
-        }
-
-        if(/(^\+)/.test(value)){
+        if (results.startsWithPlus) {
             phoneInput.removeAttribute('maxLength');
             phoneInput.setAttribute('maxLength', '14');
-            if (digitCountInternational) {
-                checkLength.textContent = '✅ 12 or 13 digits';
-                checkLength.classList.add("text-success");
-            } else {
-                checkLength.textContent = '❌ 11 or 12 digits';
-                checkLength.classList.remove("text-success");
-            }
-        } else if (/(^0)/.test(value)){
+        } else if (results.startsWithZero) {
             phoneInput.removeAttribute('maxLength');
             phoneInput.setAttribute('maxLength', '12');
-            if (digitCountLocal) {
-                checkLength.textContent = '✅ 11 or 12 digits';
-                checkLength.classList.add("text-success");
-            } else {
-                checkLength.textContent = '❌ 11 or 12 digits';
-                checkLength.classList.remove("text-success");
-            }
         }
 
-        if (digitsOnly) {
-            checkDigits.textContent = '✅ Contains only numbers';
-            checkDigits.classList.add("text-success");
-        } else {
-            checkDigits.textContent = '❌ Contains only numbers';
-            checkDigits.classList.remove("text-success");
+        if (checkPlus) {
+            updateRuleCheck(checkPlus, results.startsWithPlus || results.startsWithZero, 'Starts with zero or a "+"');
         }
 
-        if (startsWithPlusOrZero && digitsOnly && (digitCountLocal || digitCountInternational)) {
-            phoneInput.classList.add('is-valid');
-            phoneInput.classList.remove('is-invalid');
-        } else {
-            phoneInput.classList.add('is-invalid');
-            phoneInput.classList.remove('is-valid');
+        if (checkDigits) {
+            updateRuleCheck(checkDigits, results.digitsOnly, 'Contains only numbers');
         }
+
+        if (checkLength) {
+            const validLength = results.digitCountInternational || results.digitCountLocal;
+            updateRuleCheck(checkLength, validLength, 'Valid number length');
+        }
+
+        highlightInput(results.isValid, phoneInput);
     });
+
 }
 
-function validateEmailInput() {
-    const emailInput = document.getElementById('email');
+function validateEmailInput(inputId) {
+    const emailInput = document.getElementById(inputId);
 
     emailInput.addEventListener('input', () => {
         const emailValue = emailInput.value;
 
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (re.test(emailValue)) {
-            emailInput.classList.add('is-valid');
-            emailInput.classList.remove('is-invalid');
-        } else {
-            emailInput.classList.add('is-invalid');
-            emailInput.classList.remove('is-valid');
-        }
+        highlightInput(re.test(emailValue), emailInput)
     });
 }
 
-function checkPasswordStrength(){
-    const passwordInput = document.getElementById('registerPassword');
-    const phoneFeedback = document.getElementById('passwordFeedback');
+function checkPasswordStrengthAdvanced(passwordInputId, feedbackId, lengthCheckId, digitCheckId, specialCheckId, letterCheckId) {
+    const passwordInput = document.getElementById(passwordInputId);
+    const feedback = document.getElementById(feedbackId);
 
-    const checkLength = document.getElementById('passwordLengthCheck');
-    const checkDigit = document.getElementById('passwordDigitCheck');
-    const checkSpecial = document.getElementById('PasswordSpecialCharsCheck');
-    const checkLetter = document.getElementById('PasswordLetterCheck');
+    const checkLength = document.getElementById(lengthCheckId);
+    const checkDigit = document.getElementById(digitCheckId);
+    const checkSpecial = document.getElementById(specialCheckId);
+    const checkLetter = document.getElementById(letterCheckId);
+
+    if (!passwordInput || !feedback || !checkLength || !checkDigit || !checkSpecial || !checkLetter) return;
 
     passwordInput.addEventListener('focus', () => {
-        phoneFeedback.style.display = 'block';
+        feedback.style.display = 'block';
     });
 
     passwordInput.addEventListener('blur', () => {
-        phoneFeedback.style.display = 'none';
+        feedback.style.display = 'none';
     });
 
-    passwordInput.addEventListener('input', function () {
+    passwordInput.addEventListener('input', () => {
         const value = passwordInput.value;
 
-        const length = value.length > 7;
-        const digit = /\d/.test(value);
-        const letter = /[a-zA-Z]/.test(value);
-        const special = /[^a-zA-Z0-9]/.test(value);
+        const rules = {
+            length: value.length >= 8,
+            digit: /\d/.test(value),
+            letter: /[a-zA-Z]/.test(value),
+            special: /[^a-zA-Z0-9]/.test(value),
+        };
 
-        // Update checklist
-        if (length) {
-            checkLength.textContent = '✅ Minimum 8 chars';
-            checkLength.classList.add("text-success");
-        } else {
-            checkLength.textContent = '❌ Minimum 8 chars';
-            checkLength.classList.remove("text-success");
-        }
+        updateRuleCheck(checkLength, rules.length, 'Minimum 8 characters');
+        updateRuleCheck(checkDigit, rules.digit, 'At least 1 digit');
+        updateRuleCheck(checkSpecial, rules.special, 'At least 1 special character');
+        updateRuleCheck(checkLetter, rules.letter, 'At least 1 letter');
 
-        if (digit) {
-            checkDigit.textContent = '✅ At least 1 digit';
-            checkDigit.classList.add("text-success");
-        } else {
-            checkDigit.textContent = '❌ At least 1 digit';
-            checkDigit.classList.remove("text-success");
-        }
-
-        if (special) {
-            checkSpecial.textContent = '✅ At least 1 special char';
-            checkSpecial.classList.add("text-success");
-        } else {
-            checkSpecial.textContent = '❌ At least 1 special char';
-            checkSpecial.classList.remove("text-success");
-        }
-
-        if (letter) {
-            checkLetter.textContent = '✅ At least 1 letter';
-            checkLetter.classList.add("text-success");
-        } else {
-            checkLetter.textContent = '❌ At least 1 letter';
-            checkLetter.classList.remove("text-success");
-        }
-
-        if (length && digit && special && letter) {
-            passwordInput.classList.add('is-valid');
-            passwordInput.classList.remove('is-invalid');
-        } else {
-            passwordInput.classList.add('is-invalid');
-            passwordInput.classList.remove('is-valid');
-        }
+        const isStrong = Object.values(rules).every(Boolean);
+        highlightInput(isStrong, passwordInput);
     });
 }
 
-function arePasswordsMatching(){
-    const passwordInput = document.getElementById('registerPassword');
-    const confirmInput = document.getElementById('confirmPassword');
-    const feedback = document.getElementById('passwordMatchFeedback');
+function arePasswordsMatching(passwordInputId, confirmPasswordId, feedbackId) {
+    const passwordInput = document.getElementById(passwordInputId);
+    const confirmInput = document.getElementById(confirmPasswordId);
+    const feedback = document.getElementById(feedbackId);
 
-    function checkPasswordsMatch() {
-        const password = passwordInput.value;
-        const confirm = confirmInput.value;
+    if (!passwordInput || !confirmInput || !feedback) return;
 
-        if (confirm === '') {
-            confirmInput.classList.remove('is-valid', 'is-invalid');
-            feedback.style.display = 'none';
+    const updateMatchStatus = () => {
+        const password = passwordInput.value.trim();
+        const confirm = confirmInput.value.trim();
+
+        if (!confirm) {
+            resetValidation();
             return;
         }
 
-        if (password === confirm) {
-            confirmInput.classList.add('is-valid');
-            confirmInput.classList.remove('is-invalid');
-            feedback.style.display = 'none';
-        } else {
-            confirmInput.classList.add('is-invalid');
-            confirmInput.classList.remove('is-valid');
-            feedback.style.display = 'block';
-        }
-    }
+        const match = password === confirm;
+        highlightInput(match, confirmInput);
 
-    passwordInput.addEventListener('input', checkPasswordsMatch);
-    confirmInput.addEventListener('input', checkPasswordsMatch);
+        feedback.style.display = match ? 'none' : 'block';
+    };
+
+    const resetValidation = () => {
+        confirmInput.classList.remove('is-valid', 'is-invalid');
+        feedback.style.display = 'none';
+    };
+
+    passwordInput.addEventListener('input', updateMatchStatus);
+    confirmInput.addEventListener('input', updateMatchStatus);
 }
 
-function checkNames(){
-    const firstName = document.getElementById('firstName');
-    const lastName = document.getElementById('lastName');
+
+function validateNames(firstNameId, lastNameId) {
+    const firstName = document.getElementById(firstNameId);
+    const lastName = document.getElementById(lastNameId);
 
     firstName.addEventListener('input', () => {
         highlightInput(firstName.value.length > 0, firstName);
@@ -210,19 +166,14 @@ function checkNames(){
 
 }
 
-function highlightInput(isValid, input){
-    if(input.value.length < 1){
-        input.classList.remove('is-invalid', 'is-valid');
+function highlightInput(isValidCondition, inputField) {
+    const value = inputField.value.trim();
+
+    if (!value) {
+        inputField.classList.remove('is-valid', 'is-invalid');
         return;
     }
-    if (isValid) {
-        input.classList.add('is-valid');
-        input.classList.remove('is-invalid');
-    } else {
-        input.classList.add('is-invalid');
-        input.classList.remove('is-valid');
-    }
+
+    inputField.classList.toggle('is-valid', isValidCondition);
+    inputField.classList.toggle('is-invalid', !isValidCondition);
 }
-
-
-

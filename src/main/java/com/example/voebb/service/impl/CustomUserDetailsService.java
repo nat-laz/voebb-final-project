@@ -320,7 +320,6 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
         return user;
     }
 
-
     private UserUpdateDTO toUpdateDto(CustomUser user) {
         UserUpdateDTO dto = new UserUpdateDTO();
         dto.setEmail(user.getEmail());

@@ -1,8 +1,8 @@
 <div th:fragment="public-login-dropdown" class="nav-item dropdown ms-auto">
   <button th:if="${!#authorization.expr('isAuthenticated()')}"
-     class="btn btn-secondary h-100 dropdown-toggle d-flex align-items-center px-3 py-2 rounded-2 text-dark"
-     href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-     style="transition: background-color 0.2s ease;">
+          class="btn btn-secondary h-100 dropdown-toggle d-flex align-items-center px-3 py-2 rounded-2 text-dark"
+          href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+          style="transition: background-color 0.2s ease;">
     <span>
       <i class="bi bi-person-circle" style="color: black;"></i> Login
     </span>
@@ -17,32 +17,50 @@
     </span>
   </a>
   
-  <div class="dropdown-menu dropdown-menu-end bg-secondary shadow-sm p-3 mb-5 bg-body rounded" style="width: 280px;">
-    <div th:if="${!#authorization.expr('isAuthenticated()')}" class="container rounded" style="width: 260px;">
+  
+  <div class="dropdown-menu dropdown-menu-end shadow-sm w-100" style="max-width: 300px;"
+       th:if="${!#authorization.expr('isAuthenticated()')}">
+    
+    <div th:if="${loginError}" class="alert alert-danger" role="alert">
+      <span th:text="${loginError}"></span>
+    </div>
+    
+    <div class="p-4 rounded text-light dci-border-dark" style="background-color: #333333">
+      
       <form th:action="@{/login}" method="post">
         <div class="mb-3">
-          <label for="loginUsername" class="form-label">Username</label>
-          <input type="text" class="form-control" name="username" id="loginUsername" required>
+          <label for="usernameInput" class="form-label">Email or phone number</label>
+          <input type="text" id="usernameInput" name="username" required
+                 class="form-control bg-dark text-light dci-border-dark"
+                 autocomplete="off"
+          >
+          <div class="invalid-feedback">
+            Please enter a valid email address or phone number.
+          </div>
         </div>
         
         <div class="mb-3">
           <label for="loginPassword" class="form-label">Password</label>
-          <input type="password" class="form-control" name="password" id="loginPassword" required>
+          <input type="password" class="form-control bg-dark text-light dci-border-dark" name="password"
+                 id="loginPassword" minlength="8" required>
+          <div class="invalid-feedback">
+            Enter a valid password
+          </div>
         </div>
         
         <div class="form-check mb-3">
           <input class="form-check-input" type="checkbox" name="remember-me" id="dropDownCheck">
-          <label class="form-check-label" for="dropDownCheck">
-            Remember me
-          </label>
+          <label class="form-check-label" for="dropDownCheck">Remember me</label>
         </div>
         
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
       </form>
-      <div class="dropdown-divider"></div>
-      <div class="rounded-2" style="background-color: #f8f9fa">
-        <a class="dropdown-item rounded-2" href="/register">New around here? Sign up</a>
-        <a class="dropdown-item rounded-2" href="/restore-password">Forgot password?</a>
+      
+      <hr class="my-4 border-secondary">
+      
+      <div class="d-grid gap-2">
+        <a class="btn btn-outline-secondary dci-border-dark text-light" href="/register">New around here? Sign up</a>
+        <a class="btn btn-outline-secondary dci-border-dark text-light" href="/restore-password">Forgot password?</a>
       </div>
     </div>
     

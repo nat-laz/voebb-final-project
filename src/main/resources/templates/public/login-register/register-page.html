@@ -23,7 +23,7 @@
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="firstName" class="form-label">First name</label>
-            <input type="text" id="firstName" name="usernameInput" required
+            <input type="text" id="firstName" required
                    class="form-control bg-dark text-light dci-border-dark"
                    autocomplete="off"
                    th:field="*{firstName}"
@@ -35,7 +35,7 @@
           
           <div class="col-md-6 mb-3">
             <label for="lastName" class="form-label">Last name</label>
-            <input type="text" id="lastName" name="usernameInput" required
+            <input type="text" id="lastName" required
                    class="form-control bg-dark text-light dci-border-dark"
                    autocomplete="off"
                    th:field="*{lastName}"
@@ -47,9 +47,9 @@
         </div>
         
         <div class="mb-3">
-          <label for="phoneNumber" class="form-label">Mobile number</label>
+          <label for="phoneInput" class="form-label">Mobile number</label>
           <input class="form-control bg-dark text-light dci-border-dark"
-                 type="text" id="phoneNumber" name="usernameInput" placeholder="" required
+                 type="text" id="phoneInput" placeholder="" required
                  autocomplete="off"
                  th:field="*{phoneNumber}"
                  th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid' : ''"
@@ -121,8 +121,42 @@
     </div>
   
   </div>
-  <script th:src="@{/js/user/credentials.js}"></script>
+  <script th:src="@{/js/user/validation-utils.js}"></script>
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
 
+          validateNames(
+              'firstName',
+              'lastName'
+          );
+
+
+          validatePhoneInputWithFeedback(
+              'phoneInput',
+              'phoneFeedback',
+          );
+          
+          validateEmailInput(
+              'email'
+          );
+          
+          checkPasswordStrengthAdvanced(
+              'registerPassword',
+              'passwordFeedback',
+              'passwordLengthCheck',
+              'passwordDigitCheck',
+              'PasswordSpecialCharsCheck',
+              'PasswordLetterCheck'
+          );
+          
+          arePasswordsMatching(
+              'registerPassword',
+              'confirmPassword',
+              'passwordMatchFeedback'
+          )
+      });
+  
+  </script>
 </main>
 
 <section layout:fragment="footer"></section>
