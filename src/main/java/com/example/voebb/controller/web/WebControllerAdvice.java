@@ -1,5 +1,6 @@
 package com.example.voebb.controller.web;
 
+import com.example.voebb.model.dto.creator.CreatorRoleResponseDTO;
 import com.example.voebb.model.dto.item.ItemFilters;
 import com.example.voebb.model.dto.library.LibraryDTO;
 import com.example.voebb.model.dto.product.ProductFilters;
@@ -25,6 +26,7 @@ public class WebControllerAdvice {
     private final ProductTypeService productTypeService;
     private final LanguageService languageService;
     private final CountryService countryService;
+    private final CreatorRoleService creatorRoleService;
     private final ItemStatusService itemStatusService;
     private final CustomUserService customUserService;
 
@@ -53,14 +55,18 @@ public class WebControllerAdvice {
         return countryService.getAllCountries();
     }
 
-    @ModelAttribute("requestURI")
-    public String requestURI(HttpServletRequest request) {return request.getRequestURI();}
-
+    @ModelAttribute("roles")
+    public List<CreatorRoleResponseDTO> roles() {
+        return creatorRoleService.getAllCreatorRoles();
+    }
     @ModelAttribute("itemFilters")
     public ItemFilters itemFilters() {return new ItemFilters();}
 
     @ModelAttribute("itemStatuses")
     public List<ItemStatus> statuses() {return itemStatusService.getAllStatuses();}
+
+    @ModelAttribute("requestURI")
+    public String requestURI(HttpServletRequest request) {return request.getRequestURI();}
 
     @ModelAttribute("borrowExpiresSoon")
     @PreAuthorize("isAuthenticated()")

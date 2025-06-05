@@ -109,7 +109,7 @@ public class ReservationServiceImpl implements ReservationService {
         String userName = user.getFirstName() + " " + user.getLastName();
         String productTitle = item.getProduct().getTitle();
 
-        return "Item \"" + productTitle + "\" [ID: #" + item.getId() + "] was borrowed by User [ID: #" + user.getId() + "] " + userName + ".";
+        return "Item \"" + productTitle + "\" [ID: " + item.getId() + "] was borrowed by User [ID: " + user.getId() + "] " + userName + ".";
     }
 
 

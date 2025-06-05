@@ -265,16 +265,3 @@ document.getElementById("newRoleForm").addEventListener("submit", async function
     }
 });
 
-// // TODO: proper UI for this validation
-// // Warning pop-up: At least one creator should be added before submitting
-// document.addEventListener('DOMContentLoaded', function () {
-//     const form = document.querySelector('.needs-validation');
-//     form.addEventListener('submit', function (event) {
-//         const creatorFields = document.querySelectorAll('#creatorsPreview input[type="hidden"]');
-//         if (creatorFields.length === 0) {
-//             event.preventDefault();
-//             event.stopPropagation();
-//             alert("Please add at least one creator before submitting.");
-//         }
-//     });
-// });

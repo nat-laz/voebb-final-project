@@ -142,8 +142,8 @@ public class BorrowServiceImpl implements BorrowService {
         String userName = user.getFirstName() + " " + user.getLastName();
         String productTitle = item.getProduct().getTitle();
 
-        return "[User ID: #" + user.getId() + "] " + userName +
-               " successfully extended the item \"" + productTitle + "\" [Item ID: #" + item.getId() + "] until " +
+        return "[User ID: " + user.getId() + "] " + userName +
+               " successfully extended the item \"" + productTitle + "\" [Item ID: " + item.getId() + "] until " +
                borrow.getDueDate() + ".";
     }
 

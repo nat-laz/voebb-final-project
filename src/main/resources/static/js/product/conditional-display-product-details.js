@@ -3,10 +3,20 @@ const bookDetailsBlock = document.getElementById('bookDetailsBlock');
 const emediaBlock = document.getElementById('emediaBlock');
 const emediaInput = emediaBlock?.querySelector('input');
 
+
+const typeMap = {
+    1: "book",
+    2: "ebook",
+    3: "dvd",
+    4: "boardgame"
+};
+
 function toggleConditionalFields() {
-    const selected = productTypeSelect.options[productTypeSelect.selectedIndex]?.textContent?.toLowerCase();
-    const isBook = selected === "book" || selected === "ebook";
-    const isEbook = selected === "ebook";
+    const selectedId = productTypeSelect.value;
+    const typeName = typeMap[selectedId];
+
+    const isBook = typeName === "book" || typeName === "ebook";
+    const isEbook = typeName === "ebook";
 
     // Book fields toggle
     bookDetailsBlock.classList.toggle("d-none", !isBook);

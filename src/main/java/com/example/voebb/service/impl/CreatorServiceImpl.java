@@ -3,12 +3,11 @@ package com.example.voebb.service.impl;
 import com.example.voebb.model.dto.creator.CreatorFullNameDTO;
 import com.example.voebb.model.dto.creator.CreatorResponseDTO;
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
-import com.example.voebb.model.entity.Creator;
-import com.example.voebb.model.entity.CreatorProductRelation;
-import com.example.voebb.model.entity.CreatorRole;
-import com.example.voebb.model.entity.Product;
+import com.example.voebb.model.dto.creator.UpdateCreatorWithRoleDTO;
+import com.example.voebb.model.entity.*;
 import com.example.voebb.repository.CreatorProductRelationRepo;
 import com.example.voebb.repository.CreatorRepo;
+import com.example.voebb.repository.CreatorRoleRepo;
 import com.example.voebb.service.CreatorRoleService;
 import com.example.voebb.service.CreatorService;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,6 +28,7 @@ public class CreatorServiceImpl implements CreatorService {
     private final CreatorRepo creatorRepo;
     private final CreatorRoleService creatorRoleService;
     private final CreatorProductRelationRepo creatorProductRelationRepo;
+    private final CreatorRoleRepo creatorRoleRepo;
 
     @Override
     @Transactional
@@ -57,7 +57,48 @@ public class CreatorServiceImpl implements CreatorService {
             product.addRelation(relation);
             creator.addRelation(relation);
             relation.setCreatorRole(role);
-            creatorRepo.save(creator);
+        }
+    }
+
+
+    @Transactional
+    public void updateCreatorsForProduct(Product product, List<UpdateCreatorWithRoleDTO> creatorsDto) {
+
+        Set<CreatorRelationId> incomingRelationIds = creatorsDto.stream()
+                .map(creator -> new CreatorRelationId(creator.getCreatorId(), product.getId(), creator.getCreatorRoleId()))
+                .collect(Collectors.toSet());
+
+        List<CreatorProductRelation> existingRelations = new ArrayList<>(product.getCreatorProductRelations());
+        for (CreatorProductRelation existing : existingRelations) {
+            if (!incomingRelationIds.contains(existing.getId())) {
+                product.removeRelation(existing);
+                creatorProductRelationRepo.delete(existing);
+            }
+        }
+
+        for (UpdateCreatorWithRoleDTO dtoCreator : creatorsDto) {
+            CreatorRelationId id = new CreatorRelationId(
+                    dtoCreator.getCreatorId(), product.getId(), dtoCreator.getCreatorRoleId()
+            );
+
+            boolean alreadyExists = product.getCreatorProductRelations().stream()
+                    .anyMatch(relation -> relation.getId().equals(id));
+
+            if (!alreadyExists) {
+                Creator creator = creatorRepo.findById(dtoCreator.getCreatorId())
+                        .orElseThrow(() -> new RuntimeException("Creator not found: " + dtoCreator.getCreatorId()));
+                CreatorRole role = creatorRoleRepo.findById(dtoCreator.getCreatorRoleId())
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + dtoCreator.getCreatorRoleId()));
+
+                CreatorProductRelation newRelation = new CreatorProductRelation();
+                newRelation.setId(id);
+                newRelation.setCreator(creator);
+                newRelation.setProduct(product);
+                newRelation.setCreatorRole(role);
+
+                product.addRelation(newRelation);
+                creator.addRelation(newRelation);
+            }
         }
     }
 

@@ -4,490 +4,590 @@
       layout:decorate="~{admin/admin-layout}">
 
 <head>
-    <title>Add product</title>
+  <title>Add product</title>
+  
+  <style>
+      .selected-tag {
+          background-color: #e9ecef;
+          border-radius: 20px;
+          padding: 4px 10px;
+          font-size: 0.875rem;
+          display: inline-flex;
+          align-items: center;
+      }
 
-    <style>
-        .selected-tag {
-            background-color: #e9ecef;
-            border-radius: 20px;
-            padding: 4px 10px;
-            font-size: 0.875rem;
-            display: inline-flex;
-            align-items: center;
-        }
+      .selected-tag button {
+          border: none;
+          background: transparent;
+          margin-left: 6px;
+          font-weight: bold;
+          color: #888;
+          cursor: pointer;
+      }
 
-        .selected-tag button {
-            border: none;
-            background: transparent;
-            margin-left: 6px;
-            font-weight: bold;
-            color: #888;
-            cursor: pointer;
-        }
-
-        .list-group-item button {
-            white-space: nowrap;
-        }
-    </style>
+      .list-group-item button {
+          white-space: nowrap;
+      }
+  </style>
 </head>
-
 <body>
 <main layout:fragment="content">
-    <div class="container my-5">
-        <h2 class="mb-4 fw-bold">Add New Product</h2>
-
-        <div th:replace="~{admin/fragments/_alerts :: alerts}"></div>
-
-        <div class="progress mb-3" style="height: 20px;">
-            <div id="formProgress" class="progress-bar" role="progressbar" style="width: 33%;"
-                 aria-valuemin="0" aria-valuemax="100">Step 1 of 4
-            </div>
-        </div>
-
-        <form th:action="@{/admin/products/new}" th:object="${createProductDTO}" method="post"
-              class="row g-4 needs-validation" novalidate>
-
-            <ul class="nav nav-tabs" id="productTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="tab-basic-tab" data-bs-toggle="tab" data-bs-target="#tab-basic"
-                            type="button" role="tab">Basic Info
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
+  <div class="container my-5">
+    <h2 class="mb-4 fw-bold">Add New Product</h2>
+    
+    <div th:replace="~{admin/fragments/_alerts :: alerts}"></div>
+    
+    <div class="progress mb-3" style="height: 20px;">
+      <div id="formProgress" class="progress-bar" role="progressbar" style="width: 33%;"
+           aria-valuemin="0" aria-valuemax="100">Step 1 of 4
+      </div>
+    </div>
+    
+    <form onkeydown="return event.key !== 'Enter';" th:action="@{/admin/products/new}" th:object="${createProductDTO}"
+          method="post"
+          class="row g-4 needs-validation" novalidate>
+      
+      <ul class="nav nav-tabs" id="productTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="tab-basic-tab" data-bs-toggle="tab" data-bs-target="#tab-basic"
+                  type="button" role="tab">Basic Info
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
         <span data-bs-toggle="tooltip" data-bs-placement="top" title="Please complete Basic Info first">
           <button class="nav-link disabled" id="tab-creators-tab" data-bs-toggle="tab" data-bs-target="#tab-creators"
                   type="button" role="tab" tabindex="-1" aria-disabled="true">Creators</button>
         </span>
-                </li>
-                <li class="nav-item" role="presentation">
+        </li>
+        <li class="nav-item" role="presentation">
         <span data-bs-toggle="tooltip" data-bs-placement="top" title="Please complete Creators first">
           <button class="nav-link disabled" id="tab-metadata-tab" data-bs-toggle="tab" data-bs-target="#tab-metadata"
                   type="button" role="tab" tabindex="-1" aria-disabled="true">Metadata</button>
         </span>
-                </li>
-                </li>
-                <li class="nav-item" role="presentation">
-        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Please complete Creators first">
+        </li>
+        </li>
+        <li class="nav-item" role="presentation">
+        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Please complete Metadata first">
           <button class="nav-link disabled" id="tab-results-tab" data-bs-toggle="tab" data-bs-target="#tab-results"
-                  type="button" role="tab" tabindex="-1" aria-disabled="true">Results</button>
+                  type="button" role="tab" tabindex="-1" aria-disabled="true">Result</button>
         </span>
-                </li>
-            </ul>
-
-            <div class="tab-content pt-3">
-
-                <!-- ============================ Basic Info Tab ============================ -->
-                <div class="tab-pane fade show active" id="tab-basic" role="tabpanel">
-                    <div class="col-12 card p-4 shadow-sm">
-                        <h5 class="mb-3">Basic Information</h5>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Product Type <span class="text-danger">*</span></label>
-                                <select th:field="*{productTypeId}" class="form-select" required>
-                                    <option value="">-- Select Type --</option>
-                                    <option th:each="type : ${productTypes}" th:value="${type.id}"
-                                            th:text="${type.name}"></option>
-                                </select>
-                                <div class="text-danger" th:if="${#fields.hasErrors('productTypeId')}"
-                                     th:errors="*{productTypeId}"></div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Title <span class="text-danger">*</span></label>
-                                <input th:field="*{title}" class="form-control" required>
-                                <div class="text-danger" th:if="${#fields.hasErrors('title')}"
-                                     th:errors="*{title}"></div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">Release Year</label>
-                                <input th:field="*{releaseYear}" class="form-control" pattern="\d{4}"
-                                       placeholder="e.g. 2023">
-                                <div class="text-danger" th:if="${#fields.hasErrors('releaseYear')}"
-                                     th:errors="*{releaseYear}"></div>
-                            </div>
-
-                            <div class="col-md-8">
-                                <label class="form-label">Cover Photo URL</label>
-                                <input th:field="*{photo}" class="form-control" type="url">
-                                <div class="text-danger" th:if="${#fields.hasErrors('photo')}"
-                                     th:errors="*{photo}"></div>
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Description</label>
-                                <textarea th:field="*{description}" class="form-control" rows="3"
-                                          maxlength="1000"></textarea>
-                                <div class="text-danger" th:if="${#fields.hasErrors('description')}"
-                                     th:errors="*{description}"></div>
-                            </div>
-
-                            <div id="emediaBlock" class="col-md-6 d-none">
-                                <label class="form-label">Product Link (eMedia)</label>
-                                <input th:field="*{productLinkToEmedia}" class="form-control">
-                                <div class="text-danger" th:if="${#fields.hasErrors('productLinkToEmedia')}"
-                                     th:errors="*{productLinkToEmedia}"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="bookDetailsBlock" class="col-12 card p-4 shadow-sm d-none mt-4">
-                        <h5 class="mb-3">Book Details</h5>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label>ISBN</label>
-                                <input th:field="*{bookDetails.isbn}" class="form-control" maxlength="20">
-                            </div>
-                            <div class="col-md-4">
-                                <label>Edition</label>
-                                <input th:field="*{bookDetails.edition}" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label>Pages</label>
-                                <input th:field="*{bookDetails.pages}" type="number" min="1" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="button" class="btn btn-primary mt-3" onclick="goToTab('tab-creators-tab', 2)">Next
-                    </button>
-                    </button>
-                </div>
-
-
-                <!-- ============================ Creators Section Tab  ============================ -->
-                <div class="tab-pane fade" id="tab-creators" role="tabpanel">
-                    <div class="card p-4 shadow-sm">
-                        <h5 class="mb-3 fw-semibold">Creators</h5>
-                        <div class="text-danger mt-2"
-                             th:if="${#fields.hasErrors('creators')}"
-                             th:errors="*{creators}"></div>
-                        <div id="creatorsPreview" class="d-flex flex-wrap gap-2 mb-3"></div>
-
-                        <div class="row g-3 align-items-end">
-
-                            <div class="col-md-5 position-relative">
-                                <label for="creatorSearchInput" class="form-label">
-                                    Search Creator by last name <span class="text-danger">*</span>
-                                </label>
-                                <input id="creatorSearchInput" type="text" class="form-control"
-                                       placeholder="e.g. Rowling"
-                                       autocomplete="off" required>
-                                <ul id="creatorResultsBox" class="list-group position-absolute w-100 d-none shadow-sm"
-                                    style="z-index: 10;"></ul>
-                            </div>
-
-                            <div class="col-md-5 position-relative">
-                                <label for="roleSearchInput" class="form-label">
-                                    Search Role <span class="text-danger">*</span>
-                                </label>
-                                <input id="roleSearchInput" type="text" class="form-control" placeholder="e.g. Author"
-                                       autocomplete="off" required>
-                                <ul id="roleResultsBox" class="list-group position-absolute w-100 d-none shadow-sm"
-                                    style="z-index: 10;"></ul>
-                            </div>
-
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-primary w-100" onclick="addCreatorToPreview()">
-                                    Add Creator
-                                </button>
-                            </div>
-                        </div>
-
-                        <!--  Fields populated by AJAX -->
-                        <input type="hidden" id="creatorId">
-                        <input type="hidden" id="creatorFirstName">
-                        <input type="hidden" id="creatorLastName">
-                        <input type="hidden" id="creatorIndex" value="0">
-                        <input type="hidden" id="creatorRoleId">
-                        <input type="hidden" id="creatorRole">
-                    </div>
-
-                    <button type="button" class="btn btn-secondary mt-3 me-2" onclick="goToTab('tab-basic-tab', 1)">
-                        Back
-                    </button>
-                    <button type="button" class="btn btn-primary mt-3" onclick="goToTab('tab-metadata-tab', 3)">Next
-                    </button>
-                </div>
-
-
-                <!-- ============================ Country & Language Section Tab ============================ -->
-                <div class="tab-pane fade" id="tab-metadata" role="tabpanel">
-                    <div class="col-12 card p-4 shadow-sm">
-                        <h5 class="mb-3">Metadata</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label">Publication Countries</label>
-                                <div class="text-danger mt-1" th:if="${#fields.hasErrors('countryIds')}"
-                                     th:errors="*{countryIds}"></div>
-                                <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
-                                    <div id="selectedCountries" class="d-flex flex-wrap gap-2"></div>
-                                </div>
-                                <input id="searchCountryInput" type="text" class="form-control form-control-sm mb-2"
-                                       placeholder="Search countries..."/>
-                                <ul class="list-group border rounded" id="country_list"
-                                    style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none; ">
-                                    <li class="list-group-item border-0 py-2"
-                                        th:each="country : ${countries}">
-                                        <div class="form-check">
-                                            <input class="form-check-input"
-                                                   type="checkbox"
-                                                   th:value="${country.id}"
-                                                   th:field="*{countryIds}"
-                                                   th:id="'country__' + ${country.id}">
-                                            <label class="form-check-label"
-                                                   th:for="'country__' + ${country.id}"
-                                                   th:text="${country.name}"></label>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label">Available Languages</label>
-                                <div class="text-danger mt-1" th:if="${#fields.hasErrors('languageIds')}"
-                                     th:errors="*{languageIds}"></div>
-                                <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
-                                    <div id="selectedLanguages" class="d-flex flex-wrap gap-2"></div>
-                                </div>
-                                <input id="searchLanguageInput" type="text" class="form-control form-control-sm mb-2"
-                                       placeholder="Search languages..."/>
-                                <ul class="list-group border rounded" id="language_list"
-                                    style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none; ">
-                                    <li class="list-group-item border-0 py-2"
-                                        th:each="language : ${languages}">
-                                        <div class="form-check">
-                                            <input class="form-check-input"
-                                                   type="checkbox"
-                                                   th:value="${language.id}"
-                                                   th:field="*{languageIds}"
-                                                   th:id="'language__' + ${language.id}">
-                                            <label class="form-check-label"
-                                                   th:for="'language__' + ${language.id}"
-                                                   th:text="${language.name}"></label>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="button" class="btn btn-secondary mt-3 me-2" onclick="goToTab('tab-creators-tab', 2)">
-                        Back
-                    </button>
-                    <button type="button" class="btn btn-primary mt-3" onclick="goToTab('tab-results-tab', 4)">Review
-                        changes
-                    </button>
-                </div>
-
-                <!-- ============================ Check results Tab ============================ -->
-                <div class="tab-pane fade" id="tab-results" role="tabpanel">
-                    <h2 class="mb-3">Check product info</h2>
-
-                    <div class="col-12 card p-4 shadow-sm mt-4">
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <p><strong>Product Type:</strong> <span id="revProductType"></span></p>
-                                <p><strong>Title:</strong> <span id="revTitle"></span></p>
-                                <p><strong>Release Year:</strong> <span id="revReleaseYear"></span></p>
-                                <p><strong>Cover Photo:</strong> <span id="revPhoto"></span></p>
-                                <p><strong>Description:</strong> <span id="revDescription"></span></p>
-                                <p><strong>Product Link (eMedia):</strong> <span id="revProductLink"></span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 card p-4 shadow-sm mt-4">
-                        <h5 class="mb-3">Book Details</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <p><strong>ISBN:</strong> <span id="revISBN"></span></p>
-                                <p><strong>Edition:</strong> <span id="revEdition"></span></p>
-                                <p><strong>Pages:</strong> <span id="revPages"></span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 card p-4 shadow-sm mt-4">
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <h5 class="mb-3">Creators</h5>
-                                <ul id="selected_creators_review"></ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 card p-4 shadow-sm mt-4">
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <h5 class="mb-3">Countries</h5>
-                                <ul id="selected_countries_review"></ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 card p-4 shadow-sm mt-4">
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <h5 class="mb-3">Languages</h5>
-                                <ul id="selected_languages_review"></ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="button" class="btn btn-secondary mt-3 me-2" onclick="goToTab('tab-metadata-tab', 3)">
-                        Back
-                    </button>
-                    <button type="submit" class="btn btn-success mt-3">Submit</button>
-                </div>
+        </li>
+      </ul>
+      
+      <div class="tab-content pt-3">
+        
+        <!-- ============================ Basic Info Tab ============================ -->
+        <div class="tab-pane fade show active" id="tab-basic" role="tabpanel">
+          <div class="col-12 card p-4 shadow-sm">
+            <h5 class="mb-3">Basic Information</h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Product Type <span class="text-danger">*</span></label>
+                <select id="productTypeId" th:field="*{productTypeId}" class="form-select" required>
+                  <option value="">-- Select Type --</option>
+                  <option th:each="type : ${productTypes}"
+                          th:value="${type.id}"
+                          th:text="${type.displayName}"></option>
+                </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('productTypeId')}"
+                     th:errors="*{productTypeId}"></div>
+              </div>
+              
+              <div class="col-md-6">
+                <label class="form-label">Title <span class="text-danger">*</span></label>
+                <input th:field="*{title}" id="title" class="form-control" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('title')}"
+                     th:errors="*{title}"></div>
+              </div>
+              
+              <div class="col-md-4">
+                <label class="form-label">Release Year</label>
+                <input id="releaseYear" th:field="*{releaseYear}" class="form-control" pattern="\d{4}"
+                       placeholder="e.g. 2023">
+                <div class="text-danger" th:if="${#fields.hasErrors('releaseYear')}"
+                     th:errors="*{releaseYear}"></div>
+              </div>
+              
+              <div class="col-md-8">
+                <label class="form-label">Cover Photo URL</label>
+                <input id="photo" th:field="*{photo}" class="form-control" type="url">
+                <div class="text-danger" th:if="${#fields.hasErrors('photo')}"
+                     th:errors="*{photo}"></div>
+              </div>
+              
+              <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="3"
+                          maxlength="1000"></textarea>
+                <div class="text-danger" th:if="${#fields.hasErrors('description')}"
+                     th:errors="*{description}"></div>
+              </div>
+              
+              <div id="emediaBlock" class="col-md-6 d-none">
+                <label class="form-label">Product Link (eMedia)</label>
+                <input id="productLinkToEmedia" th:field="*{productLinkToEmedia}" class="form-control">
+                <div class="text-danger" th:if="${#fields.hasErrors('productLinkToEmedia')}"
+                     th:errors="*{productLinkToEmedia}"></div>
+              </div>
             </div>
-        </form>
-    </div>
+          </div>
+          
+          <div id="bookDetailsBlock" class="col-12 card p-4 shadow-sm d-none mt-4">
+            <h5 class="mb-3">Book Details</h5>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label>ISBN</label>
+                <input th:field="*{bookDetails.isbn}"
+                       id="bookIsbn"
+                       class="form-control"
+                       placeholder="e.g 978-0-306-40615-7"
+                       maxlength="20">
+              </div>
+              <div class="col-md-4">
+                <label>Edition</label>
+                <input th:field="*{bookDetails.edition}"
+                       id="bookEdition"
+                       class="form-control"
+                       placeholder="Enter edition">
+              </div>
+              <div class="col-md-4">
+                <label for="bookPages">Pages</label>
+                <input type="text"
+                       id="bookPages"
+                       inputmode="numeric"
+                       pattern="[0-9]+"
+                       th:field="*{bookDetails.pages}"
+                       class="form-control"
+                       placeholder="Enter number of pages"
+                       required
+                       oninvalid="this.setCustomValidity('Please enter a valid number of pages')"
+                       oninput="this.setCustomValidity('')">
+              </div>
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-primary mt-3" onclick="goToTab('tab-creators-tab', 2, true)">Next
+          </button>
+        </div>
+        
+        
+        <!-- ============================ Creators Section Tab  ============================ -->
+        <div class="tab-pane fade" id="tab-creators" role="tabpanel">
+          <div class="card p-4 shadow-sm">
+            <h5 class="mb-3 fw-semibold">Creators</h5>
+            <div class="text-danger mt-2"
+                 th:if="${#fields.hasErrors('creators')}"
+                 th:errors="*{creators}"></div>
+            
+            <div id="creatorsPreview" class="d-flex flex-wrap gap-2 mb-3"></div>
+            
+            <div class="row g-3 align-items-end">
+              
+              <div class="col-md-5 position-relative">
+                <label for="creatorSearchInput" class="form-label">
+                  Search Creator by name <span class="text-danger">*</span>
+                </label>
+                <input id="creatorSearchInput" type="text" class="form-control"
+                       placeholder="e.g. Rowling"
+                       autocomplete="off" required>
+                <ul id="creatorResultsBox" class="list-group position-absolute w-100 d-none shadow-sm"
+                    style="z-index: 10;"></ul>
+              </div>
+              
+              <div class="col-md-5 position-relative">
+                <label for="roleSearchInput" class="form-label">
+                  Search Role <span class="text-danger">*</span>
+                </label>
+                <input id="roleSearchInput" type="text" class="form-control" placeholder="e.g. Author"
+                       autocomplete="off" required>
+                <ul id="roleResultsBox" class="list-group position-absolute w-100 d-none shadow-sm"
+                    style="z-index: 10;"></ul>
+              </div>
+              
+              <div class="col-md-2">
+                <button type="button" class="btn btn-primary w-100" onclick="addCreatorToPreview()">
+                  Add Creator
+                </button>
+              </div>
+            </div>
+            
+            <!--  Fields populated by AJAX -->
+            <input type="hidden" id="creatorId">
+            <input type="hidden" id="creatorFirstName">
+            <input type="hidden" id="creatorLastName">
+            <input type="hidden" id="creatorIndex" value="0">
+            <input type="hidden" id="creatorRoleId">
+            <input type="hidden" id="creatorRole">
+          </div>
+          
+          <button type="button" class="btn btn-secondary mt-3 me-2" onclick="goToTab('tab-basic-tab', 1, false)">
+            Back
+          </button>
+          <button type="button" class="btn btn-primary mt-3" onclick="goToTab('tab-metadata-tab', 3, true)">Next
+          </button>
+        </div>
+        
+        
+        <!-- ============================ Country & Language Section Tab ============================ -->
+        <div class="tab-pane fade" id="tab-metadata" role="tabpanel">
+          <div class="col-12 card p-4 shadow-sm">
+            <h5 class="mb-3">Metadata</h5>
+            <div class="row">
+              
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Publication Countries</label>
+                <div class="text-danger mt-1" id="countryIdsError">
+                  <span th:if="${#fields.hasErrors('countryIds')}" th:errors="*{countryIds}"></span>
+                </div>
+                <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
+                  <div id="selectedCountries" class="d-flex flex-wrap gap-2"></div>
+                </div>
+                <input id="searchCountryInput" type="text" class="form-control form-control-sm mb-2"
+                       placeholder="Search countries..."/>
+                <ul class="list-group border rounded" id="country_list"
+                    style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none; ">
+                  <li class="list-group-item border-0 py-2"
+                      th:each="country : ${productCountries}">
+                    <div class="form-check">
+                      <input class="form-check-input"
+                             type="checkbox"
+                             th:value="${country.id}"
+                             th:field="*{countryIds}"
+                             th:id="'country__' + ${country.id}">
+                      <label class="form-check-label"
+                             th:for="'country__' + ${country.id}"
+                             th:text="${country.name}"></label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Available Languages</label>
+                <div class="text-danger mt-1" id="languageIdsError">
+                  <span th:if="${#fields.hasErrors('languageIds')}" th:errors="*{languageIds}"></span>
+                </div>
+                <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
+                  <div id="selectedLanguages" class="d-flex flex-wrap gap-2"></div>
+                </div>
+                <input id="searchLanguageInput" type="text" class="form-control form-control-sm mb-2"
+                       placeholder="Search languages..."/>
+                <ul class="list-group border rounded" id="language_list"
+                    style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none; ">
+                  <li class="list-group-item border-0 py-2"
+                      th:each="language : ${productLanguages}">
+                    <div class="form-check">
+                      <input class="form-check-input"
+                             type="checkbox"
+                             th:value="${language.id}"
+                             th:field="*{languageIds}"
+                             th:id="'language__' + ${language.id}">
+                      <label class="form-check-label"
+                             th:for="'language__' + ${language.id}"
+                             th:text="${language.name}"></label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-secondary mt-3 me-2" onclick="goToTab('tab-creators-tab', 2, false)">
+            Back
+          </button>
+          <button type="button" class="btn btn-primary mt-3" onclick="goToTab('tab-results-tab', 4, true)">Review
+            changes
+          </button>
+        </div>
+        
+        <!-- ============================ Check results Tab ============================ -->
+        <div class="tab-pane fade" id="tab-results" role="tabpanel">
+          <div class="container d-flex justify-content-center">
+            <div class="w-100" style="max-width: 800px;">
+              
+              <h2 class="mb-4 fw-bold">Review Product Details</h2>
+              
+              <div class="card shadow-sm p-4">
+                
+                <!-- General Info -->
+                <section class="py-3 px-2 border-bottom">
+                  <h5 class="mb-3 fw-semibold text-muted small">General Info</h5>
+                  <div class="row gx-4">
+                    <div class="col-md-6">
+                      <div class="mb-2"><strong>Product Type:</strong>
+                        <span id="revProductType" class="text-muted small">—</span></div>
+                      <div class="mb-2"><strong>Title:</strong>
+                        <span id="revTitle" class="text-muted small">—</span></div>
+                      <div class="mb-2"><strong>Release Year:</strong>
+                        <span id="revReleaseYear" class="text-muted">—</span></div>
+                      <div class="mb-2"><strong>Description:</strong>
+                        <span id="revDescription" class="text-muted small">—</span></div>
+                      <div class="mb-2" id="revEmediaBlock"><strong>Product Link (eMedia):</strong>
+                        <span id="revProductLink" class="text-muted small">—</span></div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="fw-medium mb-2 small">Cover Photo</label>
+                      <div class="border rounded bg-light d-flex align-items-center justify-content-center"
+                           style="height: 200px;">
+                        <img id="revPhotoPreview" src="#" alt="Cover Photo Preview" class="img-fluid d-none"
+                             style="max-height: 180px;"/>
+                        <span id="revPhoto" class="text-muted small">No image preview available</span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                
+                <section id="revBookDetailsBlock" class="py-3 px-2 border-bottom d-none">
+                  <h5 class="mb-3 fw-semibold text-muted small">Book Details</h5>
+                  <div class="row gx-4">
+                    <div class="col-md-4"><strong>ISBN:</strong> <span id="revISBN" class="text-muted small ">—</span></div>
+                    <div class="col-md-4"><strong>Edition:</strong> <span id="revEdition" class="text-muted small">—</span>
+                    </div>
+                    <div class="col-md-4"><strong>Pages:</strong> <span id="revPages" class="text-muted small">—</span></div>
+                  </div>
+                </section>
+                
+                <section class="py-3 px-2 border-bottom">
+                  <h5 class="mb-3 fw-semibold text-muted small">Creators</h5>
+                  <div  class="d-flex flex-wrap gap-2  ps-4 small">
+                    <ul class="mb-0 list-unstyled" id="selected_creators_review"></ul>
+                  </div>
+                </section>
+                
+                <section class="py-3 px-2">
+                  <div class="row gx-4">
+                    <div class="col-md-6">
+                      <strong class="small text-muted">Countries</strong>
+                      <div  class="d-flex flex-wrap gap-2 mt-2  ps-4 small">
+                        <ul class="mb-0 list-unstyled" id="selected_countries_review"></ul>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <strong class="small text-muted">Languages</strong>
+                      <div class="d-flex flex-wrap gap-2 mt-2  ps-4 small">
+                        <ul class="mb-0 list-unstyled" id="selected_languages_review" ></ul>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                
+                <div class="d-flex justify-content-end align-items-center gap-2 mt-4 border-top pt-4">
+                  <button type="button" class="btn btn-outline-secondary"
+                          onclick="goToTab('tab-metadata-tab', 3, false)">
+                    Back
+                  </button>
+                  <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i> Submit
+                  </button>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  <div th:replace="~{admin/fragments/_creator-create :: createCreatorModal}"></div>
+  <div th:replace="~{admin/fragments/_role-create :: createRoleModal}"></div>
+  
+  <script th:src="@{/js/product/conditional-display-product-details.js}"></script>
+  <script th:src="@{/js/product/select-country-language.js}"></script>
+  <script th:src="@{/js/product/creators-form.js}"></script>
+  
+  
+  <script>
+      function goToTab(tabId, step, validate = true) {
+          const currentTabPane = document.querySelector('.tab-pane.show.active');
+          if (!currentTabPane) return;
 
-    <div th:replace="~{admin/fragments/_creator-create :: createCreatorModal}"></div>
-    <div th:replace="~{admin/fragments/_role-create :: createRoleModal}"></div>
+          if (validate) {
+              const requiredInputs = currentTabPane.querySelectorAll('[required]');
+              let allValid = true;
 
-    <script th:src="@{/js/product/conditional-display-product-details.js}"></script>
-    <script th:src="@{/js/product/select-country-language.js}"></script>
-    <script th:src="@{/js/product/creators-form.js}"></script>
+              requiredInputs.forEach(input => {
+                  if (!input.checkValidity()) {
+                      input.classList.add('is-invalid');
+                      allValid = false;
+                  } else {
+                      input.classList.remove('is-invalid');
+                  }
+              });
+
+              if (step === 4) {
+                  const countriesChecked = document.querySelectorAll('#country_list input[type="checkbox"]:checked').length > 0;
+                  const languagesChecked = document.querySelectorAll('#language_list input[type="checkbox"]:checked').length > 0;
+
+                  if (!countriesChecked) {
+                      allValid = false;
+                      document.getElementById('countryIdsError').textContent = "Please select at least one country";
+                  }
+
+                  if (!languagesChecked) {
+                      allValid = false;
+                      document.getElementById('languageIdsError').textContent = "Please select at least one language";
+                  }
+              }
+
+              if (!allValid) return;
+          }
+
+          const tabButton = document.getElementById(tabId);
+          tabButton.disabled = false;
+          const tab = new bootstrap.Tab(tabButton);
+          tab.show();
+
+          updateProgress(step);
+          addInfoToResults(step);
+      }
 
 
-    <script>
-        function goToTab(tabId, step) {
-            const currentTabPane = document.querySelector('.tab-pane.show.active');
-            const requiredInputs = currentTabPane.querySelectorAll('[required]');
-            let allValid = true;
-            requiredInputs.forEach(input => {
-                if (!input.checkValidity()) {
-                    input.classList.add('is-invalid');
-                    allValid = false;
-                } else {
-                    input.classList.remove('is-invalid');
-                }
-            });
+      function updateProgress(step) {
+          const progressBar = document.getElementById('formProgress');
+          const percent = step * 25;
+          progressBar.style.width = percent + '%';
+          progressBar.setAttribute('aria-valuenow', percent);
+          progressBar.textContent = `Step ${step} of 4`;
+      }
 
-            if (!allValid) return;
+      function addInfoToResults(step) {
+          switch (step) {
+              case 1:
+                  console.log("step 1");
+                  break;
+              case 2:
+                  console.log("step 2");
+                  updateGeneralInfo();
+                  break;
+              case 3:
+                  console.log("step 3");
+                  updateSelectedCreators();
+                  break;
+              case 4:
+                  console.log("step 4");
+                  updateSelectedCountries();
+                  updateSelectedLanguages();
+                  break;
+          }
+      }
 
-            const tabButton = document.getElementById(tabId);
-            tabButton.disabled = false;
-            const tab = new bootstrap.Tab(tabButton);
-            tab.show();
-            updateProgress(step);
-            addInfoToResults(step);
-        }
+      function updateSelectedCountries() {
+          const selectedCountries = [];
+          const checkboxes = document.querySelectorAll('#country_list input[type=checkbox]:checked');
+          checkboxes.forEach(cb => {
+              const label = document.querySelector(`label[for="${cb.id}"]`);
+              if (label) selectedCountries.push(label.textContent.trim());
+          });
 
-        function updateProgress(step) {
-            const progressBar = document.getElementById('formProgress');
-            const percent = step * 25;
-            progressBar.style.width = percent + '%';
-            progressBar.setAttribute('aria-valuenow', percent);
-            progressBar.textContent = `Step ${step} of 4`;
-        }
+          const reviewList = document.getElementById('selected_countries_review');
+          reviewList.innerHTML = ''; // Clear existing
+          selectedCountries.forEach(name => {
+              const li = document.createElement('li');
+              li.textContent = '• ' + name;
+              reviewList.appendChild(li);
+          });
+      }
 
-        function addInfoToResults(step) {
-            switch (step) {
-                case 1:
-                    console.log("step 1");
-                    break;
-                case 2:
-                    console.log("step 2");
-                    updateGeneralInfo();
-                    break;
-                case 3:
-                    console.log("step 3");
-                    updateSelectedCreators();
-                    break;
-                case 4:
-                    console.log("step 4");
-                    updateSelectedCountries();
-                    updateSelectedLanguages();
-                    break;
-            }
-        }
+      function updateSelectedLanguages() {
+          const selectedLanguages = [];
+          const checkboxes = document.querySelectorAll('#language_list input[type=checkbox]:checked');
+          checkboxes.forEach(cb => {
+              const label = document.querySelector(`label[for="${cb.id}"]`);
+              if (label) selectedLanguages.push(label.textContent.trim());
+          });
 
-        function updateSelectedCountries() {
-            const selectedCountries = [];
-            const checkboxes = document.querySelectorAll('#country_list input[type=checkbox]:checked');
-            checkboxes.forEach(cb => {
-                const label = document.querySelector(`label[for="${cb.id}"]`);
-                if (label) selectedCountries.push(label.textContent.trim());
-            });
+          const reviewList = document.getElementById('selected_languages_review');
+          reviewList.innerHTML = ''; // Clear existing
+          selectedLanguages.forEach(name => {
+              const li = document.createElement('li');
+              li.textContent = '• ' + name;
+              reviewList.appendChild(li);
+          });
+      }
 
-            const reviewList = document.getElementById('selected_countries_review');
-            reviewList.innerHTML = ''; // Clear existing
-            selectedCountries.forEach(name => {
-                const li = document.createElement('li');
-                li.textContent = name;
-                reviewList.appendChild(li);
-            });
-        }
+      function updateSelectedCreators() {
+          const reviewList = document.getElementById('selected_creators_review');
+          reviewList.innerHTML = ''; // Clear existing
+          const creatorDivs = document.querySelectorAll('#creatorsPreview .selected-tag');
 
-        function updateSelectedLanguages() {
-            const selectedLanguages = [];
-            const checkboxes = document.querySelectorAll('#language_list input[type=checkbox]:checked');
-            checkboxes.forEach(cb => {
-                const label = document.querySelector(`label[for="${cb.id}"]`);
-                if (label) selectedLanguages.push(label.textContent.trim());
-            });
+          creatorDivs.forEach(div => {
+              const firstName = div.querySelector('input[name$=".firstName"]').value;
+              const lastName = div.querySelector('input[name$=".lastName"]').value;
+              const role = div.querySelector('input[name$=".role"]').value;
 
-            const reviewList = document.getElementById('selected_languages_review');
-            reviewList.innerHTML = ''; // Clear existing
-            selectedLanguages.forEach(name => {
-                const li = document.createElement('li');
-                li.textContent = name;
-                reviewList.appendChild(li);
-            });
-        }
+              const li = document.createElement('li');
+              li.textContent = `• ${firstName} ${lastName} — ${role}`;
+              reviewList.appendChild(li);
+          });
+      }
 
-        function updateSelectedCreators() {
-            const reviewList = document.getElementById('selected_creators_review');
-            reviewList.innerHTML = ''; // Clear existing
-            const creatorDivs = document.querySelectorAll('#creatorsPreview .selected-tag');
+      const defaultCoverUrls = {
+          1: "/images/default-book.png",
+          2: "/images/default-ebook.jpg",
+          3: "/images/default-dvd.webp",
+          4: "/images/default-boardgame.jpg"
+      };
 
-            creatorDivs.forEach(div => {
-                const firstName = div.querySelector('input[name$=".firstName"]').value;
-                const lastName = div.querySelector('input[name$=".lastName"]').value;
-                const role = div.querySelector('input[name$=".role"]').value;
+      function updateGeneralInfo() {
+          // Get values
+          const productTypeSelect = document.getElementById('productTypeId');
+          const productTypeValue = productTypeSelect.value;
+          const productTypeText = productTypeSelect.options[productTypeSelect.selectedIndex].text;
+          const title = document.getElementById('title').value;
+          const releaseYear = document.getElementById('releaseYear').value;
+          const photoUrl = document.getElementById('photo').value;
+          const description = document.getElementById('description').value;
+          const productLink = document.getElementById('productLinkToEmedia').value;
 
-                const li = document.createElement('li');
-                li.textContent = `${firstName} ${lastName} — ${role}`;
-                reviewList.appendChild(li);
-            });
-        }
 
-        function updateGeneralInfo() {
-            // Get values
-            const productTypeSelect = document.getElementById('productTypeId');
-            const productTypeText = productTypeSelect.options[productTypeSelect.selectedIndex].text;
-            const title = document.getElementById('title').value;
-            const releaseYear = document.getElementById('releaseYear').value;
-            const photoUrl = document.getElementById('photo').value;
-            const description = document.getElementById('description').value;
-            const productLink = document.getElementById('productLinkToEmedia').value;
+          // Set review content
+          document.getElementById('revProductType').textContent = productTypeText || 'N/A';
+          document.getElementById('revTitle').textContent = title || 'N/A';
+          document.getElementById('revReleaseYear').textContent = releaseYear || 'N/A';
+          document.getElementById('revPhoto').textContent = photoUrl || 'N/A';
+          document.getElementById('revDescription').textContent = description || 'N/A';
+          document.getElementById('revProductLink').textContent = productLink || 'N/A';
 
-            // Set review content
-            document.getElementById('revProductType').textContent = productTypeText || 'N/A';
-            document.getElementById('revTitle').textContent = title || 'N/A';
-            document.getElementById('revReleaseYear').textContent = releaseYear || 'N/A';
-            document.getElementById('revPhoto').textContent = photoUrl || 'N/A';
-            document.getElementById('revDescription').textContent = description || 'N/A';
-            document.getElementById('revProductLink').textContent = productLink || 'N/A';
+          const img = document.getElementById('revPhotoPreview');
+          const placeholder = document.getElementById('revPhoto');
+          const isValidUrl = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i.test(photoUrl);
 
-            console.log(productTypeSelect.value);
+          if (photoUrl && isValidUrl) {
+              img.src = photoUrl;
+              img.classList.remove('d-none');
+              placeholder.textContent = '';
+          } else if (defaultCoverUrls[productTypeValue]) {
+              img.src = defaultCoverUrls[productTypeValue];
+              img.classList.remove('d-none');
+              placeholder.textContent = '';
+          } else {
+              img.classList.add('d-none');
+              placeholder.textContent = 'No image preview available';
+          }
 
-            if (productTypeSelect.value === "1" || productTypeSelect.value === "2") {
-                console.log('book details');
-                const isbn = document.getElementById('bookDetails.isbn').value;
-                const edition = document.getElementById('bookDetails.edition').value;
-                const pages = document.getElementById('bookDetails.pages').value;
+          const bookDetailsBlock = document.getElementById('revBookDetailsBlock');
+          if (productTypeValue === "1" || productTypeValue === "2") {
+              bookDetailsBlock.classList.remove('d-none');
+              document.getElementById('revISBN').textContent = document.getElementById('bookIsbn').value || 'N/A';
+              document.getElementById('revEdition').textContent = document.getElementById('bookEdition').value || 'N/A';
+              document.getElementById('revPages').textContent = document.getElementById('bookPages').value || 'N/A';
+          } else {
+              bookDetailsBlock.classList.add('d-none');
+              document.getElementById('revISBN').textContent = '';
+              document.getElementById('revEdition').textContent = '';
+              document.getElementById('revPages').textContent = '';
+          }
+          
+          const revEmediaBlock = document.getElementById('revEmediaBlock');
+          if (productTypeValue === "2") {
+              revEmediaBlock.classList.remove('d-none');
+          } else {
+              revEmediaBlock.classList.add('d-none');
+          }
 
-                document.getElementById('revISBN').textContent = isbn || 'N/A';
-                document.getElementById('revEdition').textContent = edition || 'N/A';
-                document.getElementById('revPages').textContent = pages || 'N/A';
-            }
-        }
-
-    </script>
+      }
+  </script>
 </main>
 </body>
 </html>
