@@ -1,128 +1,667 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout}">
+
 <head>
-    <title>Edit Product</title>
-    <!-- Bootstrap 5 CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Edit product</title>
+  
+  <style>
+      .selected-tag {
+          background-color: #e9ecef;
+          border-radius: 20px;
+          padding: 4px 10px;
+          font-size: 0.875rem;
+          display: inline-flex;
+          align-items: center;
+      }
 
-    <style>
-        /* Remove the border on the top of the first list item */
-        .no-upper-and-bottom-border .list-group-item:first-child {
-            border-top: none;
-        }
+      .selected-tag button {
+          border: none;
+          background: transparent;
+          margin-left: 6px;
+          font-weight: bold;
+          color: #888;
+          cursor: pointer;
+      }
 
-        /* Remove the border on the bottom of the last list item */
-        .no-upper-and-bottom-border .list-group-item:last-child {
-            border-bottom: none;
-        }
-    </style>
+      .list-group-item button {
+          white-space: nowrap;
+      }
+  </style>
 </head>
 <body>
-
-<div class="container mt-5">
-    <h2 class="mb-4">Edit Product</h2>
-
-    <form th:action="@{/admin/products/edit/{id}(id=${updateProductDTO.id})}"
-          th:object="${updateProductDTO}" method="post" class="row g-3">
-
-        <!-- Title -->
-        <div class="col-md-6">
-            <label for="title" class="form-label">Title</label>
-            <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="Enter title" required>
-        </div>
-
-        <!-- Release Year -->
-        <div class="col-md-6">
-            <label for="releaseYear" class="form-label">Release Year</label>
-            <input type="number" th:field="*{releaseYear}" class="form-control" id="releaseYear" placeholder="e.g. 2020"
-                   required>
-        </div>
-
-        <!-- Description -->
-        <div class="col-12">
-            <label for="description" class="form-label">Description</label>
-            <textarea th:field="*{description}" class="form-control" id="description" rows="4"
-                      placeholder="Enter product description"></textarea>
-        </div>
-
-        <!-- Product Image URL -->
-        <div class="col-md-6">
-            <label for="photo" class="form-label">Image URL</label>
-            <input type="text" th:field="*{photo}" class="form-control" id="photo" placeholder="http://...">
-        </div>
-
-        <!-- Product Link -->
-        <div class="col-md-6">
-            <label for="productLinkToEmedia" class="form-label">Product Link (eMedia)</label>
-            <input type="text" th:field="*{productLinkToEmedia}" class="form-control" id="productLinkToEmedia"
-                   placeholder="http://...">
-        </div>
-
-
-        <!-- Countries -->
-        <div class="border rounded-2 p-2 no-upper-and-bottom-border" style="max-width: 300px">
-            <input type="text" id="searchInput" placeholder="Search countries..." class="form-control mb-2">
-            <div class="overflow-auto" style="max-height: 200px">
-                <ul class="list-group" id="country_list" style="border: none">
-                    <li class="list-group-item" style="border-left: none; border-right: none"
-                        th:each="country : ${countries}">
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   th:value="${country.id}"
-                                   th:field="*{countryIds}"
-                                   th:id="'checkbox__' + ${country.id}"
-                            >
-                            <label class="form-check-label"
-                                   th:for="'checkbox__' + ${country.id}"
-                                   th:text="${country.name}"></label>
-                        </div>
-                    </li>
-                </ul>
+<main layout:fragment="content">
+  <div class="container my-5">
+    <h2 class="mb-4 fw-bold">Update Product</h2>
+    
+    <div th:replace="~{admin/fragments/_alerts :: alerts}"></div>
+    
+    <div class="progress mb-3" style="height: 20px;">
+      <div id="formProgress" class="progress-bar" role="progressbar" style="width: 33%;"
+           aria-valuemin="0" aria-valuemax="100">Step 1 of 4
+      </div>
+    </div>
+    
+    <form onkeydown="return event.key !== 'Enter';" th:action="@{/admin/products/edit/{id}(id=${updateProductDTO.id})}"
+          th:object="${updateProductDTO}"
+          method="post"
+          class="row g-4 needs-validation" novalidate>
+      <ul class="nav nav-tabs" id="productTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="tab-basic-tab" data-bs-toggle="tab" data-bs-target="#tab-basic"
+                  type="button" role="tab">Basic Info
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Please complete Basic Info first">
+          <button class="nav-link disabled" id="tab-creators-tab" data-bs-toggle="tab" data-bs-target="#tab-creators"
+                  type="button" role="tab" tabindex="-1" aria-disabled="true">Creators</button>
+        </span>
+        </li>
+        <li class="nav-item" role="presentation">
+        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Please complete Creators first">
+          <button class="nav-link disabled" id="tab-metadata-tab" data-bs-toggle="tab" data-bs-target="#tab-metadata"
+                  type="button" role="tab" tabindex="-1" aria-disabled="true">Metadata</button>
+        </span>
+        </li>
+        </li>
+        <li class="nav-item" role="presentation">
+        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Please complete Metadata first">
+          <button class="nav-link disabled" id="tab-results-tab" data-bs-toggle="tab" data-bs-target="#tab-results"
+                  type="button" role="tab" tabindex="-1" aria-disabled="true">Result</button>
+        </span>
+        </li>
+      </ul>
+      
+      <div class="tab-content pt-3">
+        
+        <!-- ============================ Basic Info Tab ============================ -->
+        <div class="tab-pane fade show active" id="tab-basic" role="tabpanel">
+          <div class="col-12 card p-4 shadow-sm">
+            <h5 class="mb-3">Basic Information</h5>
+            <div class="row g-3">
+              
+              <div class="col-md-6">
+                <label class="form-label">Product Type</label>
+                <select class="form-select" disabled>
+                  <option th:each="type : ${productTypes}"
+                          th:value="${type.id}"
+                          th:text="${type.displayName}"
+                          th:selected="${type.id == updateProductDTO.productTypeId}">
+                  </option>
+                </select>
+                <input type="hidden" th:field="*{productTypeId}"/>
+              </div>
+              
+              <div class="col-md-6">
+                <label class="form-label">Title <span class="text-danger">*</span></label>
+                <input th:field="*{title}" id="title" class="form-control">
+                <div class="text-danger" th:if="${#fields.hasErrors('title')}"
+                     th:errors="*{title}"></div>
+              </div>
+              
+              <div class="col-md-4">
+                <label class="form-label">Release Year</label>
+                <input id="releaseYear" th:field="*{releaseYear}" class="form-control" pattern="\d{4}"
+                       placeholder="e.g. 2023">
+                <div class="text-danger" th:if="${#fields.hasErrors('releaseYear')}"
+                     th:errors="*{releaseYear}"></div>
+              </div>
+              
+              <div class="col-md-8">
+                <label class="form-label">Cover Photo URL</label>
+                <input id="photo" th:field="*{photo}" class="form-control" type="url">
+                <div class="text-danger" th:if="${#fields.hasErrors('photo')}"
+                     th:errors="*{photo}"></div>
+              </div>
+              
+              <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="3"
+                          maxlength="1000"></textarea>
+                <div class="text-danger" th:if="${#fields.hasErrors('description')}"
+                     th:errors="*{description}"></div>
+              </div>
+              
+              <div id="emediaBlock" class="col-md-6 d-none">
+                <label class="form-label">Product Link (eMedia)</label>
+                <input id="productLinkToEmedia" th:field="*{productLinkToEmedia}" class="form-control">
+                <div class="text-danger" th:if="${#fields.hasErrors('productLinkToEmedia')}"
+                     th:errors="*{productLinkToEmedia}"></div>
+              </div>
             </div>
+          </div>
+          
+          <div id="bookDetailsBlock"
+               th:if="*{bookDetails != null}"
+               class="col-12 card p-4 shadow-sm d-none mt-4">
+            <h5 class="mb-3">Book Details</h5>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label>ISBN</label>
+                <input th:field="*{bookDetails.isbn}"
+                       id="bookIsbn"
+                       class="form-control"
+                       placeholder="e.g 978-0-306-40615-7"
+                       maxlength="20">
+              </div>
+              <div class="col-md-4">
+                <label>Edition</label>
+                <input th:field="*{bookDetails.edition}"
+                       id="bookEdition"
+                       class="form-control"
+                       placeholder="Enter edition">
+              </div>
+              <div class="col-md-4">
+                <label for="bookPages">Pages</label>
+                <input type="text"
+                       id="bookPages"
+                       inputmode="numeric"
+                       pattern="[0-9]+"
+                       th:field="*{bookDetails.pages}"
+                       class="form-control"
+                       placeholder="Enter number of pages"
+                       required
+                       oninvalid="this.setCustomValidity('Please enter a valid number of pages')"
+                       oninput="this.setCustomValidity('')">
+              </div>
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-primary mt-3" onclick="goToTab('tab-creators-tab', 2, true)">Next
+          </button>
         </div>
-
-        <!-- Submit Button -->
-        <div class="col-12 mt-3">
-            <button type="submit" class="btn btn-primary">Update Product</button>
-            <a th:href="@{/admin/products}" class="btn btn-secondary ms-2">Cancel</a>
+        
+        
+        <!-- ============================ Creators Section Tab  ============================ -->
+        <div class="tab-pane fade" id="tab-creators" role="tabpanel">
+          <div class="card p-4 shadow-sm">
+            <h5 class="mb-3 fw-semibold">Creators</h5>
+            
+            <div id="creatorsPreview" class="d-flex flex-wrap gap-2 mb-3">
+              <th:block th:each="c, iStat : ${updateProductDTO.creators}">
+                <div class="selected-tag">
+                  [[${c.firstName}]] [[${c.lastName}]] — [[${roleMap[c.creatorRoleId]}]]
+                  <button type="button" onclick="this.parentElement.remove()">×</button>
+                  <input type="hidden" th:name="${'creators[' + iStat.index + '].creatorId'}"
+                         th:value="${c.creatorId}"/>
+                  <input type="hidden" th:name="${'creators[' + iStat.index + '].firstName'}"
+                         th:value="${c.firstName}"/>
+                  <input type="hidden" th:name="${'creators[' + iStat.index + '].lastName'}"
+                         th:value="${c.lastName}"/>
+                  <input type="hidden" th:name="${'creators[' + iStat.index + '].creatorRoleId'}"
+                         th:value="${c.creatorRoleId}"/>
+                  <input type="hidden" th:name="${'creators[' + iStat.index + '].role'}"
+                         th:value="${roleMap[c.creatorRoleId]}"/>
+                </div>
+              </th:block>
+            </div>
+            
+            <div class="row g-3 align-items-end">
+              
+              <div class="col-12 col-md-5 position-relative">
+                <label for="creatorSearchInput" class="form-label">
+                  Search Creator by name <span class="text-danger">*</span>
+                </label>
+                <input id="creatorSearchInput" type="text" class="form-control" placeholder="e.g. Rowling" autocomplete="off">
+                <ul id="creatorResultsBox" class="list-group position-absolute w-100 d-none shadow-sm" style="z-index: 10;"></ul>
+              </div>
+              
+              <div class="col-12 col-md-5 position-relative">
+                <label for="roleSearchInput" class="form-label">
+                  Search Role <span class="text-danger">*</span>
+                </label>
+                <input id="roleSearchInput" type="text" class="form-control" placeholder="e.g. Author" autocomplete="off">
+                <ul id="roleResultsBox" class="list-group position-absolute w-100 d-none shadow-sm" style="z-index: 10;"></ul>
+              </div>
+              
+              <div class="col-12 col-md-2 mt-2 mt-md-0">
+                <div class="d-grid">
+                  <button type="button" class="btn btn-primary" onclick="addCreatorToPreviewEditForm()">
+                    Add Creator
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            
+            <!--  Fields populated by AJAX -->
+            <input type="hidden" id="creatorId">
+            <input type="hidden" id="creatorFirstName">
+            <input type="hidden" id="creatorLastName">
+            <input type="hidden" id="creatorIndex" th:value="${#lists.size(updateProductDTO.creators)}">
+            <input type="hidden" id="creatorRoleId">
+            <input type="hidden" id="creatorRole">
+          </div>
+          
+          <button type="button" class="btn btn-secondary mt-3 me-2" onclick="goToTab('tab-basic-tab', 1, false)">
+            Back
+          </button>
+          <button type="button" class="btn btn-primary mt-3" onclick="goToTab('tab-metadata-tab', 3, true)">Next
+          </button>
         </div>
+        
+        
+        <!-- ============================ Country & Language Section Tab ============================ -->
+        <div class="tab-pane fade" id="tab-metadata" role="tabpanel">
+          <div class="col-12 card p-4 shadow-sm">
+            <h5 class="mb-3">Metadata</h5>
+            <div class="row">
+              
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Publication Countries</label>
+                <div class="text-danger mt-1" id="countryIdsError">
+                  <span th:if="${#fields.hasErrors('countryIds')}" th:errors="*{countryIds}"></span>
+                </div>
+                
+                <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
+                  <div id="selectedCountries" class="d-flex flex-wrap gap-2">
+                    <span th:each="country : ${productCountries}"
+                          th:if="${#lists.contains(updateProductDTO.countryIds, country.id)}"
+                          class="selected-tag">
+                      <span th:text="${country.name}"></span>
+                      <button type="button"
+                              th:onclick="|document.getElementById('country__${country.id}').checked = false; this.parentElement.remove();|">
+                        &times;
+                      </button>
+                    </span>
+                  </div>
+                </div>
+                
+                <input id="searchCountryInput" type="text" class="form-control form-control-sm mb-2"
+                       placeholder="Search countries..."/>
+                
+                <ul class="list-group border rounded" id="country_list"
+                    style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none;">
+                  <li class="list-group-item border-0 py-2"
+                      th:each="country : ${productCountries}">
+                    <div class="form-check">
+                      <input class="form-check-input"
+                             type="checkbox"
+                             th:value="${country.id}"
+                             th:field="*{countryIds}"
+                             th:id="'country__' + ${country.id}"
+                             th:checked="${#lists.contains(updateProductDTO.countryIds, country.id)}">
+                      <label class="form-check-label"
+                             th:for="'country__' + ${country.id}"
+                             th:text="${country.name}"></label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              
+              
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Available Languages</label>
+                <div class="text-danger mt-1" id="languageIdsError">
+                  <span th:if="${#fields.hasErrors('languageIds')}" th:errors="*{languageIds}"></span>
+                </div>
+                
+                <div class="border rounded bg-light-subtle p-2 mb-2" style="min-height: 40px;">
+                  <div id="selectedLanguages" class="d-flex flex-wrap gap-2">
+                    <span th:each="lang : ${productLanguages}"
+                          th:if="${#lists.contains(updateProductDTO.languageIds, lang.id)}"
+                          class="selected-tag">
+                      <span th:text="${lang.name}"></span>
+                      <button type="button"
+                              th:onclick="|document.getElementById('language__${lang.id}').checked = false; this.parentElement.remove();|">
+                        &times;
+                      </button>
+                    </span>
+                  </div>
+                </div>
+                
+                <input id="searchLanguageInput" type="text" class="form-control form-control-sm mb-2"
+                       placeholder="Search languages..."/>
+                
+                <ul class="list-group border rounded" id="language_list"
+                    style="max-height: 210px; overflow-y: auto; padding-left: 0.5rem; box-shadow: none;">
+                  <li class="list-group-item border-0 py-2"
+                      th:each="language : ${productLanguages}">
+                    <div class="form-check">
+                      <input class="form-check-input"
+                             type="checkbox"
+                             th:value="${language.id}"
+                             th:field="*{languageIds}"
+                             th:id="'language__' + ${language.id}"
+                             th:checked="${#lists.contains(updateProductDTO.languageIds, language.id)}">
+                      <label class="form-check-label"
+                             th:for="'language__' + ${language.id}"
+                             th:text="${language.name}"></label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-secondary mt-3 me-2" onclick="goToTab('tab-creators-tab', 2, false)">
+            Back
+          </button>
+          <button type="button" class="btn btn-primary mt-3" onclick="goToTab('tab-results-tab', 4, true)">Review
+            changes
+          </button>
+        </div>
+        
+        <!-- ============================ Check results Tab ============================ -->
+        <div class="tab-pane fade" id="tab-results" role="tabpanel">
+          <div class="container d-flex justify-content-center">
+            <div class="w-100" style="max-width: 800px;">
+              
+              <h2 class="mb-4 fw-bold">Review Product Details</h2>
+              
+              <div class="card shadow-sm p-4">
+                
+                <!-- General Info -->
+                <section class="py-3 px-2 border-bottom">
+                  <h5 class="mb-3 fw-semibold text-muted small">General Info</h5>
+                  <div class="row gx-4">
+                    <div class="col-md-6">
+                      
+                      <div class="mb-2">
+                        <strong>Title:</strong>
+                        <span id="revTitle" class="text-muted small"
+                              th:text="${updateProductDTO.title} ?: '—'"></span>
+                      </div>
+                      
+                      <div class="mb-2">
+                        <strong>Release Year:</strong>
+                        <span id="revReleaseYear" class="text-muted small"
+                              th:text="${updateProductDTO.releaseYear} ?: '—'"></span>
+                      </div>
+                      
+                      <div class="mb-2">
+                        <strong>Description:</strong>
+                        <span id="revDescription" class="text-muted small"
+                              th:text="${updateProductDTO.description} ?: '—'"></span>
+                      </div>
+                      
+                      <div class="mb-2 d-none" id="revEmediaBlock">
+                        <strong>Product Link (eMedia):</strong>
+                        <span id="revProductLink" class="text-muted small"></span>
+                      </div>
+                    
+                    </div>
+                  </div>
+                </section>
+                
+                <section id="revBookDetailsBlock" class="py-3 px-2 border-bottom d-none">
+                  <h5 class="mb-3 fw-semibold text-muted small">Book Details</h5>
+                  <div class="row gx-4">
+                    <div class="col-md-4">
+                      <strong>ISBN:</strong>
+                      <span id="revISBN" class="text-muted small"></span>
+                    </div>
+                    <div class="col-md-4">
+                      <strong>Edition:</strong>
+                      <span id="revEdition" class="text-muted small"></span>
+                    </div>
+                    <div class="col-md-4">
+                      <strong>Pages:</strong>
+                      <span id="revPages" class="text-muted small"></span>
+                    </div>
+                  </div>
+                </section>
+                
+                <section class="py-3 px-2 border-bottom">
+                  <h5 class="mb-3 fw-semibold text-muted small">Creators</h5>
+                  <div class="d-flex flex-wrap gap-2  ps-4 small">
+                    <ul class="mb-0 list-unstyled" id="selected_creators_review">
+                      <li th:each="creator : ${updateProductDTO.creators}"
+                          th:text="'• ' + ${creator.firstName} + ' ' + ${creator.lastName} + ' — ' + ${roleMap[creator.creatorRoleId]}">
+                      </li>
+                    </ul>
+                  </div>
+                </section>
+                
+                <section class="py-3 px-2">
+                  <div class="row gx-4">
+                    <div class="col-md-6">
+                      <strong class="small text-muted">Countries</strong>
+                      <div class="d-flex flex-wrap gap-2 mt-2  ps-4 small">
+                        <ul class="mb-0 list-unstyled" id="selected_countries_review"></ul>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <strong class="small text-muted">Languages</strong>
+                      <div class="d-flex flex-wrap gap-2 mt-2  ps-4 small">
+                        <ul class="mb-0 list-unstyled" id="selected_languages_review"></ul>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                
+                <div class="d-flex justify-content-end align-items-center gap-2 mt-4 border-top pt-4">
+                  <button type="button" class="btn btn-outline-secondary"
+                          onclick="goToTab('tab-metadata-tab', 3, false)">
+                    Back
+                  </button>
+                  <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i> Submit Changes
+                  </button>
+                </div>
+              
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </form>
-</div>
+  </div>
+  
+  <div th:replace="~{admin/fragments/_creator-create :: createCreatorModal}"></div>
+  <div th:replace="~{admin/fragments/_role-create :: createRoleModal}"></div>
+  
+  <script th:src="@{/js/product/conditional-display-product-details.js}"></script>
+  <script th:src="@{/js/product/select-country-language.js}"></script>
+  <script th:src="@{/js/product/creators-form.js}"></script>
+  
+  
+  <script>
+      function addCreatorToPreviewEditForm() {
+          const firstName = document.getElementById("creatorFirstName").value;
+          const lastName = document.getElementById("creatorLastName").value;
+          const creatorId = document.getElementById("creatorId").value;
+          const roleName = document.getElementById("creatorRole").value;
+          const roleId = document.getElementById("creatorRoleId").value;
+          const index = parseInt(document.getElementById("creatorIndex").value);
 
-<!-- Bootstrap JS (Optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+          if (!creatorId || !roleId || !firstName || !lastName) {
+              alert("Please select a creator and a role.");
+              return;
+          }
 
-<script>
-    const listItems = document.querySelectorAll("#country_list li");
-    document.getElementById("searchInput").addEventListener("input", function () {
-        const filter = this.value.toLowerCase();
+          const wrapper = document.createElement("div");
+          wrapper.className = "selected-tag";
+          wrapper.innerHTML = `
+        ${firstName} ${lastName} — ${roleName}
+        <button type="button" onclick="this.parentElement.remove()">×</button>
+        <input type="hidden" name="creators[${index}].creatorId" value="${creatorId}">
+        <input type="hidden" name="creators[${index}].firstName" value="${firstName}">
+        <input type="hidden" name="creators[${index}].lastName" value="${lastName}">
+        <input type="hidden" name="creators[${index}].creatorRoleId" value="${roleId}">
+        <input type="hidden" name="creators[${index}].role" value="${roleName}">
+    `;
 
-        let lastVisibleItem = null;
+          document.getElementById("creatorsPreview").appendChild(wrapper);
 
-        listItems.forEach(function (item) {
-            const label = item.querySelector("label");
-            const text = label.textContent.toLowerCase();
+          document.getElementById("creatorSearchInput").value = "";
+          document.getElementById("roleSearchInput").value = "";
+          document.getElementById("creatorId").value = "";
+          document.getElementById("creatorFirstName").value = "";
+          document.getElementById("creatorLastName").value = "";
+          document.getElementById("creatorRoleId").value = "";
+          document.getElementById("creatorRole").value = "";
 
-            if (text.includes(filter)) {
-                item.style.display = "list-item"
-                lastVisibleItem = item;
-            } else {
-                item.style.display = "none";
-            }
-        });
+          document.getElementById("creatorIndex").value = index + 1;
 
-        listItems.forEach(function (item) {
-            if (item.style.display === "list-item") {
-                item.style.borderBottom = "1px solid #ddd";
-            }
-        });
+          updateSelectedCreators();
+      }
 
-        if (lastVisibleItem) {
-            lastVisibleItem.style.borderBottom = "none";
-        }
+      function goToTab(tabId, step, validate = true) {
+          const currentTabPane = document.querySelector('.tab-pane.show.active');
+          if (!currentTabPane) return;
 
-    });
-</script>
+          if (validate) {
+              const requiredInputs = currentTabPane.querySelectorAll('[required]');
+              let allValid = true;
+
+              requiredInputs.forEach(input => {
+                  if (!input.checkValidity()) {
+                      input.classList.add('is-invalid');
+                      allValid = false;
+                  } else {
+                      input.classList.remove('is-invalid');
+                  }
+              });
+
+              if (step === 4) {
+                  const countriesChecked = document.querySelectorAll('#country_list input[type="checkbox"]:checked').length > 0;
+                  const languagesChecked = document.querySelectorAll('#language_list input[type="checkbox"]:checked').length > 0;
+
+                  if (!countriesChecked) {
+                      allValid = false;
+                      document.getElementById('countryIdsError').textContent = "Please select at least one country";
+                  }
+
+                  if (!languagesChecked) {
+                      allValid = false;
+                      document.getElementById('languageIdsError').textContent = "Please select at least one language";
+                  }
+              }
+
+              if (!allValid) return;
+          }
+
+          const tabButton = document.getElementById(tabId);
+          tabButton.disabled = false;
+          const tab = new bootstrap.Tab(tabButton);
+          tab.show();
+
+          updateProgress(step);
+          addInfoToResults(step);
+      }
+
+
+      function updateProgress(step) {
+          const progressBar = document.getElementById('formProgress');
+          const percent = step * 25;
+          progressBar.style.width = percent + '%';
+          progressBar.setAttribute('aria-valuenow', percent);
+          progressBar.textContent = `Step ${step} of 4`;
+      }
+
+      function addInfoToResults(step) {
+          switch (step) {
+              case 1:
+                  console.log("step 1");
+                  break;
+              case 2:
+                  console.log("step 2");
+                  updateGeneralInfo();
+                  break;
+              case 3:
+                  console.log("step 3");
+                  updateSelectedCreators();
+                  break;
+              case 4:
+                  console.log("step 4");
+                  updateSelectedCountries();
+                  updateSelectedLanguages();
+                  break;
+          }
+      }
+
+      function updateSelectedCountries() {
+          const selectedCountries = [];
+          const checkboxes = document.querySelectorAll('#country_list input[type=checkbox]:checked');
+          checkboxes.forEach(cb => {
+              const label = document.querySelector(`label[for="${cb.id}"]`);
+              if (label) selectedCountries.push(label.textContent.trim());
+          });
+
+          const reviewList = document.getElementById('selected_countries_review');
+          reviewList.innerHTML = ''; // Clear existing
+          selectedCountries.forEach(name => {
+              const li = document.createElement('li');
+              li.textContent = '• ' + name;
+              reviewList.appendChild(li);
+          });
+      }
+
+      function updateSelectedLanguages() {
+          const selectedLanguages = [];
+          const checkboxes = document.querySelectorAll('#language_list input[type=checkbox]:checked');
+          checkboxes.forEach(cb => {
+              const label = document.querySelector(`label[for="${cb.id}"]`);
+              if (label) selectedLanguages.push(label.textContent.trim());
+          });
+
+          const reviewList = document.getElementById('selected_languages_review');
+          reviewList.innerHTML = ''; // Clear existing
+          selectedLanguages.forEach(name => {
+              const li = document.createElement('li');
+              li.textContent = '• ' + name;
+              reviewList.appendChild(li);
+          });
+      }
+
+      function updateSelectedCreators() {
+          const reviewList = document.getElementById('selected_creators_review');
+          reviewList.innerHTML = '';
+
+          const creatorDivs = document.querySelectorAll('#creatorsPreview .selected-tag');
+          console.log("Found", creatorDivs.length, "creators");
+
+          creatorDivs.forEach(div => {
+              const firstName = div.querySelector('input[name$=".firstName"]').value;
+              const lastName = div.querySelector('input[name$=".lastName"]').value;
+              const role = div.querySelector('input[name$=".role"]')?.value || 'N/A';
+
+              const li = document.createElement('li');
+              li.textContent = `• ${firstName} ${lastName} — ${role}`;
+              reviewList.appendChild(li);
+          });
+      }
+
+
+      function updateGeneralInfo() {
+          const title = document.getElementById('title').value;
+          const releaseYear = document.getElementById('releaseYear').value;
+          const description = document.getElementById('description').value;
+          const productLink = document.getElementById('productLinkToEmedia').value;
+
+          document.getElementById('revTitle').textContent = title || '—';
+          document.getElementById('revReleaseYear').textContent = releaseYear || '—';
+          document.getElementById('revDescription').textContent = description || '—';
+          document.getElementById('revProductLink').textContent = productLink || '—';
+
+          // Show/hide eMedia section
+          const revEmediaBlock = document.getElementById('revEmediaBlock');
+          if (productLink && productLink.trim() !== "") {
+              revEmediaBlock.classList.remove('d-none');
+          } else {
+              revEmediaBlock.classList.add('d-none');
+          }
+          
+          const productTypeValue = document.getElementById('productTypeId')?.value;
+
+          const bookDetailsBlock = document.getElementById('revBookDetailsBlock');
+          if (productTypeValue === "1" || productTypeValue === "2") {
+              bookDetailsBlock.classList.remove('d-none');
+              document.getElementById('revISBN').textContent = document.getElementById('bookIsbn').value || '—';
+              document.getElementById('revEdition').textContent = document.getElementById('bookEdition').value || '—';
+              document.getElementById('revPages').textContent = document.getElementById('bookPages').value || '—';
+          } else {
+              bookDetailsBlock.classList.add('d-none');
+              document.getElementById('revISBN').textContent = '';
+              document.getElementById('revEdition').textContent = '';
+              document.getElementById('revPages').textContent = '';
+          }
+      }
+  </script>
+</main>
 </body>
 </html>

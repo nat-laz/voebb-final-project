@@ -44,4 +44,6 @@ public interface ProductItemRepo extends JpaRepository<ProductItem, Long> {
             Pageable pageable
     );
 
+    @Query("SELECT COUNT(pi) FROM ProductItem pi WHERE pi.product.id = :productId")
+    long countByProductId(@Param("productId") Long productId);
 }

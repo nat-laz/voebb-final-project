@@ -1,16 +1,12 @@
 package com.example.voebb.service.impl;
 
+import com.example.voebb.exception.ProductDeletionException;
+import com.example.voebb.exception.ProductNotFoundException;
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
 import com.example.voebb.model.dto.product.*;
-import com.example.voebb.model.entity.Country;
-import com.example.voebb.model.entity.Language;
-import com.example.voebb.model.entity.Product;
-import com.example.voebb.model.entity.ProductType;
-import com.example.voebb.model.mapper.BookDetailsMapper;
+import com.example.voebb.model.entity.*;
 import com.example.voebb.model.mapper.ProductMapper;
-import com.example.voebb.repository.CountryRepo;
-import com.example.voebb.repository.ProductRepo;
-import com.example.voebb.repository.ProductTypeRepo;
+import com.example.voebb.repository.*;
 import com.example.voebb.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +29,8 @@ public class ProductServiceImpl implements ProductService {
     private final CountryService countryService;
     private final LanguageService languageService;
     private final ProductTypeRepo productTypeRepo;
+    private final ProductItemRepo productItemRepo;
+
 
     @Override
     @Transactional
@@ -57,12 +55,6 @@ public class ProductServiceImpl implements ProductService {
         newProduct.setCountries(countries);
         newProduct.setLanguages(languages);
 
-        productRepo.save(newProduct);
-
-        if (newProduct.isBook() && dto.getBookDetails() != null) {
-            bookDetailsService.saveBookDetails(dto.getBookDetails(), newProduct);
-        }
-
         if (dto.getCreators() == null || dto.getCreators().isEmpty()) {
             throw new IllegalArgumentException("At least one creator is required.");
         }
@@ -77,21 +69,28 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("At least one valid creator with role is required.");
         }
 
-
         creatorService.assignCreatorsToProduct(validCreators, newProduct);
+
+        productRepo.save(newProduct);
+
+        if (newProduct.isBook() && dto.getBookDetails() != null) {
+            bookDetailsService.saveBookDetails(dto.getBookDetails(), newProduct);
+        }
+
     }
 
 
     @Override
     public Page<CardProductDTO> getProductCardsByFilters(ProductFilters filters, Pageable pageable) {
-        System.out.println("title - " + filters.getTitle());
-        System.out.println("author - " + filters.getAuthor());
-        System.out.println("libraryId - " + filters.getLibraryId());
-        System.out.println("type - " + filters.getProductType());
-        System.out.println("language - " + filters.getLanguageId());
-        System.out.println("country - " + filters.getCountryId());
+//        System.out.println("title - " + filters.getTitle());
+//        System.out.println("author - " + filters.getAuthor());
+//        System.out.println("libraryId - " + filters.getLibraryId());
+//        System.out.println("type - " + filters.getProductType());
+//        System.out.println("language - " + filters.getLanguageId());
+//        System.out.println("country - " + filters.getCountryId());
 
         Page<Product> page = productRepo.searchWithFilters(
+                null,
                 filters.getTitle(),
                 filters.getAuthor(),
                 filters.getLibraryId(),
@@ -118,7 +117,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductInfoDTO> getAllByTitleAdmin(String title, Pageable pageable) {
-        Page<Product> page = productRepo.searchWithFilters(title, null, null, null, null, null, pageable);
+        Page<Product> page = productRepo.searchWithFilters(null, title, null, null, null, null, null, pageable);
         return page.map(ProductMapper::toProductInfoDTO);
     }
 
@@ -131,6 +130,32 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    public UpdateProductDTO updateProduct(Long productId, UpdateProductDTO updateProductDTO) {
+
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        product.setTitle(updateProductDTO.getTitle());
+        product.setReleaseYear(updateProductDTO.getReleaseYear());
+        product.setDescription(updateProductDTO.getDescription());
+        product.setPhoto(updateProductDTO.getPhoto());
+        product.setProductLinkToEmedia(updateProductDTO.getProductLinkToEmedia());
+
+        product.setLanguages(languageService.getLanguagesByIds(updateProductDTO.getLanguageIds()));
+        product.setCountries(countryRepo.findAllById(updateProductDTO.getCountryIds()));
+
+        creatorService.updateCreatorsForProduct(product, updateProductDTO.getCreators());
+
+        if (product.isBook()) {
+            bookDetailsService.updateDetails(product, updateProductDTO.getBookDetails());
+        }
+
+        return updateProductDTO;
+    }
+
+
+    @Override
+    @Transactional
     public UpdateProductDTO getUpdateProductDTOById(Long id) {
         Product product = productRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -139,38 +164,55 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> getAllProducts(Pageable pageable) {
-        return productRepo.findAll(pageable);
+    public Page<GetProductAdminDTO> getFilteredProductsAdmin(ProductFilters filters, Pageable pageable) {
+
+        Page<Product> page = productRepo.searchWithFilters(
+                filters.getProductId(),
+                filters.getTitle(),
+                null,
+                null,
+                filters.getProductType(),
+                null,
+                null,
+                pageable);
+
+        return page.map(product -> {
+            String mainCreator = product.getCreatorProductRelations().stream()
+                    .filter(relation -> relation.getCreatorRole().getId().equals(product.getType().getMainCreatorRoleId()))
+                    .map(relation -> relation.getCreator().getFirstName() + " " + relation.getCreator().getLastName())
+                    .collect(Collectors.joining(", "));
+
+            if (mainCreator.isBlank()) {
+                mainCreator = "N/A";
+            }
+
+            String emediaLink = product.getProductLinkToEmedia();
+            if (emediaLink == null || emediaLink.isBlank()) {
+                emediaLink = "N/A";
+            }
+
+            return new GetProductAdminDTO(
+                    product.getId(),
+                    product.getTitle(),
+                    product.getType().getName(),
+                    mainCreator,
+                    emediaLink
+            );
+        });
     }
 
-    @Override
     @Transactional
-    public UpdateProductDTO updateProduct(Long productId, UpdateProductDTO updateProductDTO) {
-        Product existingProduct = productRepo.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        List<Country> countries = countryRepo.findAllById(updateProductDTO.countryIds());
-
-        if (existingProduct.isBook()) {
-            bookDetailsService.updateDetails(existingProduct, updateProductDTO.bookDetails());
-        }
-
-        existingProduct.setTitle(updateProductDTO.title());
-        existingProduct.setReleaseYear(updateProductDTO.releaseYear());
-        existingProduct.setDescription(updateProductDTO.description());
-        existingProduct.setPhoto(updateProductDTO.photo());
-        existingProduct.setProductLinkToEmedia(updateProductDTO.productLinkToEmedia());
-        existingProduct.setCountries(countries);
-        productRepo.save(existingProduct);
-        return updateProductDTO;
-    }
-
     @Override
     public void deleteProductById(Long productId) {
+
         if (!productRepo.existsById(productId)) {
-            throw new RuntimeException("Product not found");
+            throw new ProductNotFoundException(productId);
+        }
+
+        long copyCount = productItemRepo.countByProductId(productId);
+        if (copyCount > 0) {
+            throw new ProductDeletionException(productId, copyCount);
         }
         productRepo.deleteById(productId);
     }
-
 }

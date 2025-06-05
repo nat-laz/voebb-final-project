@@ -117,7 +117,18 @@
           </td>
           
           <td>
-            <span class="badge bg-light text-dark" th:text="${item.productType}">Book</span>
+              <span
+                class="badge bg-info-subtle text-info-emphasis d-inline-flex align-items-center gap-2 px-3 py-2">
+                <i th:switch="${item.productType}">
+                  <i th:case="'book'" class="bi bi-book"></i>
+                  <i th:case="'ebook'" class="bi bi-tablet"></i>
+                  <i th:case="'dvd'" class="bi bi-disc"></i>
+                  <i th:case="'blue-ray'" class="bi bi-film"></i>
+                  <i th:case="'boardgame'" class="bi bi-dice-5"></i>
+                  <i th:case="*"><i class="bi bi-box5"></i></i>
+                </i>
+                <span class="fw-semibold text-capitalize" th:text="${item.productType}"></span>
+              </span>
           </td>
           
           <td>

@@ -53,7 +53,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     }
 
     @Override
-    public List<ProductType> getProductTypeByIds(List<Long> ids){
+    public List<ProductType> getProductTypeByIds(List<Long> ids) {
         return productTypeRepo.findAllById(ids);
     }
 }

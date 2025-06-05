@@ -10,10 +10,10 @@ SELECT SETVAL('creator_roles_creator_role_id_seq', (SELECT MAX(creator_role_id) 
 
 -- Product types
 INSERT INTO product_types (product_type_id, name, display_name, borrow_duration_days, main_creator_role_id, default_cover_url)
-VALUES (1, 'book', 'Book', 28, 1, '/images/default-book.jpg'),
-       (2, 'ebook', 'E-Book', 28, 1, '/images/default-book.jpg'),
-       (3, 'dvd', 'DVD', 14, 4, '/images/default-dvd.jpg'), 
-       (4, 'boardgame', 'Board Game', 7, 5, '/images/default-dvd.jpg')
+VALUES (1, 'book', 'Book', 28, 1, '/images/default-book.png'),
+       (2, 'ebook', 'E-Book', 28, 1, '/images/default-ebook.jpg'),
+       (3, 'dvd', 'DVD', 14, 4, '/images/default-dvd.webp'),
+       (4, 'boardgame', 'Board Game', 7, 5, '/images/default-boardgame.jpg')
 ON CONFLICT (product_type_id) DO NOTHING;
 SELECT SETVAL('product_types_product_type_id_seq', (SELECT MAX(product_type_id) FROM product_types));
 
@@ -113,13 +113,13 @@ ON CONFLICT(creator_id, product_id, creator_role_id) DO NOTHING;
 --  Clients ─────────────────────────────────────────────────
 -- Test password is 12345678
 INSERT INTO custom_users (custom_user_id, first_name, last_name, email, phone_number, password, is_enabled, borrowed_products_count)
-VALUES (1, 'Admin 1', 'Admin 1', 'admin1@example.com', '+1234567890123451', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (2, 'Admin 2', 'Admin 2', 'admin2@example.com', '+1234567890123452', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (3, 'Client 1', 'Client 1', 'client1@example.com', '+1234567890123453', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (4, 'Client 2', 'Client 2', 'client2@example.com', '+1234567890123454', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (5, 'Helly ', 'R.', 'helly@example.com', '+1234567890123455', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (6, 'Mark', 'S', 'mark@example.com', '+1234567890123456', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (7, 'Ronald', 'B.', 'ronald@example.com', '+1234567890123457', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 5)
+VALUES (1, 'Admin 1', 'Admin 1', 'admin1@example.com', '+4917012345671', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (2, 'Admin 2', 'Admin 2', 'admin2@example.com', '+4917012345672', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (3, 'Client 1', 'Client 1', 'client1@example.com', '+4917012345673', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (4, 'Client 2', 'Client 2', 'client2@example.com', '+4917012345674', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (5, 'Helly ', 'R.', 'helly@example.com', '+4917012345675', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (6, 'Mark', 'S', 'mark@example.com', '+4917012345676', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (7, 'Ronald', 'B.', 'ronald@example.com', '+4917012345677', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 5)
 ON CONFLICT (custom_user_id) DO NOTHING;
 SELECT SETVAL('custom_users_custom_user_id_seq', (SELECT MAX(custom_user_id) FROM custom_users));
 

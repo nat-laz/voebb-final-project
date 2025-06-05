@@ -58,10 +58,25 @@ public class GlobalExceptionHandler {
         return getRedirectPathFromRequest(request);
     }
 
+    @ExceptionHandler(ProductDeletionException.class)
+    public String handleProductDeletionException(RuntimeException ex, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        return getRedirectPathFromRequest(request);
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public String handleProductNotFoundExceptionn(RuntimeException ex, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        return getRedirectPathFromRequest(request);
+    }
+
     private String getRedirectPathFromRequest(HttpServletRequest request) {
         String uri = request.getRequestURI();
         if (uri.contains("/borrowings")) {
             return "redirect:/admin/borrowings";
+        }
+        if (uri.contains("/products")) {
+            return "redirect:/admin/products";
         }
         return "redirect:/admin/reservations";
 

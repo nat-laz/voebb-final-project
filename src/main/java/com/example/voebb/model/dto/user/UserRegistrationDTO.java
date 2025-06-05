@@ -19,7 +19,7 @@ public class UserRegistrationDTO{
         String email;
 
         @NotNull(message = "Phone Number must be not null")
-        @Pattern(regexp = "^\\+[0-9]{10,20}$", message = "Invalid phone number format")
+        @Pattern(regexp = "(^\\+49[0-9]{3}[0-9]{7,8}$)|(^0[0-9]{3}[0-9]{7,8}$)", message = "Invalid phone number format")
         String phoneNumber;
 
         @NotNull(message = "Password must be not null")

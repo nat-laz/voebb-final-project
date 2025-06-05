@@ -4,112 +4,162 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{public/public-layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Registration page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VOEBB</title>
 </head>
 <body>
-<main class="container mt-5" layout:fragment="content">
+<section layout:fragment="header"></section>
 
-    <h3 class="text-center mb-4">Create new user</h3>
-
-    <form id="registrationForm" method="post" th:action="@{/register}" th:object="${userRegistrationDTO}">
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="form-floating mb3">
-
-                    <input class="form-control"
-                           id="firstName"
-                           placeholder=""
-                           required
-                           th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''"
-                           th:field="*{firstName}"
-                           type="text">
-
-                    <label for="firstName">First name</label>
-
-                    <div class="invalid-feedback"
-                         th:errors="*{firstName}"
-                         th:if="${#fields.hasErrors('firstName')}">
-                    </div>
-                </div>
+<main class="d-flex justify-content-center align-items-center vh-100 bg-dark text-light" layout:fragment="content">
+  <div class="w-100" style="max-width: 400px;">
+    
+    <h3 class="text-center mb-4">VOEBB Signup</h3>
+    
+    <div class="p-4 rounded text-light dci-border-dark" style="background-color: #333333">
+      
+      <form id="user-form" th:action="@{/register}" method="post" th:object="${userRegistrationDTO}">
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="firstName" class="form-label">First name</label>
+            <input type="text" id="firstName" required
+                   class="form-control bg-dark text-light dci-border-dark"
+                   autocomplete="off"
+                   th:field="*{firstName}"
+                   th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback">
+              Please enter a valid first name
             </div>
-
-            <div class="col-md-6">
-                <div class="form-floating mb-3">
-
-                    <input class="form-control"
-                           id="lastName"
-                           placeholder=""
-                           required
-                           th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''"
-                           th:field="*{lastName}"
-                           type="text">
-
-                    <label for="lastName">Last name</label>
-
-                    <div class="invalid-feedback"
-                         th:errors="*{lastName}"
-                         th:if="${#fields.hasErrors('lastName')}">
-                    </div>
-                </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="lastName" class="form-label">Last name</label>
+            <input type="text" id="lastName" required
+                   class="form-control bg-dark text-light dci-border-dark"
+                   autocomplete="off"
+                   th:field="*{lastName}"
+                   th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback">
+              Please enter a valid last name
             </div>
+          </div>
         </div>
-
-        <div class="form-floating mb-3">
-
-            <input class="form-control"
-                   id="email"
-                   placeholder=""
-                   required
-                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                   th:field="*{email}"
-                   type="email">
-
-            <label for="email">Email</label>
-
-            <div class="invalid-feedback"
-                 th:errors="*{email}"
-                 th:if="${#fields.hasErrors('email')}">
-            </div>
+        
+        <div class="mb-3">
+          <label for="phoneInput" class="form-label">Mobile number</label>
+          <input class="form-control bg-dark text-light dci-border-dark"
+                 type="text" id="phoneInput" placeholder="" required
+                 autocomplete="off"
+                 th:field="*{phoneNumber}"
+                 th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid' : ''"
+          >
+          <div
+            class="invalid-feedback p-1 mt-2 rounded dci-border-dark" id="phoneFeedback"
+            style="display: none; background-color: #444444">
+            <ul id="phoneCriteria" style="list-style: none; padding-left: 0; margin-bottom: 0;">
+              <li id="checkPlus">❌ Starts with zero or a "+"</li>
+              <li id="checkDigits">❌ Contains only numbers</li>
+              <li id="checkLength">❌ length check</li>
+            </ul>
+          </div>
+          <div class="invalid-feedback"
+               th:errors="*{phoneNumber}"
+               th:if="${#fields.hasErrors('phoneNumber')}">
+          </div>
         </div>
-        <div class="form-floating mb-3">
-            <input class="form-control"
-                   id="phoneNumber"
-                   placeholder=""
-                   required
-                   th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid' : ''"
-                   th:field="*{phoneNumber}"
-                   type="tel"
-            >
-            <label for="phoneNumber">Phone Number</label>
-            <div class="invalid-feedback"
-                 th:errors="*{phoneNumber}"
-                 th:if="${#fields.hasErrors('phoneNumber')}">
-            </div>
+        
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input class="form-control bg-dark text-light dci-border-dark"
+                 type="text" id="email" name="email" placeholder="" required
+                 autocomplete="off"
+                 th:field="*{email}"
+                 th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+          >
+          <div class="invalid-feedback"
+               th:errors="*{email}"
+               th:if="${#fields.hasErrors('email')}">
+          </div>
         </div>
-
-        <div class="form-floating mb-3">
-            <input class="form-control"
-                   id="password"
-                   placeholder=""
-                   required
-                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
-                   th:field="*{password}"
-                   type="password">
-            <label for="password">Password</label>
-
-            <div class="invalid-feedback"
-                 th:errors="*{password}"
-                 th:if="${#fields.hasErrors('password')}">
-            </div>
+        
+        <div class="mb-3">
+          <label for="registerPassword" class="form-label">Password</label>
+          <input type="password" class="form-control bg-dark text-light dci-border-dark" name="registerPassword"
+                 id="registerPassword" required
+                 th:field="*{password}">
+          <div class="invalid-feedback p-1 mt-2 rounded dci-border-dark" id="passwordFeedback"
+               style="display: none; background-color: #444444">
+            <ul id="passwordCriteria" style="list-style: none; padding-left: 0; margin-bottom: 0;">
+              <li id="passwordLengthCheck">❌ Minimum 8 chars</li>
+              <li id="passwordDigitCheck">❌ At least 1 digit</li>
+              <li id="PasswordSpecialCharsCheck">❌ At least 1 special char</li>
+              <li id="PasswordLetterCheck">❌ At least 1 letter</li>
+            </ul>
+          </div>
         </div>
-
-        <div class="form-group text-center">
-            <button class="btn btn-primary w-100" id="submitButton" type="submit">Register</button>
+        
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">Repeat password</label>
+          <input type="password" class="form-control bg-dark text-light dci-border-dark" name="confirmPassword"
+                 id="confirmPassword" required>
+          <div class="invalid-feedback p-1 mt-2 rounded dci-border-dark" id="passwordMatchFeedback"
+               style="display: none; background-color: #444444">
+            Passwords not match
+          </div>
         </div>
-    </form>
+        
+        <button type="submit" class="btn btn-primary w-100">Register</button>
+      </form>
+      
+      <hr class="my-4 border-secondary">
+      
+      <div class="d-grid gap-2">
+        <a class="btn btn-outline-secondary dci-border-dark text-light" href="/login">Already has an account? Login</a>
+        <a class="btn btn-outline-secondary dci-border-dark text-light" href="/">Go to main page</a>
+      </div>
+    </div>
+  
+  </div>
+  <script th:src="@{/js/user/validation-utils.js}"></script>
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+
+          validateNames(
+              'firstName',
+              'lastName'
+          );
+
+
+          validatePhoneInputWithFeedback(
+              'phoneInput',
+              'phoneFeedback',
+          );
+          
+          validateEmailInput(
+              'email'
+          );
+          
+          checkPasswordStrengthAdvanced(
+              'registerPassword',
+              'passwordFeedback',
+              'passwordLengthCheck',
+              'passwordDigitCheck',
+              'PasswordSpecialCharsCheck',
+              'PasswordLetterCheck'
+          );
+          
+          arePasswordsMatching(
+              'registerPassword',
+              'confirmPassword',
+              'passwordMatchFeedback'
+          )
+      });
+  
+  </script>
 </main>
+
+<section layout:fragment="footer"></section>
 
 </body>
 </html>
