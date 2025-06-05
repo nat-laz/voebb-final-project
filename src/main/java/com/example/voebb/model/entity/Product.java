@@ -68,16 +68,29 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     List<CreatorProductRelation> creatorProductRelations = new ArrayList<>();
 
-    public boolean isBook(){
-       return this.getType().getName().equalsIgnoreCase("book") || this.getType().getName().equalsIgnoreCase("ebook");
+    public boolean isBook() {
+        return this.getType().getName().equalsIgnoreCase("book") || this.getType().getName().equalsIgnoreCase("ebook");
     }
 
-    public void addRelation(CreatorProductRelation creatorProductRelation){
+    public void addRelation(CreatorProductRelation creatorProductRelation) {
         creatorProductRelations.add(creatorProductRelation);
         creatorProductRelation.setProduct(this);
     }
+
+    public void removeRelation(CreatorProductRelation creatorProductRelation) {
+        if (creatorProductRelation == null) return;
+
+        this.creatorProductRelations.remove(creatorProductRelation);
+
+        Creator creator = creatorProductRelation.getCreator();
+        if (creator != null) {
+            creator.getCreatorProductRelations().remove(creatorProductRelation);
+        }
+
+    }
+
     public String getPhoto() {
-        if(photo != null && !photo.isBlank()){
+        if (photo != null && !photo.isBlank()) {
             return photo;
         }
 
@@ -89,6 +102,5 @@ public class Product {
         }
         return null;
     }
-
 
 }

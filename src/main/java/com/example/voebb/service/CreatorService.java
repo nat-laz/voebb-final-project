@@ -13,7 +13,7 @@ public interface CreatorService {
 
     void assignCreatorsToProduct(List<CreatorWithRoleDTO> creatorDTOs, Product product);
 
-    void updateCreatorWithRolesForProduct(Product product, List<UpdateCreatorWithRoleDTO> dtos);
+    void updateCreatorsForProduct(Product product, List<UpdateCreatorWithRoleDTO> creatorsDto);
 
     Set<CreatorResponseDTO> searchByName(String lastName);
 

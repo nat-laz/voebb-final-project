@@ -30,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
     private final LanguageService languageService;
     private final ProductTypeRepo productTypeRepo;
     private final ProductItemRepo productItemRepo;
-    private final CreatorProductRelationRepo creatorProductRelationRepo;
+
 
     @Override
     @Transactional
@@ -130,30 +130,29 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public UpdateProductDTO updateProduct(Long productId, UpdateProductDTO dto) {
+    public UpdateProductDTO updateProduct(Long productId, UpdateProductDTO updateProductDTO) {
+
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        product.setTitle(dto.getTitle());
-        product.setReleaseYear(dto.getReleaseYear());
-        product.setDescription(dto.getDescription());
-        product.setPhoto(dto.getPhoto());
-        product.setProductLinkToEmedia(dto.getProductLinkToEmedia());
+        product.setTitle(updateProductDTO.getTitle());
+        product.setReleaseYear(updateProductDTO.getReleaseYear());
+        product.setDescription(updateProductDTO.getDescription());
+        product.setPhoto(updateProductDTO.getPhoto());
+        product.setProductLinkToEmedia(updateProductDTO.getProductLinkToEmedia());
 
-        List<Language> languages = languageService.getLanguagesByIds(dto.getLanguageIds());
-        List<Country> countries = countryRepo.findAllById(dto.getCountryIds());
-        product.setLanguages(languages);
-        product.setCountries(countries);
+        product.setLanguages(languageService.getLanguagesByIds(updateProductDTO.getLanguageIds()));
+        product.setCountries(countryRepo.findAllById(updateProductDTO.getCountryIds()));
 
-        creatorService.updateCreatorWithRolesForProduct(product, dto.getCreators());
+        creatorService.updateCreatorsForProduct(product, updateProductDTO.getCreators());
 
         if (product.isBook()) {
-            bookDetailsService.updateDetails(product, dto.getBookDetails());
+            bookDetailsService.updateDetails(product, updateProductDTO.getBookDetails());
         }
 
-        productRepo.save(product);
-        return dto;
+        return updateProductDTO;
     }
+
 
     @Override
     @Transactional
@@ -216,16 +215,4 @@ public class ProductServiceImpl implements ProductService {
         }
         productRepo.deleteById(productId);
     }
-
-    private String key(String firstName, String lastName, String role) {
-        return (firstName == null ? "" : firstName.trim().toLowerCase()) + "|" +
-               (lastName == null ? "" : lastName.trim().toLowerCase()) + "|" +
-               (role == null ? "" : role.trim().toLowerCase());
-    }
-
-    private String key(Creator creator, CreatorRole role) {
-        return key(creator.getFirstName(), creator.getLastName(), role.getCreatorRoleName());
-    }
-
-
 }

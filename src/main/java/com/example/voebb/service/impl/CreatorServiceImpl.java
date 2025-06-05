@@ -4,10 +4,7 @@ import com.example.voebb.model.dto.creator.CreatorFullNameDTO;
 import com.example.voebb.model.dto.creator.CreatorResponseDTO;
 import com.example.voebb.model.dto.creator.CreatorWithRoleDTO;
 import com.example.voebb.model.dto.creator.UpdateCreatorWithRoleDTO;
-import com.example.voebb.model.entity.Creator;
-import com.example.voebb.model.entity.CreatorProductRelation;
-import com.example.voebb.model.entity.CreatorRole;
-import com.example.voebb.model.entity.Product;
+import com.example.voebb.model.entity.*;
 import com.example.voebb.repository.CreatorProductRelationRepo;
 import com.example.voebb.repository.CreatorRepo;
 import com.example.voebb.repository.CreatorRoleRepo;
@@ -64,62 +61,46 @@ public class CreatorServiceImpl implements CreatorService {
     }
 
 
-    @Override
     @Transactional
-    public void updateCreatorWithRolesForProduct(Product product, List<UpdateCreatorWithRoleDTO> dtos) {
-        if (dtos == null || dtos.isEmpty()) {
-            throw new IllegalArgumentException("At least one creator must be assigned.");
-        }
+    public void updateCreatorsForProduct(Product product, List<UpdateCreatorWithRoleDTO> creatorsDto) {
+
+        Set<CreatorRelationId> incomingRelationIds = creatorsDto.stream()
+                .map(creator -> new CreatorRelationId(creator.getCreatorId(), product.getId(), creator.getCreatorRoleId()))
+                .collect(Collectors.toSet());
 
         List<CreatorProductRelation> existingRelations = new ArrayList<>(product.getCreatorProductRelations());
-        List<CreatorProductRelation> updatedRelations = new ArrayList<>();
-
-        for (UpdateCreatorWithRoleDTO dto : dtos) {
-            Long creatorId = dto.getCreatorId();
-            Long roleId = dto.getCreatorRoleId();
-
-            Creator creator = creatorRepo.findById(creatorId)
-                    .orElseThrow(() -> new RuntimeException("Creator not found: " + creatorId));
-
-            CreatorRole role = creatorRoleRepo.findById(roleId)
-                    .orElseThrow(() -> new RuntimeException("CreatorRole not found: " + roleId));
-
-            CreatorProductRelation match = existingRelations.stream()
-                    .filter(relation ->
-                            relation.getCreator().getId().equals(creatorId)
-                            && relation.getCreatorRole().getId().equals(roleId))
-                    .findFirst()
-                    .orElse(null);
-
-            if (match != null) {
-                updatedRelations.add(match);
-            } else {
-                CreatorProductRelation newRel = new CreatorProductRelation();
-                product.addRelation(newRel);
-                creator.addRelation(newRel);
-                newRel.setCreatorRole(role);
-                updatedRelations.add(newRel);
+        for (CreatorProductRelation existing : existingRelations) {
+            if (!incomingRelationIds.contains(existing.getId())) {
+                product.removeRelation(existing);
+                creatorProductRelationRepo.delete(existing);
             }
         }
 
-        // Remove obsolete relations
-        List<CreatorProductRelation> toRemove = existingRelations.stream()
-                .filter(relation -> updatedRelations.stream().noneMatch(updated ->
-                        updated.getCreator().getId().equals(relation.getCreator().getId())
-                        && updated.getCreatorRole().getId().equals(relation.getCreatorRole().getId())))
-                .toList();
+        for (UpdateCreatorWithRoleDTO dtoCreator : creatorsDto) {
+            CreatorRelationId id = new CreatorRelationId(
+                    dtoCreator.getCreatorId(), product.getId(), dtoCreator.getCreatorRoleId()
+            );
 
-        for (CreatorProductRelation relation : toRemove) {
-            relation.getCreator().getCreatorProductRelations().remove(relation);
-            relation.setCreator(null);
-            relation.setProduct(null);
-            relation.setCreatorRole(null);
+            boolean alreadyExists = product.getCreatorProductRelations().stream()
+                    .anyMatch(relation -> relation.getId().equals(id));
+
+            if (!alreadyExists) {
+                Creator creator = creatorRepo.findById(dtoCreator.getCreatorId())
+                        .orElseThrow(() -> new RuntimeException("Creator not found: " + dtoCreator.getCreatorId()));
+                CreatorRole role = creatorRoleRepo.findById(dtoCreator.getCreatorRoleId())
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + dtoCreator.getCreatorRoleId()));
+
+                CreatorProductRelation newRelation = new CreatorProductRelation();
+                newRelation.setId(id);
+                newRelation.setCreator(creator);
+                newRelation.setProduct(product);
+                newRelation.setCreatorRole(role);
+
+                product.addRelation(newRelation);
+                creator.addRelation(newRelation);
+            }
         }
-
-        product.getCreatorProductRelations().removeAll(toRemove);
-        creatorProductRelationRepo.deleteAll(toRemove);
     }
-
 
     @Override
     public Set<CreatorResponseDTO> searchByName(String name) {
