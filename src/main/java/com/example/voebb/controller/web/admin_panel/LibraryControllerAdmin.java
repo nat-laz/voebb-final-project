@@ -1,8 +1,6 @@
 package com.example.voebb.controller.web.admin_panel;
 
-import com.example.voebb.model.dto.library.CreateLibraryDTO;
-import com.example.voebb.model.dto.library.EditLibraryDTO;
-import com.example.voebb.model.dto.library.LibraryDTO;
+import com.example.voebb.model.dto.library.*;
 import com.example.voebb.service.LibraryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,14 +15,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/libraries")
 @RequiredArgsConstructor
 public class LibraryControllerAdmin {
+
     private final LibraryService libraryService;
 
     @GetMapping
-    public String getIndexPage(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-                               Model model) {
-        Page<LibraryDTO> page = libraryService.getAllLibraries(pageable);
+    public String getIndexPage(Model model,
+                               @ModelAttribute("libraryFilters") LibraryFilters filters,
+                               @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+                               @RequestParam(value = "success", required = false) String success) {
+
+        Page<FullInfoLibraryDTO> page = libraryService.getFilteredLibrariesAdmin(filters, pageable);
         model.addAttribute("page", page);
         model.addAttribute("libraries", page.getContent());
+
+        if (success != null && !success.isBlank()) {
+            model.addAttribute("success", success);
+        }
+
         return "admin/library/index";
     }
 
