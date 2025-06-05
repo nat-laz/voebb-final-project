@@ -12,7 +12,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
 
-<header class="sticky-top">
+<header class="sticky-top" layout:fragment="header">
   <div th:if="${borrowExpiresSoon}" class="bg-dark text-white py-1 text-center v-middle py-2">
     <small>🔔 You have borrows that expires soon! Check your borrows in profile and return them at time. 🔔</small>
   </div>
@@ -65,7 +65,9 @@
 <div layout:fragment="content"></div>
 
 <!-- Footer -->
-<footer th:replace="~{public/fragments/footer.html :: footer}"></footer>
+<footer layout:fragment="footer">
+  <div th:replace="~{public/fragments/footer.html :: footer}"></div>
+</footer>
 
 <!--Scripts-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

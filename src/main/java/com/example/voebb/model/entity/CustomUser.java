@@ -31,9 +31,7 @@ public class CustomUser {
     @Column(nullable = false, unique = true, length = 120)
     private String email;
 
-    // TODO: decide pattern
     @Column(nullable = false, unique = true, length = 20)
-    // @Pattern(regexp = "^\\+[0-9]{10,20}$", message = "Invalid phone number format")
     private String phoneNumber;
 
     @Column(nullable = false)

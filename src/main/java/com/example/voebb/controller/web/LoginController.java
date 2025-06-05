@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class LoginController {
@@ -26,11 +27,32 @@ public class LoginController {
 
     @PostMapping("/register")
     public String postRegisterPage(@ModelAttribute("userRegistrationDTO") @Valid UserRegistrationDTO userRegistrationDTO,
-                                   BindingResult result) {
-        if (result.hasErrors()) {
+                                   BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             return "public/login-register/register-page";
         }
+
+        if (customUserDetailsService.emailExists(userRegistrationDTO.getEmail())) {
+            bindingResult.rejectValue("email", "error.email", "Email is already taken");
+            return "public/login-register/register-page";
+        }
+
+        if (customUserDetailsService.phoneNumberExists(userRegistrationDTO.getPhoneNumber())) {
+            bindingResult.rejectValue("phoneNumber", "error.phoneNumber", "Phone number is already taken");
+            return "public/login-register/register-page";
+        }
+
         customUserDetailsService.registerUser(userRegistrationDTO);
         return "redirect:/";
+    }
+
+    @GetMapping("/login")
+    public String getLoginPage(@RequestParam(value = "error", required = false) String error,
+                               Model model) {
+        if (error != null) {
+            model.addAttribute("loginError", "Invalid username or password.");
+        }
+
+        return "public/login-register/login-page";
     }
 }
