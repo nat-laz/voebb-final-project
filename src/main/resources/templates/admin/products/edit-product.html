@@ -198,36 +198,33 @@
               </th:block>
             </div>
             
-            
             <div class="row g-3 align-items-end">
               
-              <div class="col-md-5 position-relative">
+              <div class="col-12 col-md-5 position-relative">
                 <label for="creatorSearchInput" class="form-label">
                   Search Creator by name <span class="text-danger">*</span>
                 </label>
-                <input id="creatorSearchInput" type="text" class="form-control"
-                       placeholder="e.g. Rowling"
-                       autocomplete="off">
-                <ul id="creatorResultsBox" class="list-group position-absolute w-100 d-none shadow-sm"
-                    style="z-index: 10;"></ul>
+                <input id="creatorSearchInput" type="text" class="form-control" placeholder="e.g. Rowling" autocomplete="off">
+                <ul id="creatorResultsBox" class="list-group position-absolute w-100 d-none shadow-sm" style="z-index: 10;"></ul>
               </div>
               
-              <div class="col-md-5 position-relative">
+              <div class="col-12 col-md-5 position-relative">
                 <label for="roleSearchInput" class="form-label">
                   Search Role <span class="text-danger">*</span>
                 </label>
-                <input id="roleSearchInput" type="text" class="form-control" placeholder="e.g. Author"
-                       autocomplete="off">
-                <ul id="roleResultsBox" class="list-group position-absolute w-100 d-none shadow-sm"
-                    style="z-index: 10;"></ul>
+                <input id="roleSearchInput" type="text" class="form-control" placeholder="e.g. Author" autocomplete="off">
+                <ul id="roleResultsBox" class="list-group position-absolute w-100 d-none shadow-sm" style="z-index: 10;"></ul>
               </div>
               
-              <div class="col-md-2">
-                <button type="button" class="btn btn-primary w-100" onclick="addCreatorToPreviewEditForm()">
-                  <i class="bi bi-plus-circle me-2"></i> Add Creator
-                </button>
+              <div class="col-12 col-md-2 mt-2 mt-md-0">
+                <div class="d-grid">
+                  <button type="button" class="btn btn-primary" onclick="addCreatorToPreviewEditForm()">
+                    Add Creator
+                  </button>
+                </div>
               </div>
             </div>
+            
             
             <!--  Fields populated by AJAX -->
             <input type="hidden" id="creatorId">
@@ -364,56 +361,49 @@
                     <div class="col-md-6">
                       
                       <div class="mb-2">
-                        <strong>Product Type:</strong>
-                        <span id="revProductType" class="text-muted small"
-                              th:text="${productTypesMap[updateProductDTO.productTypeId]} ?: '—'"></span>
-                      </div>
-                      
-                      <div class="mb-2">
                         <strong>Title:</strong>
-                        <span id="revTitle" class="text-muted small" th:text="${updateProductDTO.title} ?: '—'"></span>
+                        <span id="revTitle" class="text-muted small"
+                              th:text="${updateProductDTO.title} ?: '—'"></span>
                       </div>
                       
                       <div class="mb-2">
                         <strong>Release Year:</strong>
-                        <span id="revReleaseYear" class="text-muted small" th:text="${updateProductDTO.releaseYear} ?: '—'"></span>
+                        <span id="revReleaseYear" class="text-muted small"
+                              th:text="${updateProductDTO.releaseYear} ?: '—'"></span>
                       </div>
                       
                       <div class="mb-2">
                         <strong>Description:</strong>
-                        <span id="revDescription" class="text-muted small" th:text="${updateProductDTO.description} ?: '—'"></span>
+                        <span id="revDescription" class="text-muted small"
+                              th:text="${updateProductDTO.description} ?: '—'"></span>
                       </div>
                       
-                      <div class="mb-2" id="revEmediaBlock" th:if="${updateProductDTO.productLinkToEmedia != null}">
+                      <div class="mb-2 d-none" id="revEmediaBlock">
                         <strong>Product Link (eMedia):</strong>
-                        <span id="revProductLink" class="text-muted small"
-                              th:text="${updateProductDTO.productLinkToEmedia}"></span>
+                        <span id="revProductLink" class="text-muted small"></span>
                       </div>
                     
                     </div>
                   </div>
                 </section>
                 
-                
-                <section id="revBookDetailsBlock"
-                         class="py-3 px-2 border-bottom">
+                <section id="revBookDetailsBlock" class="py-3 px-2 border-bottom d-none">
                   <h5 class="mb-3 fw-semibold text-muted small">Book Details</h5>
                   <div class="row gx-4">
                     <div class="col-md-4">
                       <strong>ISBN:</strong>
-                      <span id="revISBN" class="text-muted small" th:text="${updateProductDTO.bookDetails?.isbn} ?: '—'"></span>
+                      <span id="revISBN" class="text-muted small"></span>
                     </div>
                     <div class="col-md-4">
                       <strong>Edition:</strong>
-                      <span id="revEdition" class="text-muted small" th:text="${updateProductDTO.bookDetails?.edition} ?: '—'"></span>
+                      <span id="revEdition" class="text-muted small"></span>
                     </div>
                     <div class="col-md-4">
                       <strong>Pages:</strong>
-                      <span id="revPages" class="text-muted small" th:text="${updateProductDTO.bookDetails?.pages} ?: '—'"></span>
+                      <span id="revPages" class="text-muted small"></span>
                     </div>
                   </div>
                 </section>
-                
                 
                 <section class="py-3 px-2 border-bottom">
                   <h5 class="mb-3 fw-semibold text-muted small">Creators</h5>
@@ -636,48 +626,40 @@
           });
       }
 
-      
+
       function updateGeneralInfo() {
-          // Get values
-          const productTypeSelect = document.getElementById('productTypeId');
-          const productTypeText = productTypeSelect.options[productTypeSelect.selectedIndex].text;
-          const productTypeValue = productTypeSelect.value;
-          
           const title = document.getElementById('title').value;
           const releaseYear = document.getElementById('releaseYear').value;
-          const photoUrl = document.getElementById('photo').value;
           const description = document.getElementById('description').value;
           const productLink = document.getElementById('productLinkToEmedia').value;
 
+          document.getElementById('revTitle').textContent = title || '—';
+          document.getElementById('revReleaseYear').textContent = releaseYear || '—';
+          document.getElementById('revDescription').textContent = description || '—';
+          document.getElementById('revProductLink').textContent = productLink || '—';
 
-          // Set review content
-          document.getElementById('revProductType').textContent = productTypeText || 'N/A';
-          document.getElementById('revTitle').textContent = title || 'N/A';
-          document.getElementById('revReleaseYear').textContent = releaseYear || 'N/A';
-          document.getElementById('revPhoto').textContent = photoUrl || 'N/A';
-          document.getElementById('revDescription').textContent = description || 'N/A';
-          document.getElementById('revProductLink').textContent = productLink || 'N/A';
+          // Show/hide eMedia section
+          const revEmediaBlock = document.getElementById('revEmediaBlock');
+          if (productLink && productLink.trim() !== "") {
+              revEmediaBlock.classList.remove('d-none');
+          } else {
+              revEmediaBlock.classList.add('d-none');
+          }
+          
+          const productTypeValue = document.getElementById('productTypeId')?.value;
 
           const bookDetailsBlock = document.getElementById('revBookDetailsBlock');
           if (productTypeValue === "1" || productTypeValue === "2") {
               bookDetailsBlock.classList.remove('d-none');
-              document.getElementById('revISBN').textContent = document.getElementById('bookIsbn').value || 'N/A';
-              document.getElementById('revEdition').textContent = document.getElementById('bookEdition').value || 'N/A';
-              document.getElementById('revPages').textContent = document.getElementById('bookPages').value || 'N/A';
+              document.getElementById('revISBN').textContent = document.getElementById('bookIsbn').value || '—';
+              document.getElementById('revEdition').textContent = document.getElementById('bookEdition').value || '—';
+              document.getElementById('revPages').textContent = document.getElementById('bookPages').value || '—';
           } else {
               bookDetailsBlock.classList.add('d-none');
               document.getElementById('revISBN').textContent = '';
               document.getElementById('revEdition').textContent = '';
               document.getElementById('revPages').textContent = '';
           }
-
-          const revEmediaBlock = document.getElementById('revEmediaBlock');
-          if (productTypeValue === "2") {
-              revEmediaBlock.classList.remove('d-none');
-          } else {
-              revEmediaBlock.classList.add('d-none');
-          }
-
       }
   </script>
 </main>
