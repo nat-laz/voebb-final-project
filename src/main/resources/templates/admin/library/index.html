@@ -62,10 +62,10 @@
           <label for="districtFilter" class="form-label">District</label>
           <select id="districtFilter" name="district" class="form-select">
             <option th:value="''">All Districts</option>
-            <option th:each="d : ${librariesDistricts}"
-                    th:value="${d}"
-                    th:text="${d}"
-                    th:selected="${libraryFilters.district == d}">
+            <option th:each="district : ${librariesDistricts}"
+                    th:value="${district}"
+                    th:text="${district}"
+                    th:selected="${libraryFilters.district == district}">
             </option>
           </select>
         </div>
@@ -85,25 +85,25 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="lib : ${page.content}">
-          <td th:text="${lib.id}"></td>
+        <tr th:each="library : ${page.content}">
+          <td th:text="${library.id}"></td>
           
           <td class="text-nowrap" style="max-width: 220px;">
             <div class="text-truncate d-inline-block"
                  style="max-width: 200px;"
-                 th:text="${lib.name}"
-                 th:attr="data-bs-toggle='tooltip', title=${lib.name}">
+                 th:text="${library.name}"
+                 th:attr="data-bs-toggle='tooltip', title=${library.name}">
             </div>
           </td>
           
           <td>
         <span class="badge bg-info-subtle text-info-emphasis px-3 py-2 text-capitalize"
-              th:text="${lib.district != null && !lib.district.isBlank() ? lib.district : 'N/A'}">
+              th:text="${library.district != null && !library.district.isBlank() ? library.district : 'N/A'}">
         </span>
           </td>
           
           <td class="text-end text-nowrap">
-            <a th:href="@{/admin/libraries/edit/{id}(id=${lib.id})}"
+            <a th:href="@{/admin/libraries/edit/{id}(id=${library.id})}"
                class="btn btn-sm btn-info me-1"
                data-bs-toggle="tooltip"
                title="Edit Library">
@@ -161,7 +161,8 @@
           <span class="page-link">…</span>
         </li>
         
-        <li class="page-item" th:if="${page.totalPages > 1}" th:classappend="${page.number == page.totalPages - 1} ? 'active'">
+        <li class="page-item" th:if="${page.totalPages > 1}"
+            th:classappend="${page.number == page.totalPages - 1} ? 'active'">
           <a class="page-link"
              th:href="@{/admin/libraries(page=${page.totalPages - 1},
                libraryId=${libraryFilters.libraryId},
@@ -181,7 +182,6 @@
         </li>
       </ul>
     </nav>
-  
   </div>
 </main>
 </body>

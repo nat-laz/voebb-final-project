@@ -36,32 +36,31 @@ public class LibraryControllerAdmin {
     }
 
     @GetMapping("/new")
-    public String getCreatePage(Model model) {
+    public String showCreateLibraryForm(Model model) {
         model.addAttribute("createLibraryDTO", new CreateLibraryDTO());
         return "admin/library/create";
     }
 
     @PostMapping("/new")
-    public String postCreatePage(@ModelAttribute(name = "createLibraryDTO") CreateLibraryDTO createLibraryDTO) {
+    public String createLibrary(@ModelAttribute(name = "createLibraryDTO") CreateLibraryDTO createLibraryDTO) {
         libraryService.createLibrary(createLibraryDTO);
         return "redirect:/admin/libraries";
     }
 
     @GetMapping("/edit/{id}")
-    public String getEditPage(@PathVariable("id") Long id,
-                              Model model) {
+    public String showEditForm(@PathVariable("id") Long id,
+                               Model model) {
         EditLibraryDTO editLibraryDTO = libraryService.getLibraryById(id);
         model.addAttribute("library", editLibraryDTO);
         return "admin/library/edit";
     }
 
     @PostMapping("/edit/{id}")
-    public String updateProduct(@PathVariable("id") Long id,
-                                @ModelAttribute("library") EditLibraryDTO editLibraryDTO) {
+    public String editLibrary(@PathVariable("id") Long id,
+                              @ModelAttribute("library") EditLibraryDTO editLibraryDTO) {
 
         libraryService.updateLibrary(id, editLibraryDTO);
         return "redirect:/admin/libraries";
 
     }
-
 }
