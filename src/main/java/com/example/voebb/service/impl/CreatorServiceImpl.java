@@ -77,6 +77,10 @@ public class CreatorServiceImpl implements CreatorService {
         }
 
         for (UpdateCreatorWithRoleDTO dtoCreator : creatorsDto) {
+            if (dtoCreator.getCreatorId() == null || dtoCreator.getCreatorRoleId() == null) {
+                continue;
+            }
+
             CreatorRelationId id = new CreatorRelationId(
                     dtoCreator.getCreatorId(), product.getId(), dtoCreator.getCreatorRoleId()
             );
