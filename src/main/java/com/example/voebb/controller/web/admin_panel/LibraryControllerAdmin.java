@@ -21,7 +21,7 @@ public class LibraryControllerAdmin {
     @GetMapping
     public String getIndexPage(Model model,
                                @ModelAttribute("libraryFilters") LibraryFilters filters,
-                               @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+                               @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
                                @RequestParam(value = "success", required = false) String success) {
 
         Page<FullInfoLibraryDTO> page = libraryService.getFilteredLibrariesAdmin(filters, pageable);

@@ -41,6 +41,11 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
+    public List<String> getAllDistricts() {
+        return libraryRepo.findAllDistricts();
+    }
+
+    @Override
     public Page<FullInfoLibraryDTO> getFilteredLibrariesAdmin(LibraryFilters filters, Pageable pageable) {
         return libraryRepo
                 .findFilteredLibrariesForAdmin(

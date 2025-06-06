@@ -58,4 +58,8 @@ public interface LibraryRepo extends JpaRepository<Library, Long> {
     List<LibraryDTO> getAllInDTO();
 
     boolean existsByName(String name);
+
+    @Query("SELECT DISTINCT l.address.district FROM Library l WHERE l.address.district IS NOT NULL ORDER BY l.address.district")
+    List<String> findAllDistricts();
+
 }
