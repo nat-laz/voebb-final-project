@@ -9,11 +9,6 @@ body {
     margin: 0 auto;
 }
 
-.content-section p,
-.content-section span,
-.content-section h3 {
-    text-align: justify;
-}
 .carousel-wrapper,
 .carousel-window,
 .custom-carousel {
@@ -89,14 +84,17 @@ body {
     flex: 0 0 18rem;
     width: 18rem;
     margin:0;
-    transition: all 0.3s ease;
     border: none;
     box-shadow: none;
+    transition:
+            transform 0.25s ease,
+            background-color 0.25s ease;
+    will-change: transform;
 }
 
 .card:hover {
     background-color: #b1bfcc;
-    transform: translateY(-4px);
+    transform: translateY(-1px);
 }
 
 .card-title {
