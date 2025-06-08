@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VÖBB UI Refresh</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/zephyr/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link th:href="@{/css/custom-style.css}" rel="stylesheet">
+  <title data-layout-title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE"></title>
+  <style>
+      body[data-theme="light"] {
+          background-color: #f8f9fa;
+      }
+
+      body[data-theme="dark"] {
+          background-color: #242627;
+      }
+
+      .search-row {
+          background-color: #e9ecef;
+          padding: 2rem 1.5rem;
+      }
+
+      [data-bs-theme="dark"] .search-row {
+          background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .search-label {
+          font-weight: 600;
+          font-size: 0.9rem;
+      }
+
+      .btn-search {
+          background-color: #4361ee;
+          border: none;
+      }
+
+      .btn-search:hover {
+          background-color: #364fc7;
+      }
+      
+      .nav-item:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+          text-decoration: none;
+          border-radius: 0.5rem;
+      }
+      
+      .icon-flip {
+          transform: scaleX(-1);
+      }
+      
+      .btn-icon {
+          width: 2.5rem;
+          height: 2.5rem;
+          padding: 0;
+          border: none;
+          background: transparent;
+          border-radius: 50%;
+          transition: background-color 0.2s ease-in-out;
+      }
+
+      .btn-icon:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .log-in-hover {
+          background-color: rgba(255, 255, 255, 0.1);
+      }
+      
+      .log-in-hover:hover {
+          background-color: rgba(255, 255, 255, 0.3);
+      }
+      
+  </style>
+</head>
+<body data-theme="light" class="d-flex flex-column min-vh-100">
+
+<div th:replace="~{public/fragments/main-navbar.html :: main-navbar}"></div>
+
+<div class="search-row">
+  <div class="container-fluid">
+    <form class="row g-3 align-items-end" th:action="@{/search}" method="POST" th:object="${productFilters}" id="searchForm">
+      
+      <input type="hidden" th:field="*{author}" id="creatorHidden">
+      <input type="hidden" th:field="*{productType}" id="productTypeHidden">
+      <input type="hidden" th:field="*{languageId}" id="languageHidden">
+      <input type="hidden" th:field="*{libraryId}" id="libraryHidden">
+      <input type="hidden" th:field="*{countryId}" id="countryHidden">
+      
+      <div class="col-12 col-md-6">
+        <label for="searchInput" class="form-label search-label">Search</label>
+        <input th:field="*{title}" type="text" class="form-control" id="searchInput" placeholder="Search for a product" />
+      </div>
+      <div class="col-12 col-md-3">
+        <label for="librarySelect" class="form-label search-label">Library</label>
+        <select id="librarySelect" class="form-select">
+          <option value="" th:selected="${libraryId == null}">All Libraries</option>
+          <option th:each="library : ${libraries}"
+                  th:value="${library.id}"
+                  th:text="${library.name}"
+                  th:selected="${library.id == libraryId}">
+          </option>
+        </select>
+      </div>
+      <div class="col-12 col-md-3 d-grid">
+        <button type="submit" class="btn btn-search text-white">
+          <i class="bi bi-search"></i> Search
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!--Main content-->
+<div layout:fragment="content"></div>
+
+<!-- Footer -->
+<footer th:replace="~{public/fragments/footer.html :: footer}" class="mt-auto"></footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const html = document.documentElement;
+    const body = document.body;
+
+    const toggleTheme = () => {
+        const isDark = html.getAttribute('data-bs-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+
+        html.setAttribute('data-bs-theme', newTheme);
+        body.setAttribute('data-theme', newTheme);
+
+        updateThemeIcon(newTheme);
+    };
+
+    const updateThemeIcon = (theme) => {
+        const icon = document.getElementById('themeIcon');
+        const iconMobile = document.getElementById('themeIconMobile');
+
+        const applyIconFlip = (el) => {
+            if (theme === 'light') {
+                el.classList.add('icon-flip');
+            } else {
+                el.classList.remove('icon-flip');
+            }
+        };
+
+        applyIconFlip(icon);
+        applyIconFlip(iconMobile);
+    };
+    
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    document.getElementById('themeToggleMobile').addEventListener('click', toggleTheme);
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentTheme = html.getAttribute('data-bs-theme') || 'dark';
+        updateThemeIcon(currentTheme);
+    });
+</script>
+
+
+
+</body>
+</html>
