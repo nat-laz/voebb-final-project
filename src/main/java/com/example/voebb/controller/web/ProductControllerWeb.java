@@ -26,8 +26,6 @@ public class ProductControllerWeb {
     private final ProductService productService;
     private final BookDetailsService bookDetailsService;
     private final ProductItemService productItemService;
-    private final CreatorService creatorService;
-    private final LibraryService libraryService;
     private final ReservationService reservationService;
     private final CustomUserService customUserService;
 
@@ -63,6 +61,7 @@ public class ProductControllerWeb {
     public String getSearchResultPage(@ModelAttribute(name = "productFilters") ProductFilters productFilters,
                                       @RequestParam(defaultValue = "1") int page,
                                       Model model) {
+
         Pageable pageable = PageRequest.of(page - 1, 5);
         Page<CardProductDTO> resultProducts = productService.getProductCardsByFilters(productFilters, pageable);
         model.addAttribute("page", resultProducts);

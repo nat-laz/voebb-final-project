@@ -23,12 +23,19 @@
     </div>
     
     <p th:text="'Title: ' + ${productInfoDTO.title}"></p>
-    <p th:text="'Id: ' + ${productInfoDTO.id}"></p>
-    <p th:text="'Type: ' + ${productInfoDTO.productType}"></p>
+    <p th:text="'Type: ' + ${productInfoDTO.productType.toUpperCase()}"></p>
     <p th:text="'Release: ' + ${productInfoDTO.releaseYear}"></p>
     
     <p th:text="'Description: ' + ${productInfoDTO.description}"></p>
-    <p th:text="'Link: ' + ${productInfoDTO.productLinkToEmedia}"></p>
+    <div class="mb-3" th:if="${productInfoDTO.productLinkToEmedia}">
+      Link:
+      <a th:href="${productInfoDTO.productLinkToEmedia}"
+         th:text="${productInfoDTO.productLinkToEmedia}"
+         class="text-decoration-underline text-primary"
+         target="_blank" rel="noopener noreferrer">
+      </a>
+    </div>
+  
   </div>
   
   <!-- Book details section -->

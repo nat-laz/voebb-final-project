@@ -1,27 +1,52 @@
 <div class="card hover-card" th:fragment="card(cardProductDTO)" style="width: 50rem;">
-  <div class="card-header">
-    <a th:href="@{/products/{id}(id=${cardProductDTO.id})}"
-       style="text-decoration: none; color: inherit;">
-      <h4 class="card-title" th:text="${cardProductDTO.title}"></h4>
-    </a>
-  </div>
-  <div class="card-body">
-    <div class="row">
-      <div class="col-9">
-        <p class="card-text"
-           th:if="${cardProductDTO.mainCreators != null}"
-           th:text="${cardProductDTO.mainCreators}"></p>
-        <p class="card-text" th:text="'productType: ' + ${cardProductDTO.productType}"></p>
-      </div>
-      <div class="col-3 text-end">
-        <!-- ✅ Book Cover Image -->
-        <img th:src="${cardProductDTO.photo}"
-             class="rounded"
-             alt="Book cover"
-             style="height: 150px; width: 100px; object-fit: contain; margin-bottom: 1rem;"
-             th:attr="onerror=|this.onerror=null; this.src='${cardProductDTO.defaultPhoto}?v=1';|">
+  <div  style="max-width: 50rem;">
+    <div class="card-header">
+      <a th:href="@{/products/{id}(id=${cardProductDTO.id})}"
+         class="text-decoration-none card-title-link">
+        <h5 class="card-title mb-0" th:text="${cardProductDTO.title}"></h5>
+      </a>
+    </div>
+    
+    <div class="card-body">
+      <div class="row g-3 align-items-start">
+        
+        <div class="row g-3 align-items-center flex-column flex-md-row">
+          
+          <div class="col-md-9 d-none d-md-block">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+              <p class="mb-1 fw-semibold text-muted" th:if="${cardProductDTO.mainCreators != null}"
+                 th:text="${cardProductDTO.mainCreators}"></p>
+              
+              <div th:if="${cardProductDTO.releaseYear != null}" class="text-muted small">
+                <i class="bi bi-calendar2 me-1"></i>
+                <span th:text="${cardProductDTO.releaseYear}"></span>
+              </div>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="text-uppercase small fs-6"
+                  th:text="${cardProductDTO.productType}"></div>
+              
+              <div th:if="${cardProductDTO.productLinkToEmedia != null}">
+                <a th:href="${cardProductDTO.productLinkToEmedia}" target="_blank"
+                   class="link-primary small d-inline-flex align-items-center gap-1">
+                  <i class="bi bi-link-45deg"></i> E-Medium
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 text-center text-md-end">
+            <img th:src="${cardProductDTO.photo}"
+                 class="rounded"
+                 alt="Book cover"
+                 style="width: 100px; height: 150px; object-fit: contain;"
+                 th:attr="onerror=|this.onerror=null; this.src='${cardProductDTO.defaultPhoto}?v=1';|">
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+
     <div class="row">
       <!-- Accordion -->
       <div class="accordion" th:id="'accordionProduct__' + ${cardProductDTO.id}">
@@ -50,4 +75,4 @@
       </div>
     </div>
   </div>
-</div>
+

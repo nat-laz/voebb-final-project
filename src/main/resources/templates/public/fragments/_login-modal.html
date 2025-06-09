@@ -28,9 +28,10 @@
     </a>
     
     <a th:if="${#authorization.expr('isAuthenticated()')}"
-       class="d-flex align-items-center gap-2 text-light text-decoration-none dropdown-toggle"
+       class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded dropdown-toggle text-light text-decoration-none"
        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-      <i class="bi bi-person-circle"></i> Account
+      <i class="bi bi-person-circle fs-5"></i>
+      <span class="fw-medium">Account</span>
     </a>
     
     <div th:replace="~{this :: login-dropdown-body}"></div>
@@ -79,11 +80,15 @@
       </div>
     </div>
     
-    <div th:if="${#authorization.expr('isAuthenticated()')}" class="container" style="width: 260px;">
-      <div class="rounded-2 bg-light">
-        <a class="dropdown-item" href="/profile">Profile</a>
-        <form th:action="@{/logout}" method="post">
-          <button class="dropdown-item" type="submit">Logout</button>
+    <div th:if="${#authorization.expr('isAuthenticated()')}" class="container">
+      <div class="rounded-3 p-2 user-menu">
+        <a class="dropdown-item d-flex align-items-center gap-2 rounded-2 px-3 py-2" href="/profile">
+          <i class="bi bi-person-circle"></i> Profile
+        </a>
+        <form th:action="@{/logout}" method="post" class="m-0">
+          <button class="dropdown-item d-flex align-items-center gap-2 rounded-2 px-3 py-2 w-100" type="submit">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </button>
         </form>
       </div>
     </div>

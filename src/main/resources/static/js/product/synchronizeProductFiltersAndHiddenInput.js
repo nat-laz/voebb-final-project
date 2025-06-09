@@ -6,19 +6,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const sidebarCreator = sidebar.querySelector("#creator");
 
     // Hidden form inputs
-    const hiddenLibrary = document.getElementById("libraryHidden");
     const hiddenProductType = document.getElementById("productTypeHidden");
     const hiddenCreator = document.getElementById("creatorHidden");
     const hiddenLanguage = document.getElementById("languageHidden");
     const hiddenCountry = document.getElementById("countryHidden");
 
-
-
-    // Library dropdown
-    setupDropdown(
-        hiddenLibrary,
-        document.getElementById("libraryDropdown").querySelectorAll('.dropdown-item'),
-        document.getElementById('libraryDropdownButton'))
 
     // Product type dropdown
     setupDropdown(
