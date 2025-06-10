@@ -1,0 +1,66 @@
+body[data-theme="light"] {
+    background-color: #f8f9fa;
+}
+
+body[data-theme="dark"] {
+    background-color: #242627;
+}
+
+.search-row {
+    background-color: #e9ecef;
+    padding: 2rem 1.5rem;
+}
+
+[data-bs-theme="dark"] .search-row {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.search-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.btn-search {
+    background-color: #4361ee;
+    border: none;
+}
+
+.btn-search:hover {
+    background-color: #364fc7;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+    border-radius: 0.5rem;
+}
+
+.icon-flip {
+    transform: scaleX(-1);
+}
+
+.btn-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-icon:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.log-in-hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.log-in-hover:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+body[data-theme="light"] .user-menu .dropdown-item {
+    color: #f1f3f5; !important;
+}
