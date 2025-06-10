@@ -10,7 +10,7 @@ SELECT SETVAL('creator_roles_creator_role_id_seq', (SELECT MAX(creator_role_id) 
 
 -- Product types
 INSERT INTO product_types (product_type_id, name, display_name, borrow_duration_days, main_creator_role_id, default_cover_url)
-VALUES (1, 'book', 'Book', 28, 1, '/images/default-book.jpg'),
+VALUES (1, 'book', 'Book', 28, 1, '/images/default-book.jpeg'),
        (2, 'ebook', 'E-Book', 28, 1, '/images/default-ebook.jpeg'),
        (3, 'dvd', 'DVD', 14, 4, '/images/default-dvd.webp'),
        (4, 'boardgame', 'Board Game', 7, 5, '/images/default-boardgame.jpeg')

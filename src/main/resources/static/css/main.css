@@ -43,6 +43,7 @@ body[data-theme="dark"] {
     width: 2.5rem;
     height: 2.5rem;
     padding: 0;
+    margin-right: 0.2rem;
     border: none;
     background: transparent;
     border-radius: 50%;

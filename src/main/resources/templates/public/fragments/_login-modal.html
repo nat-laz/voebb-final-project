@@ -6,7 +6,7 @@
     <button th:if="${!#authorization.expr('isAuthenticated()')}"
             class="log-in-hover text-light border-0 rounded px-3 py-2 d-flex align-items-center gap-2"
             type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      <i class="bi bi-person"></i> Log In
+      <i class="bi bi-person"></i> Login
     </button>
 
     
@@ -24,7 +24,7 @@
     <a th:if="${!#authorization.expr('isAuthenticated()')}"
        class="d-flex align-items-center gap-2 text-light text-decoration-none"
        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-      <i class="bi bi-person-circle"></i> Log In
+      <i class="bi bi-person-circle"></i> Login
     </a>
     
     <a th:if="${#authorization.expr('isAuthenticated()')}"
