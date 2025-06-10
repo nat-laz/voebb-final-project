@@ -119,7 +119,13 @@ VALUES (1, 'Admin 1', 'Admin 1', 'admin1@example.com', '+4917012345671', '$2a$12
        (4, 'Client 2', 'Client 2', 'client2@example.com', '+4917012345674', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
        (5, 'Helly ', 'R.', 'helly@example.com', '+4917012345675', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
        (6, 'Mark', 'S', 'mark@example.com', '+4917012345676', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
-       (7, 'Ronald', 'B.', 'ronald@example.com', '+4917012345677', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 5)
+       (7, 'Ronald', 'B.', 'ronald@example.com', '+4917012345677', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 5),
+       (8, 'Ellen', 'Ripley', 'ripley@weyland.com', '+4917012345678', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 1),
+       (9, 'Neo', 'Anderson', 'neo@matrix.com', '+4917012345679', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 2),
+       (10, 'Leia', 'Organa', 'leia@rebelalliance.org', '+4917012345680', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0),
+       (11, 'Forrest', 'Gump', 'forrest@gumpco.com', '+4917012345681', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', FALSE, 3),
+       (12, 'Vito', 'Corleone', 'vito@corleonefamily.it', '+4917012345682', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 4),
+       (13, 'Amélie', 'Poulain', 'amelie@montmartre.fr', '+4917012345683', '$2a$12$Rcps34Enqr7WYhMH0/POmesuIR9CiEGn1wrtq/VKqrh2H6tWmIu9e', TRUE, 0)
 ON CONFLICT (custom_user_id) DO NOTHING;
 SELECT SETVAL('custom_users_custom_user_id_seq', (SELECT MAX(custom_user_id) FROM custom_users));
 

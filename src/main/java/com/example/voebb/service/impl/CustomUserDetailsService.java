@@ -2,9 +2,7 @@ package com.example.voebb.service.impl;
 
 import com.example.voebb.exception.UserNotFoundException;
 import com.example.voebb.model.dto.ItemActivityDTO;
-import com.example.voebb.model.dto.user.UserDTO;
-import com.example.voebb.model.dto.user.UserRegistrationDTO;
-import com.example.voebb.model.dto.user.UserUpdateDTO;
+import com.example.voebb.model.dto.user.*;
 import com.example.voebb.model.entity.CustomUser;
 import com.example.voebb.model.entity.CustomUserRole;
 import com.example.voebb.repository.CustomUserRepo;
@@ -16,6 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -145,11 +145,15 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
     }
 
     @Override
-    public List<UserDTO> getAllUsers() {
-        return userRepo.findAll().stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public Page<GetCustomUserDTO> getFilteredUsers(UserFilters filters, Pageable pageable) {
+        return customUserRepo.findFilteredUsers(
+                filters.getUserId(),
+                filters.getEmail(),
+                filters.getName(),
+                filters.getIsEnabled(),
+                pageable);
     }
+
 
     @Override
     public UserUpdateDTO getUserUpdateDTOByUsername(String username) {
@@ -257,11 +261,6 @@ public class CustomUserDetailsService implements UserDetailsService, CustomUserS
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
         user.setEnabled(false);
         userRepo.save(user);
-    }
-
-    @Override
-    public void deleteUser(Long id) {
-        userRepo.deleteById(id);
     }
 
     @Override

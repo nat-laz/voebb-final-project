@@ -20,8 +20,20 @@ public class ReservationCleanupJob {
     private final ReservationRepo reservationRepo;
     private final Clock clock;
 
-    // For testing replace with: @Scheduled(cron = "0 * * * * *") // every minute
-    @Scheduled(cron = "0 0 2 * * *") // every day at 02:00 AM
+    /**
+     * Scheduled task that runs daily at 2:00 AM server time.
+     * Cron Expression: "0 0 2 * * *"
+     * ┌───────────── second         (0 - 59)
+     * │ ┌───────────── minute       (0 - 59)
+     * │ │ ┌───────────── hour       (0 - 23)
+     * │ │ │ ┌───────────── day of month (1 - 31)
+     * │ │ │ │ ┌───────────── month      (1 - 12)
+     * │ │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday=0 or 7)
+     * │ │ │ │ │ │
+     * │ │ │ │ │ │
+     * 0  0  2  *  *  *
+     */
+    @Scheduled(cron = "0 0 2 * * *")
     @Transactional
     public void removeExpiredReservations() {
         LocalDate today = LocalDate.now(clock); // predictable for testing
@@ -40,7 +52,7 @@ public class ReservationCleanupJob {
 
         reservationRepo.deleteAll(expired);
 
-        // TODO: decide to save the logs in a file
+
         log.info("Deleted {} expired reservations", expired.size());
     }
 }
