@@ -22,39 +22,43 @@
   
   <div th:replace="~{public/fragments/main-navbar.html :: main-navbar}"></div>
   
+  
   <div class="search-row">
     <div class="container-fluid">
-      <form class="row g-3 align-items-end" th:action="@{/search}" method="POST" th:object="${productFilters}"
-            id="searchForm">
-        
-        <input type="hidden" th:field="*{author}" id="creatorHidden">
-        <input type="hidden" th:field="*{productType}" id="productTypeHidden">
-        <input type="hidden" th:field="*{languageId}" id="languageHidden">
-        <input type="hidden" th:field="*{countryId}" id="countryHidden">
-        
-        <div class="col-12 col-md-6">
-          <label for="searchInput" class="form-label search-label">Search</label>
-          <input th:field="*{title}" type="text" class="form-control" id="searchInput"
-                 placeholder="Search for a product"/>
+      <div class="container">
+        <form class="row g-3 align-items-end" th:action="@{/search}" method="POST" th:object="${productFilters}"
+              id="searchForm">
+          
+          <input type="hidden" th:field="*{author}" id="creatorHidden">
+          <input type="hidden" th:field="*{productType}" id="productTypeHidden">
+          <input type="hidden" th:field="*{languageId}" id="languageHidden">
+          <input type="hidden" th:field="*{countryId}" id="countryHidden">
+          
+          <div class="col-12 col-md-6">
+            <label for="searchInput" class="form-label search-label">Search</label>
+            <input th:field="*{title}" type="text" class="form-control" id="searchInput"
+                   placeholder="Search for a product"/>
+          </div>
+          <div class="col-12 col-md-3">
+            <label for="librarySelect" class="form-label search-label">Library</label>
+            <select id="librarySelect" class="form-select" th:field="*{libraryId}">
+              <option value="">All Libraries</option>
+              <option th:each="library : ${libraries}"
+                      th:value="${library.id}"
+                      th:text="${library.name}">
+              </option>
+            </select>
+          </div>
+          <div class="col-12 col-md-3 d-grid">
+            <button type="submit" class="btn btn-search text-white">
+              <i class="bi bi-search"></i> Search
+            </button>
+          </div>
+        </form>
+        <div>
         </div>
-        <div class="col-12 col-md-3">
-          <label for="librarySelect" class="form-label search-label">Library</label>
-          <select id="librarySelect" class="form-select" th:field="*{libraryId}">
-            <option value="">All Libraries</option>
-            <option th:each="library : ${libraries}"
-                    th:value="${library.id}"
-                    th:text="${library.name}">
-            </option>
-          </select>
-        </div>
-        <div class="col-12 col-md-3 d-grid">
-          <button type="submit" class="btn btn-search text-white">
-            <i class="bi bi-search"></i> Search
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      </div>
+
 
 </header>
 
