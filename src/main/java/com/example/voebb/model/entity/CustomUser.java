@@ -18,7 +18,6 @@ public class CustomUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //TODO: TBD => migrate to UUID type
     @Column(name = "custom_user_id")
     private Long id;
 
@@ -47,7 +46,6 @@ public class CustomUser {
     @Max(5)
     private Integer borrowedProductsCount = 0;
 
-    // TODO: TBD add more fields => created_at(register_date), updated_at, expired_membership_date
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
