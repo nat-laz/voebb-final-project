@@ -8,14 +8,13 @@
   <title>VÖBB</title>
   <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/zephyr/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/custom-style.css}">
-  <title data-layout-title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE"></title>
   <link rel="stylesheet" th:href="@{/css/main.css}">
+  <title data-layout-title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE"></title>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
 
-<header layout:fragment="header">
+<header layout:fragment="header" class="sticky-top">
   <div class="bg-dark text-white py-1 text-center v-middle py-2" th:if="${borrowExpiresSoon}">
     <small>🔔 You have borrows that expires soon! Check your borrows in profile and return them at time. 🔔</small>
   </div>
@@ -35,7 +34,7 @@
   <div class="offcanvas-body p-4">
     <label for="productTypeDropdown" class="form-label">Product Type</label>
     <div class="dropdown w-auto" id="productTypeDropdown">
-      <button class="btn btn-secondary dropdown-toggle w-100 text-body dci-border-dark" type="button"
+      <button class="btn btn-secondary dropdown-toggle w-100 text-body shadow-sm" type="button"
               id="productTypeDropdownButton"
               data-bs-toggle="dropdown" aria-expanded="false"
               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -64,7 +63,7 @@
     
     <label for="languageDropdown" class="form-label">Product language</label>
     <div class="dropdown w-auto" id="languageDropdown">
-      <button class="btn btn-secondary dropdown-toggle w-100 text-body dci-border-dark" type="button"
+      <button class="btn btn-secondary dropdown-toggle w-100 text-body shadow-sm" type="button"
               id="languageDropdownButton"
               data-bs-toggle="dropdown" aria-expanded="false"
               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -76,7 +75,8 @@
         <li th:each="language : ${productLanguages}">
           <a class="dropdown-item"
              th:text="${language.name}"
-             th:attr="data-value=${language.id}"></a>
+             th:attr="data-value=${language.id}"
+             href="#"></a>
         </li>
       </ul>
     </div>
@@ -85,7 +85,7 @@
     
     <label for="countryDropdown" class="form-label">Product country</label>
     <div class="dropdown w-auto" id="countryDropdown">
-      <button class="btn btn-secondary dropdown-toggle w-100 text-body dci-border-dark" type="button"
+      <button class="btn btn-secondary dropdown-toggle w-100 text-body shadow-sm" type="button"
               id="countryDropdownButton"
               data-bs-toggle="dropdown" aria-expanded="false"
               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -97,7 +97,8 @@
         <li th:each="country : ${productCountries}">
           <a class="dropdown-item"
              th:text="${country.name}"
-             th:attr="data-value=${country.id}"></a>
+             th:attr="data-value=${country.id}"
+             href="#"></a>
         </li>
       </ul>
     </div>
