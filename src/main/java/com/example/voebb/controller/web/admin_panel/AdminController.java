@@ -10,6 +10,6 @@ public class AdminController {
 
     @GetMapping
     public String getIndexPage(){
-        return "/admin/index";
+        return "admin/index";
     }
 }

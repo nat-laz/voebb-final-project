@@ -66,7 +66,7 @@ public class ProductControllerWeb {
         Page<CardProductDTO> resultProducts = productService.getProductCardsByFilters(productFilters, pageable);
         model.addAttribute("page", resultProducts);
         model.addAttribute("cardProductDTOs", resultProducts.getContent());
-        return "/public/product/product-list";
+        return "public/product/product-list";
     }
 
 
