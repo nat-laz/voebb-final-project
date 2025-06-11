@@ -1,12 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
     const track = document.querySelector('.carousel-track');
-    const visibleCards = 3;
+    let visibleCards;
     let cardWidth;
     let currentIndex;
     let isTransitioning = false;
 
+    // Responsive card count
+    function getVisibleCards() {
+        if (window.innerWidth < 576) return 1;
+        if (window.innerWidth < 992) return 2;
+        return 3;
+    }
+
     // Wait for all images to load before calculating width
     window.addEventListener("load", () => {
+        visibleCards = getVisibleCards();
+
         const originalCards = Array.from(track.children);
 
         if (originalCards.length === 0) {
@@ -14,9 +23,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        cardWidth = originalCards[0].offsetWidth + 16;
-        console.log("Card width:", cardWidth); // Debug
+        const card = originalCards[0];
+        const style = window.getComputedStyle(track);
+        const gap = parseFloat(style.gap) || 16;
 
+        cardWidth = card.offsetWidth + gap;
         currentIndex = visibleCards;
 
         const prepend = originalCards.slice(-visibleCards).map(card => card.cloneNode(true));

@@ -2,163 +2,94 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{public/public-layout.html}">
+      layout:decorate="~{public/public-layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>VÖBB- Home Page</title>
-    <link rel="stylesheet" th:href="@{/css/main-page.css}">
+  <meta charset="UTF-8">
+  <title>VÖBB | Home Page</title>
+  <link rel="stylesheet" th:href="@{/css/carousel.css}">
 </head>
 
 <main layout:fragment="content">
-
-<div class="content-section">
+  
+  <div class="container my-5">
     
-    <div>
-        <h3>VÖBB – Your Gateway to Berlin’s Knowledge and Culture</h3><br><br>
-        <p>
-      <span>
-        The Verbund der Öffentlichen Bibliotheken Berlins (VÖBB) is more than just a library network — it’s a vibrant cultural and educational hub serving the
-        entire Berlin community. With over 80 branches across the city, VÖBB connects people to a world of ideas, inspiration, and information.<br><br>
-
-      Our mission is to make learning, discovery, and cultural exchange accessible to all — regardless of age, background, or language. Whether you’re diving into
-        a novel, exploring new research, picking up a new language, or attending one of our many events, VÖBB is your welcoming space to grow and connect.
-
-
-      </span><br><br>
-
-        <h3>VÖBB - What We Offer</h3><br>
-        <ul>
-            <li>A massive digital and physical collection — books, eBooks, films, music, and more</li>
-            <li>Free Wi-Fi, study spaces, and workstations in modern facilities</li>
-            <li>Events, workshops, and exhibitions for all ages</li>
-            <li>Multilingual resources and inclusive services for Berlin’s diverse communities</li>
-            <li>24/7 digital access through our online portal and app</li>
-            <li>At VÖBB, we believe libraries are not just about books — they’re about people, stories, and possibilities.</li>
-        </ul>
-
-        Join us. Discover something new.<br><br>
-
-
+    <div class="text-wrapper">
+      <h3 class="mb-4">VÖBB – Your Gateway to Berlin’s Knowledge and Culture</h3>
+      
+      <p class="text-justify">
+        <span>
+          The Verbund der Öffentlichen Bibliotheken Berlins (VÖBB) is more than just a library network — it’s a vibrant cultural and educational hub serving the
+          entire Berlin community. With over 80 branches across the city, VÖBB connects people to a world of ideas, inspiration, and information.
+        </span>
+      </p>
+      
+      <p class="text-justify">
+        Our mission is to make learning, discovery, and cultural exchange accessible to all — regardless of age,
+        background, or language. Whether you’re diving into
+        a novel, exploring new research, picking up a new language, or attending one of our many events, VÖBB is your
+        welcoming space to grow and connect.
+      </p>
+      
+      <h3 class="mt-5 mb-3">VÖBB - What We Offer</h3>
+      <ul class="ps-3 mb-4">
+        <li class="mb-2 d-flex align-items-start">
+          <i class="bi bi-book me-2 text-primary"></i>
+          <span>A massive digital and physical collection — books, eBooks, films, music, and more</span>
+        </li>
+        <li class="mb-2 d-flex align-items-start">
+          <i class="bi bi-wifi me-2 text-primary"></i>
+          <span>Free Wi-Fi, study spaces, and workstations in modern facilities</span>
+        </li>
+        <li class="mb-2 d-flex align-items-start">
+          <i class="bi bi-easel2-fill me-2 text-primary"></i>
+          <span>Events, workshops, and exhibitions for all ages</span>
+        </li>
+        <li class="mb-2 d-flex align-items-start">
+          <i class="bi bi-translate me-2 text-primary"></i>
+          <span>Multilingual resources and inclusive services for Berlin’s diverse communities</span>
+        </li>
+        <li class="mb-2 d-flex align-items-start">
+          <i class="bi bi-phone me-2 text-primary"></i>
+          <span>24/7 digital access through our online portal and app</span>
+        </li>
+        <li class="mb-2 d-flex align-items-start">
+          <i class="bi bi-people me-2 text-primary"></i>
+          <span>At VÖBB, we believe libraries are not just about books — they’re about people, stories, and possibilities.</span>
+        </li>
+      </ul>
+      
+      
+      <p class="lead fw-medium">Join us. Discover something new.</p>
+    
     </div>
-
-    <div class="d-flex justify-content-center">
-        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-wrapper mx-3">
-                <button class="nav left" aria-label="Scroll left">&#8249;</button>
-                <div class="custom-carousel">
-
-                    <div class="carousel-window">
-                        <div class="carousel-track">
-
-                            <div class="card p-3" style="width: 18rem;">
-                                <img th:src="@{/images/image1.jpg}" class="card-img-top mx-auto" style="width: 85%; height: auto;" alt="Image 1">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Reading & Discussions</h5>
-                                    <p class="card-text">Join fellow book lovers for lively conversations around hand-picked titles. Share your thoughts, explore new
-                                        perspectives, and deepen your love for literature in a relaxed, inclusive setting.</p>
-                                    <a href="mailto:email1@example.com">✉ email1@example.com</a>
-                                </div>
-                            </div>
-
-                            <div class="card p-3" style="width: 18rem;">
-                                <img th:src="@{/images/image2.jpg}" class="card-img-top mx-auto" style="width: 85%; height: auto;" alt="Image 2">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Writing Workshop</h5>
-                                    <p class="card-text">Unleash your inner author! Our hands-on writing sessions guide you through storytelling, structure, and style —
-                                        whether you're a beginner or brushing up your skills.</p>
-                                    <a href="mailto:email2@example.com">✉ email1@example.com</a>
-                                </div>
-                            </div>
-
-                            <div class="card p-3" style="width: 18rem;">
-                                <img th:src="@{/images/image3.jpg}" class="card-img-top mx-auto" style="width: 85%; height: auto;" alt="Image 3">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Lecture: My money can do more!</h5>
-                                    <p class="card-text">Discover how to make smart financial choices and align your spending with your values. This talk offers
-                                        tips on ethical banking, sustainable investing, and everyday saving.
-
-                                    </p>
-                                    <a href="mailto:email3@example.com">✉ email1@example.com</a>
-                                </div>
-                            </div>
-                            <div class="card p-3" style="width: 18rem;">
-                                <img th:src="@{/images/image1.jpg}" class="card-img-top mx-auto" style="width: 85%; height: auto;" alt="Image 1">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Event: Library talks on Security </h5>
-                                    <p class="card-text">From digital privacy to public safety — join experts as we explore how to
-                                        stay informed and protected in an ever-changing world. Interactive Q&A included.</p>
-                                    <a href="mailto:email4@example.com">✉ email1@example.com</a>
-                                </div>
-                            </div>
-                            <div class="card p-3" style="width: 18rem;">
-                                <img th:src="@{/images/image1.jpg}" class="card-img-top mx-auto" style="width: 85%; height: auto;" alt="Image 1">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Poetry Classes for Kids </h5>
-                                    <p class="card-text">Let the words rhyme and rhythm flow! These playful sessions help young poets express
-                                        themselves creatively while building confidence with language and performance.</p>
-                                    <a href="mailto:email1@example.com">✉ email1@example.com</a>
-                                </div>
-                            </div>
-                            <div class="card p-3" style="width: 18rem;">
-                                <img th:src="@{/images/image1.jpg}" class="card-img-top mx-auto" style="width: 85%; height: auto;" alt="Image 1">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Electronic Music to join in</h5>
-                                    <p class="card-text">Get hands-on with beats, loops, and sound design. This interactive music lab is
-                                        open to curious minds of all levels — no experience needed, just your ears and enthusiasm!</p>
-                                    <a href="mailto:email1@example.com">✉ email1@example.com</a>
-                                </div>
-                            </div>
-                            <div class="card p-3" style="width: 18rem;">
-                                <img th:src="@{/images/image1.jpg}" class="card-img-top mx-auto" style="width: 85%; height: auto;" alt="Image 1">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Picture Book Cinema</h5>
-                                    <p class="card-text">Where stories come alive on screen! Cozy up with the little ones for animated adaptations of
-                                        beloved children’s books — followed by fun discussions and activities.</p>
-                                    <a href="mailto:email1@example.com">✉ email1@example.com</a>
-                                </div>
-                            </div>
-                            <div class="card p-3" style="width: 18rem;">
-                                <img th:src="@{/images/image1.jpg}" class="card-img-top mx-auto" style="width: 85%; height: auto;" alt="Image 1">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">DisInformation</h5>
-                                    <p class="card-text">Learn to spot fake news and navigate the online world critically. This event explores the mechanics
-                                        of misinformation and gives you tools to stay media-savvy.</p>
-                                    <a href="mailto:email1@example.com">✉ email1@example.com</a>
-                                </div>
-                            </div>
-                            <div class="card p-3" style="width: 18rem;">
-                                <img th:src="@{/images/image1.jpg}" class="card-img-top mx-auto" style="width: 85%; height: auto;" alt="Image 1">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Events in June</h5>
-                                    <p class="card-text">June is packed with discovery! From literature and learning to music and media, explore a month of
-                                        diverse events designed to spark curiosity and connect our community.</p>
-                                    <a href="mailto:email1@example.com">✉ email1@example.com</a>
-                                </div>
-
-                            </div>
-
-
-                        </div>
-
-
-                    </div>
-
-                </div>
-                <button class="nav right"  aria-label="Scroll right">&#8250;</button>
-
+  </div>
+  
+  <div class="container my-5">
+    <div class="carousel-wrapper py-4">
+      <button class="nav left" aria-label="Scroll left">&#8249;</button>
+      
+      <div class="custom-carousel">
+        <div class="carousel-window">
+          <div class="carousel-track">
+            <div class="card p-0" th:each="event : ${carouselEvents}">
+              <img th:src="@{${event.imageUrl}}" class="card-img-top" th:alt="${event.title}">
+              
+              <div class="card-body d-flex flex-column px-3 py-3">
+                <h5 class="card-title mb-3 mt-1" th:text="${event.title}">Event Title</h5>
+                <p class="card-text mb-3" th:text="${event.description}">Event Description</p>
+                <a th:href="'mailto:' + ${event.email}"
+                   th:text="'✉ ' + ${event.email}"
+                   class="mt-auto pt-2 small text-primary"
+                   aria-label="Email event organizer">✉ email@example.com</a>
+              </div>
             </div>
+          </div>
         </div>
-
+      </div>
+      
+      <button class="nav right" aria-label="Scroll right">&#8250;</button>
     </div>
-</div>
-
-
-
-<script th:src="@{/js/carousel.js}"></script>
-
-
+  </div>
+  <script th:src="@{/js/carousel.js}"></script>
 </main>
-
-
-
 </html>

@@ -5,7 +5,7 @@
       layout:decorate="~{public/public-layout}">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>VÖBB | Product Catalog</title>
   <style>
       .hover-card {
           transition: box-shadow 0.3s ease, transform 0.3s ease;
@@ -17,58 +17,114 @@
       }
 
       .page-wrapper {
-          width: 100vw;
+          width: 100%;
           min-height: 100vh;
           display: flex;
-          justify-content: center; /* center cards container */
-          align-items: flex-start;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
           box-sizing: border-box;
+          padding: 1rem;
       }
 
+      .filters-sidebar {
+          width: 100%;
+          max-width: 50rem;
+          margin-bottom: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+          .page-wrapper {
+              flex-wrap: nowrap;
+              justify-content: flex-start;
+              align-items: flex-start;
+          }
+
+          .filters-sidebar {
+              position: sticky;
+              top: 160px;
+              height: fit-content;
+              margin-right: 2rem;
+              max-width: 250px;
+          }
+      }
 
       .cards-container {
-          width: 50rem; /* fixed width */
+          flex: 1;
           display: flex;
           flex-direction: column;
           align-items: center;
-          flex-shrink: 0; /* don't shrink */
+          width: 100%;
+      }
+
+      #productTypeDropdownButton,
+      #languageDropdownButton,
+      #countryDropdownButton {
+          color: #212529 !important;
+          background-color: #ffffff !important;
+      }
+      .filters-container {
+          width: 100%;
+          max-width: 50rem;
+          margin: 0 auto 1.5rem;
       }
       
-      .filters-sidebar {
-          width: 250px;
-          height: fit-content;
-          position: fixed;
-          left: 15px;
-          top: 160px;
-          bottom: 0;
-          box-sizing: border-box;
+      @media (min-width: 1024px) {
+          .page-wrapper {
+              flex-wrap: nowrap;
+              justify-content: flex-start;
+              align-items: flex-start;
+          }
+
+          .filters-container {
+              max-width: unset;
+              width: 250px;
+              margin-right: 2rem;
+          }
+
+          .filters-sidebar {
+              position: sticky;
+              top: 160px;
+              height: fit-content;
+          }
       }
+      .card-title-link {
+          color: #212529; !important;
+      }
+
+      [data-bs-theme="dark"] .card-title-link {
+          color: #f8f9fa; !important;
+      }
+  
+  
+  
   </style>
 
 </head>
 <body>
 
 <main layout:fragment="content">
-  <div class="page-wrapper d-flex">
+  <div class="page-wrapper">
+    <div class="filters-container">
     <aside class="filters-sidebar card p-3">
       <h5>Filters</h5>
       
       <hr style="border: none; height: 1px; background-color: black;"/>
       
       <label for="productTypeDropdown" class="form-label">Product Type</label>
-      <div class="dropdown w-auto" id="productTypeDropdown">
+      <div class="dropdown w-100" id="productTypeDropdown">
         <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
                 id="productTypeDropdownButton"
                 data-bs-toggle="dropdown" aria-expanded="false"
                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           All
         </button>
-        <ul class="dropdown-menu mt-2 shadow-lg" aria-labelledby="productTypeDropdownButton"
+        <ul class="dropdown-menu mt-2 shadow-lg w-100" aria-labelledby="productTypeDropdownButton"
             style="max-height: 200px; overflow-y: auto;">
           <li><a class="dropdown-item" data-value="">All</a></li>
           <li th:each="type : ${productTypes}">
             <a class="dropdown-item"
-               th:text="${type.name}"
+               th:text="${type.displayName}"
                th:attr="data-value=${type.id}"></a>
           </li>
         </ul>
@@ -84,14 +140,14 @@
       <hr style="border: none; height: 1px; background-color: black;"/>
       
       <label for="languageDropdown" class="form-label">Product language</label>
-      <div class="dropdown w-auto" id="languageDropdown">
+      <div class="dropdown w-100" id="languageDropdown">
         <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
                 id="languageDropdownButton"
                 data-bs-toggle="dropdown" aria-expanded="false"
                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           All
         </button>
-        <ul class="dropdown-menu mt-2 shadow-lg" aria-labelledby="languageDropdownButton"
+        <ul class="dropdown-menu mt-2 shadow-lg w-100" aria-labelledby="languageDropdownButton"
             style="max-height: 200px; overflow-y: auto;">
           <li><a class="dropdown-item" data-value="">All</a></li>
           <li th:each="language : ${productLanguages}">
@@ -105,14 +161,14 @@
       <hr style="border: none; height: 1px; background-color: black;"/>
       
       <label for="countryDropdown" class="form-label">Product country</label>
-      <div class="dropdown w-auto" id="countryDropdown">
+      <div class="dropdown w-100" id="countryDropdown">
         <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
                 id="countryDropdownButton"
                 data-bs-toggle="dropdown" aria-expanded="false"
                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           All
         </button>
-        <ul class="dropdown-menu mt-2 shadow-lg" aria-labelledby="countryDropdownButton"
+        <ul class="dropdown-menu mt-2 shadow-lg w-100" aria-labelledby="countryDropdownButton"
             style="max-height: 200px; overflow-y: auto;">
           <li><a class="dropdown-item" data-value="">All</a></li>
           <li th:each="country : ${productCountries}">
@@ -128,39 +184,34 @@
       <button id="applyFiltersBtn" class="btn btn-primary w-100 m-1">Apply filters</button>
       <button id="resetFiltersBtn" class="btn btn-danger w-100 m-1">Reset filters</button>
     </aside>
+    </div>
     
-    <div class="cards-container d-flex container align-items-stretch mt-3">
+    <div class="cards-container">
       <!-- Card List -->
-      <div class="flex-fill">
+      <div class="flex-fill w-100">
         
-        <div th:if="${#lists.isEmpty(cardProductDTOs)}"
-             class="card hover-card mt-4 text-start"
-             style="width: 50rem; margin: 0 auto;">
-          <div class="card-header bg-light text-dark">
-            <h5 class="mb-0">
-              <i class="bi bi-info-circle-fill text-warning me-2"></i>
-              No products found
-            </h5>
-          </div>
-          <div class="card-body">
-            <p class="card-text">
-              There are no products matching your filters in the library catalogue.
-            </p>
-            <p class="text-muted fst-italic" style="font-size: 0.9rem;">
-              Please change your search query.
-            </p>
+        <div th:if="${#lists.isEmpty(cardProductDTOs)}" class="d-flex justify-content-center mb-4">
+          <div class="card hover-card w-100" style="max-width: 50rem;">
+            <div class="card-header">
+              <h4 class="card-title">
+                <i class="bi bi-info-circle-fill text-warning me-2"></i>
+                No products found
+              </h4>
+            </div>
+            <div class="card-body">
+                <div class="col-md-9">
+                  <p class="card-text">There are no products matching your filters in the library catalogue.</p>
+                </div>
+              <p class="text-muted fst-italic small">Please change your search query.</p>
+            </div>
           </div>
         </div>
         
-        <div th:each="cardProductDTO : ${cardProductDTOs}"
-             class="d-flex justify-content-center mb-4">
+        <div th:each="cardProductDTO : ${cardProductDTOs}" class="d-flex justify-content-center mb-4">
           <a th:replace="~{public/fragments/product-card :: card(${cardProductDTO})}"></a>
         </div>
         
-        
-        <div
-          th:replace="~{public/fragments/search-by-title-pagination::pagination}">
-        </div>
+        <div th:replace="~{public/fragments/search-by-title-pagination::pagination}"></div>
       
       </div>
     </div>

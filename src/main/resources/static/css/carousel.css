@@ -1,6 +1,28 @@
-
 body {
     background-color: #f8f9fa;
+}
+
+.carousel-wrapper,
+.carousel-window,
+.custom-carousel,
+.carousel-track,
+.card,
+.card-title,
+.card-text,
+.card a,
+.card-img-top,
+.nav {
+    transition:
+            background-color 0.4s ease,
+            color 0.4s ease,
+            filter 0.4s ease,
+            border-color 0.4s ease,
+            box-shadow 0.4s ease,
+            transform 0.25s ease;
+}
+
+.card-img-top {
+    transition: filter 0.4s ease;
 }
 
 .content-section {
@@ -9,11 +31,12 @@ body {
     margin: 0 auto;
 }
 
-.content-section p,
-.content-section span,
-.content-section h3 {
-    text-align: justify;
+.text-wrapper {
+    max-width: 60rem;
+    margin: 3rem auto;
+    padding: 1rem;
 }
+
 .carousel-wrapper,
 .carousel-window,
 .custom-carousel {
@@ -89,14 +112,17 @@ body {
     flex: 0 0 18rem;
     width: 18rem;
     margin:0;
-    transition: all 0.3s ease;
     border: none;
     box-shadow: none;
+    transition:
+            transform 0.25s ease,
+            background-color 0.25s ease;
+    will-change: transform;
 }
 
 .card:hover {
     background-color: #b1bfcc;
-    transform: translateY(-4px);
+    transform: translateY(-1px);
 }
 
 .card-title {
@@ -115,3 +141,45 @@ body {
 .card a:hover {
     text-decoration: underline;
 }
+
+
+/* DARK MODE */
+[data-bs-theme="dark"] .carousel-wrapper {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: #242627;
+    border: none;
+}
+
+[data-bs-theme="dark"] .card-text {
+    color: #99a3a6;
+}
+
+[data-bs-theme="dark"] .card a {
+    color: #4361ee;
+}
+
+[data-bs-theme="dark"] .card a:hover {
+    color: #364fc7;
+    text-decoration: underline;
+}
+
+[data-bs-theme="dark"] .card:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav {
+    color: #4361ee;
+    transition: color 0.8s ease-in-out;
+}
+
+.nav:hover {
+    color: #364fc7;
+}
+
+[data-bs-theme="dark"] .card-img-top {
+    filter: brightness(0.9);
+}
+
