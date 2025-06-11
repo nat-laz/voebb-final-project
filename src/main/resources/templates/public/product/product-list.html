@@ -27,25 +27,11 @@
           padding: 1rem;
       }
 
-      .filters-sidebar {
-          width: 100%;
-          max-width: 50rem;
-          margin-bottom: 1.5rem;
-      }
-
       @media (min-width: 768px) {
           .page-wrapper {
               flex-wrap: nowrap;
               justify-content: flex-start;
               align-items: flex-start;
-          }
-
-          .filters-sidebar {
-              position: sticky;
-              top: 160px;
-              height: fit-content;
-              margin-right: 2rem;
-              max-width: 250px;
           }
       }
 
@@ -56,36 +42,12 @@
           align-items: center;
           width: 100%;
       }
-
-      #productTypeDropdownButton,
-      #languageDropdownButton,
-      #countryDropdownButton {
-          color: #212529 !important;
-          background-color: #ffffff !important;
-      }
-      .filters-container {
-          width: 100%;
-          max-width: 50rem;
-          margin: 0 auto 1.5rem;
-      }
       
       @media (min-width: 1024px) {
           .page-wrapper {
               flex-wrap: nowrap;
               justify-content: flex-start;
               align-items: flex-start;
-          }
-
-          .filters-container {
-              max-width: unset;
-              width: 250px;
-              margin-right: 2rem;
-          }
-
-          .filters-sidebar {
-              position: sticky;
-              top: 160px;
-              height: fit-content;
           }
       }
       .card-title-link {
@@ -134,7 +96,6 @@
     </div>
   
   </div>
-  <script th:src="@{/js/product/synchronizeProductFiltersAndHiddenInput.js}"></script>
 </main>
 </body>
 </html>

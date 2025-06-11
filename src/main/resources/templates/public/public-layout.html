@@ -21,50 +21,6 @@
   </div>
   
   <div th:replace="~{public/fragments/main-navbar.html :: main-navbar}"></div>
-  
-  
-  <div class="search-row">
-    <div class="container-fluid">
-      <div class="container">
-        <form class="row g-3 align-items-end" id="searchForm" method="POST" th:action="@{/search}"
-              th:object="${productFilters}">
-          
-          <input id="creatorHidden" th:field="*{author}" type="hidden">
-          <input id="productTypeHidden" th:field="*{productType}" type="hidden">
-          <input id="languageHidden" th:field="*{languageId}" type="hidden">
-          <input id="countryHidden" th:field="*{countryId}" type="hidden">
-          
-          <div class="col-12 col-md-4">
-            <label class="form-label search-label" for="searchInput">Search</label>
-            <input class="form-control" id="searchInput" placeholder="Search for a product" th:field="*{title}"
-                   type="text"/>
-          </div>
-          <div class="col-12 col-md-4">
-            <label class="form-label search-label" for="librarySelect">Library</label>
-            <select class="form-select" id="librarySelect" th:field="*{libraryId}">
-              <option value="">All Libraries</option>
-              <option th:each="library : ${libraries}"
-                      th:text="${library.name}"
-                      th:value="${library.id}">
-              </option>
-            </select>
-          </div>
-          <div class="col-12 col-md-2 d-grid">
-            <button class="btn btn-search text-white" type="submit">
-              <i class="bi bi-search"></i> Search
-            </button>
-          </div>
-          <div class="col-12 col-md-2 d-grid">
-            <button class="btn btn-search" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
-                    aria-controls="offcanvasExample">
-              <i class="bi bi-filter-circle"></i> Filters
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
 </header>
 
 <!--Main content-->
@@ -79,7 +35,7 @@
   <div class="offcanvas-body p-4">
     <label for="productTypeDropdown" class="form-label">Product Type</label>
     <div class="dropdown w-auto" id="productTypeDropdown">
-      <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
+      <button class="btn btn-secondary dropdown-toggle w-100 text-body dci-border-dark" type="button"
               id="productTypeDropdownButton"
               data-bs-toggle="dropdown" aria-expanded="false"
               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -100,15 +56,15 @@
     <hr style="border: none; height: 1px; background-color: black;"/>
     
     <div>
-      <label for="creator" class="form-label">Creator</label>
-      <input type="text" id="creator" name="creator" class="form-control" th:value="${productFilters.author}">
+      <label for="creatorInputSidebar" class="form-label">Creator</label>
+      <input type="text" id="creatorInputSidebar" name="creator" class="form-control" th:value="${productFilters.author}">
     </div>
     
     <hr style="border: none; height: 1px; background-color: black;"/>
     
     <label for="languageDropdown" class="form-label">Product language</label>
     <div class="dropdown w-auto" id="languageDropdown">
-      <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
+      <button class="btn btn-secondary dropdown-toggle w-100 text-body dci-border-dark" type="button"
               id="languageDropdownButton"
               data-bs-toggle="dropdown" aria-expanded="false"
               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -129,7 +85,7 @@
     
     <label for="countryDropdown" class="form-label">Product country</label>
     <div class="dropdown w-auto" id="countryDropdown">
-      <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
+      <button class="btn btn-secondary dropdown-toggle w-100 text-body dci-border-dark" type="button"
               id="countryDropdownButton"
               data-bs-toggle="dropdown" aria-expanded="false"
               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -158,8 +114,9 @@
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 <script th:src="@{/js/toggleTheme.js}"></script>
+<script th:src="@{/js/product/synchronizeProductFiltersAndHiddenInput.js}"></script>
+
 
 </body>
 </html>

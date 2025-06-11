@@ -1,42 +1,89 @@
-<nav th:fragment="main-navbar" class="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-  <a class="navbar-brand fw-bold" href="/">VÖBB</a>
-  
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-          aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  
-  <div class="collapse navbar-collapse justify-content-between mt-2 mt-lg-0" id="navbarContent">
-    <!-- Desktop: Left nav -->
-    <ul class="navbar-nav align-items-lg-center">
-      <li class="nav-item d-none d-lg-block">
-        <a href="/libraries" class="nav-link text-light fw-semibold">Libraries</a>
-      </li>
-    </ul>
+<nav th:fragment="main-navbar" >
+  <!-- Nav bar-->
+  <div class="navbar navbar-expand-lg navbar-dark bg-primary px-3">
+    <a class="navbar-brand fw-bold" href="/">VÖBB</a>
     
-    <!-- Mobile: buttons -->
-    <div class="d-lg-none w-100 px-3 py-1">
-      <div class="mb-1">
-        <a href="/libraries" class="d-flex align-items-center gap-2 text-light text-decoration-none py-2">
-          <i class="bi bi-journal-bookmark-fill"></i> Libraries
-        </a>
-        
-        <button id="themeToggleMobile" class="btn btn-link text-light d-flex align-items-center gap-2 text-decoration-none px-0 py-2">
-          <i id="themeIconMobile" class="bi bi-circle-half"></i> Toggle theme
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse justify-content-between mt-2 mt-lg-0" id="navbarContent">
+      <!-- Desktop: Left nav -->
+      <ul class="navbar-nav align-items-lg-center">
+        <li class="nav-item d-none d-lg-block">
+          <a href="/libraries" class="nav-link text-light fw-semibold">Libraries</a>
+        </li>
+      </ul>
+      
+      <!-- Desktop: Right nav -->
+      <div class="d-none d-lg-flex align-items-center">
+        <button id="themeToggle" class="btn btn-icon text-light text-decoration-none ms-3 d-flex align-items-center justify-content-center" aria-label="Toggle theme">
+          <i id="themeIcon" class="bi bi-circle-half"></i>
         </button>
-        <div class="py-2">
-          <div th:replace="~{public/fragments/_login-modal :: login-dropdown}"></div>
+        
+        <div th:replace="~{public/fragments/_login-modal :: login-dropdown}"></div>
+      </div>
+      
+      <!-- Mobile: buttons -->
+      <div class="d-lg-none w-100 px-3 py-1">
+        <div class="mb-1">
+          <a href="/libraries" class="d-flex align-items-center gap-2 text-light text-decoration-none py-2">
+            <i class="bi bi-journal-bookmark-fill"></i> Libraries
+          </a>
+          
+          <button id="themeToggleMobile" class="btn btn-link text-light d-flex align-items-center gap-2 text-decoration-none px-0 py-2">
+            <i id="themeIconMobile" class="bi bi-circle-half"></i> Toggle theme
+          </button>
+          <div class="py-2">
+            <div th:replace="~{public/fragments/_login-modal :: login-dropdown}"></div>
+          </div>
         </div>
       </div>
     </div>
-    
-    <!-- Desktop: Right nav -->
-    <div class="d-none d-lg-flex align-items-center">
-      <button id="themeToggle" class="btn btn-icon text-light text-decoration-none ms-3 d-flex align-items-center justify-content-center" aria-label="Toggle theme">
-        <i id="themeIcon" class="bi bi-circle-half"></i>
-      </button>
-      
-      <div th:replace="~{public/fragments/_login-modal :: login-dropdown}"></div>
+  </div>
+  
+  <!-- Search row -->
+  <div class="search-row">
+    <div class="container-fluid">
+      <div class="container">
+        <form class="row g-3 align-items-end" id="searchForm" method="POST" th:action="@{/search}"
+              th:object="${productFilters}">
+          
+          <input id="creatorHidden" th:field="*{author}" type="hidden">
+          <input id="productTypeHidden" th:field="*{productType}" type="hidden">
+          <input id="languageHidden" th:field="*{languageId}" type="hidden">
+          <input id="countryHidden" th:field="*{countryId}" type="hidden">
+          
+          <div class="col-12 col-md-4">
+            <label class="form-label search-label" for="searchInput">Search</label>
+            <input class="form-control" id="searchInput" placeholder="Search for a product" th:field="*{title}"
+                   type="text"/>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label search-label" for="librarySelect">Library</label>
+            <select class="form-select" id="librarySelect" th:field="*{libraryId}">
+              <option value="">All Libraries</option>
+              <option th:each="library : ${libraries}"
+                      th:text="${library.name}"
+                      th:value="${library.id}">
+              </option>
+            </select>
+          </div>
+          <div class="col-12 col-md-2 d-grid">
+            <button class="btn btn-search text-white" type="submit">
+              <i class="bi bi-search"></i> Search
+            </button>
+          </div>
+          <div class="col-12 col-md-2 d-grid">
+            <button class="btn btn-search text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+                    aria-controls="offcanvasExample">
+              <i class="bi bi-filter-circle"></i> Filters
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
+  
 </nav>
