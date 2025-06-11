@@ -1,10 +1,15 @@
 package com.example.voebb.controller.web.admin_panel;
 
+import com.example.voebb.model.dto.user.GetCustomUserDTO;
 import com.example.voebb.model.dto.user.UserDTO;
+import com.example.voebb.model.dto.user.UserFilters;
 import com.example.voebb.repository.CustomUserRoleRepo;
 import com.example.voebb.service.CustomUserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,17 +24,27 @@ public class UserControllerAdmin {
     private final CustomUserService customUserService;
     private final CustomUserRoleRepo customUserRoleRepo;
 
-    // TODO: get paginated Users
+
     @GetMapping
-    public String listUsers(Model model) {
-        model.addAttribute("userDTOs", customUserService.getAllUsers());
+    public String getAllUsers(Model model,
+                              @ModelAttribute("userFilters") UserFilters filters,
+                              @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                              @RequestParam(value = "success", required = false) String success) {
+
+        Page<GetCustomUserDTO> page = customUserService.getFilteredUsers(filters, pageable);
+        model.addAttribute("page", page);
+        model.addAttribute("users", page.getContent());
+
+        if (success != null && !success.isBlank()) {
+            model.addAttribute("success", success);
+        }
 
         return "admin/user/user-management";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("userDTO", new UserDTO(null, "", "","", "", "", true, 0, List.of()));
+        model.addAttribute("userDTO", new UserDTO(null, "", "", "", "", "", true, 0, List.of()));
         model.addAttribute("allRoles", customUserRoleRepo.findAll());
         return "admin/user/create-user";
     }
@@ -51,13 +66,6 @@ public class UserControllerAdmin {
         return "redirect:/admin/users";
     }
 
-   /* @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        customUserService.deleteUser(id);
-        return "redirect:/users";
-    }
-
-    */
 
     @GetMapping("/edit/{id}")
     public String editUser(@PathVariable Long id, Model model) {
