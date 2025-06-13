@@ -27,25 +27,11 @@
           padding: 1rem;
       }
 
-      .filters-sidebar {
-          width: 100%;
-          max-width: 50rem;
-          margin-bottom: 1.5rem;
-      }
-
       @media (min-width: 768px) {
           .page-wrapper {
               flex-wrap: nowrap;
               justify-content: flex-start;
               align-items: flex-start;
-          }
-
-          .filters-sidebar {
-              position: sticky;
-              top: 160px;
-              height: fit-content;
-              margin-right: 2rem;
-              max-width: 250px;
           }
       }
 
@@ -56,36 +42,12 @@
           align-items: center;
           width: 100%;
       }
-
-      #productTypeDropdownButton,
-      #languageDropdownButton,
-      #countryDropdownButton {
-          color: #212529 !important;
-          background-color: #ffffff !important;
-      }
-      .filters-container {
-          width: 100%;
-          max-width: 50rem;
-          margin: 0 auto 1.5rem;
-      }
       
       @media (min-width: 1024px) {
           .page-wrapper {
               flex-wrap: nowrap;
               justify-content: flex-start;
               align-items: flex-start;
-          }
-
-          .filters-container {
-              max-width: unset;
-              width: 250px;
-              margin-right: 2rem;
-          }
-
-          .filters-sidebar {
-              position: sticky;
-              top: 160px;
-              height: fit-content;
           }
       }
       .card-title-link {
@@ -95,9 +57,7 @@
       [data-bs-theme="dark"] .card-title-link {
           color: #f8f9fa; !important;
       }
-  
-  
-  
+      
   </style>
 
 </head>
@@ -105,87 +65,6 @@
 
 <main layout:fragment="content">
   <div class="page-wrapper">
-    <div class="filters-container">
-    <aside class="filters-sidebar card p-3">
-      <h5>Filters</h5>
-      
-      <hr style="border: none; height: 1px; background-color: black;"/>
-      
-      <label for="productTypeDropdown" class="form-label">Product Type</label>
-      <div class="dropdown w-100" id="productTypeDropdown">
-        <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
-                id="productTypeDropdownButton"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          All
-        </button>
-        <ul class="dropdown-menu mt-2 shadow-lg w-100" aria-labelledby="productTypeDropdownButton"
-            style="max-height: 200px; overflow-y: auto;">
-          <li><a class="dropdown-item" data-value="">All</a></li>
-          <li th:each="type : ${productTypes}">
-            <a class="dropdown-item"
-               th:text="${type.displayName}"
-               th:attr="data-value=${type.id}"></a>
-          </li>
-        </ul>
-      </div>
-      
-      <hr style="border: none; height: 1px; background-color: black;"/>
-      
-      <div>
-        <label for="creator" class="form-label">Creator</label>
-        <input type="text" id="creator" name="creator" class="form-control" th:value="${productFilters.author}">
-      </div>
-      
-      <hr style="border: none; height: 1px; background-color: black;"/>
-      
-      <label for="languageDropdown" class="form-label">Product language</label>
-      <div class="dropdown w-100" id="languageDropdown">
-        <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
-                id="languageDropdownButton"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          All
-        </button>
-        <ul class="dropdown-menu mt-2 shadow-lg w-100" aria-labelledby="languageDropdownButton"
-            style="max-height: 200px; overflow-y: auto;">
-          <li><a class="dropdown-item" data-value="">All</a></li>
-          <li th:each="language : ${productLanguages}">
-            <a class="dropdown-item"
-               th:text="${language.name}"
-               th:attr="data-value=${language.id}"></a>
-          </li>
-        </ul>
-      </div>
-      
-      <hr style="border: none; height: 1px; background-color: black;"/>
-      
-      <label for="countryDropdown" class="form-label">Product country</label>
-      <div class="dropdown w-100" id="countryDropdown">
-        <button class="btn btn-secondary dropdown-toggle w-100 text-body" type="button"
-                id="countryDropdownButton"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          All
-        </button>
-        <ul class="dropdown-menu mt-2 shadow-lg w-100" aria-labelledby="countryDropdownButton"
-            style="max-height: 200px; overflow-y: auto;">
-          <li><a class="dropdown-item" data-value="">All</a></li>
-          <li th:each="country : ${productCountries}">
-            <a class="dropdown-item"
-               th:text="${country.name}"
-               th:attr="data-value=${country.id}"></a>
-          </li>
-        </ul>
-      </div>
-      
-      <hr style="border: none; height: 1px; background-color: black;"/>
-      
-      <button id="applyFiltersBtn" class="btn btn-primary w-100 m-1">Apply filters</button>
-      <button id="resetFiltersBtn" class="btn btn-danger w-100 m-1">Reset filters</button>
-    </aside>
-    </div>
-    
     <div class="cards-container">
       <!-- Card List -->
       <div class="flex-fill w-100">
@@ -217,7 +96,6 @@
     </div>
   
   </div>
-  <script th:src="@{/js/product/synchronizeProductFiltersAndHiddenInput.js}"></script>
 </main>
 </body>
 </html>
