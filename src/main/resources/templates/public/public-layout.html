@@ -129,5 +129,13 @@
 <script th:src="@{/js/toggleTheme.js}"></script>
 <script th:src="@{/js/product/synchronizeProductFiltersAndHiddenInput.js}"></script>
 
+<!-- Enable Bootstrap tooltips globally -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+    });
+</script>
+
 </body>
 </html>

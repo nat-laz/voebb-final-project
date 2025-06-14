@@ -53,9 +53,9 @@
             <label class="form-label search-label" for="librarySelect">Library</label>
             <select class="form-select" id="librarySelect" th:field="*{libraryId}">
               <option value="">All Libraries</option>
-              <option th:each="library : ${libraries}"
-                      th:text="${library.name}"
-                      th:value="${library.id}">
+              <option th:each="entry : ${libraries}"
+                      th:text="${entry.value}"
+                      th:value="${entry.key}">
               </option>
             </select>
           </div>
