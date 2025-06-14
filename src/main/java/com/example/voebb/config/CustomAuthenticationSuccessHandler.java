@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -26,11 +25,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         String redirectUrl = request.getParameter("redirect");
 
-        if (redirectUrl == null || redirectUrl.isBlank()) {
-            SavedRequest savedRequest = requestCache.getRequest(request, response);
-            if (savedRequest != null) {
-                redirectUrl = savedRequest.getRedirectUrl();
-            }
+        if (redirectUrl != null && !redirectUrl.isBlank()) {
+            response.sendRedirect(redirectUrl);
         } else {
             Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
