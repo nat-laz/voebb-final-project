@@ -42,18 +42,9 @@ public class ProductControllerWeb {
                 new CarouselEvent("Picture Book Cinema", "Where stories come alive on screen! Cozy up with the little ones for animated adaptations of beloved children’s books — followed by fun discussions and activities.", "/images/image1.jpg","email@example.com" ),
                 new CarouselEvent("DisInformation", "Learn to spot fake news and navigate the online world critically. This event explores the mechanics of misinformation and gives you tools to stay media-savvy.", "/images/image2.jpg", "email@example.com" ),
                 new CarouselEvent("Events in June", "June is packed with discovery! From literature and learning to music and media, explore a month of diverse events designed to spark curiosity and connect our community.", "/images/image3.jpg", "email@example.com" )
-
-
         );
         model.addAttribute("carouselEvents", events);
         return "public/index";
-    }
-
-    @PostMapping("/search")
-    public String postSearchResultPage(@ModelAttribute ProductFilters productFilters,
-                                       RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("productFilters", productFilters);
-        return "redirect:/search?page=1";
     }
 
     @GetMapping("/search")
@@ -82,6 +73,7 @@ public class ProductControllerWeb {
 
     @PostMapping("/reserve/{id}")
     public String reserveItem(@PathVariable("id") Long id,
+                              @RequestParam("productId") Long productId,
                               Principal principal,
                               RedirectAttributes redirectAttributes) {
 
@@ -94,6 +86,7 @@ public class ProductControllerWeb {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/profile#itemActivity";
+
+        return "redirect:/products/" + productId;
     }
 }

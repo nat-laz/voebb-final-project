@@ -36,8 +36,9 @@
   <div class="search-row">
     <div class="container-fluid">
       <div class="container">
-        <form class="row g-3 align-items-end" id="searchForm" method="POST" th:action="@{/search}"
-              th:object="${productFilters}">
+        <form class="row g-3 align-items-end" id="searchForm" method="GET" th:action="@{/search}"
+              th:object="${productFilters}"
+              onsubmit="return cleanForm(this)">
           
           <input id="creatorHidden" th:field="*{author}" type="hidden">
           <input id="productTypeHidden" th:field="*{productType}" type="hidden">
