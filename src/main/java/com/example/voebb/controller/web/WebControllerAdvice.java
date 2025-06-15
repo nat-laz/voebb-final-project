@@ -42,7 +42,7 @@ public class WebControllerAdvice {
         return libraryService.getAllLibraries().stream()
                 .collect(Collectors.toMap(
                         LibraryDTO::id,
-                        LibraryDTO::name
+                        dto -> dto.district() + ": " + dto.name()
                 ));
     }
 
