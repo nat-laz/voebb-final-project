@@ -479,28 +479,28 @@ ON CONFLICT (item_id) DO NOTHING;
 
 --  ─────────── mock: BORROWINGS  ───────────
 -- CASE 1: Active borrow (due in 3 days)
-INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (3, 50, CURRENT_DATE - INTERVAL '25 days', CURRENT_DATE + INTERVAL '3 days', NULL, 0);
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (1,3, 50, CURRENT_DATE - INTERVAL '25 days', CURRENT_DATE + INTERVAL '3 days', NULL, 0) ON CONFLICT (borrow_id) DO NOTHING;;
 
 -- CASE 2: Overdue borrow (due 5 days ago)
-INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (3, 49, CURRENT_DATE - INTERVAL '19 days', CURRENT_DATE - INTERVAL '5 days', NULL, 1);
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (2,3, 49, CURRENT_DATE - INTERVAL '19 days', CURRENT_DATE - INTERVAL '5 days', NULL, 1) ON CONFLICT (borrow_id) DO NOTHING;;
 
 -- CASE 3: Returned borrow (returned yesterday)
-INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (3, 48, CURRENT_DATE - INTERVAL '8 days', CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE - INTERVAL '1 day', 0);
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (3,3, 48, CURRENT_DATE - INTERVAL '8 days', CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE - INTERVAL '1 day', 0) ON CONFLICT (borrow_id) DO NOTHING;;
 
 -- CASE 4: Active borrow, max extensions
-INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (3, 44, CURRENT_DATE - INTERVAL '42 days', CURRENT_DATE + INTERVAL '14 days', NULL, 2);
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (4,3, 44, CURRENT_DATE - INTERVAL '42 days', CURRENT_DATE + INTERVAL '14 days', NULL, 2) ON CONFLICT (borrow_id) DO NOTHING;;
 
 -- CASE 5: Returned early
-INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (1, 45, CURRENT_DATE - INTERVAL '3 days', CURRENT_DATE + INTERVAL '4 days', CURRENT_DATE, 0);
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (5,6, 45, CURRENT_DATE - INTERVAL '3 days', CURRENT_DATE + INTERVAL '4 days', CURRENT_DATE, 0) ON CONFLICT (borrow_id) DO NOTHING;;
 
 -- CASE 6: Overdue, maxed out extensions
-INSERT INTO borrows (custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
-VALUES (2, 51, CURRENT_DATE - INTERVAL '57 days', CURRENT_DATE - INTERVAL '1 day', NULL, 2);
+INSERT INTO borrows (borrow_id, custom_user_id, item_id, borrow_start_date, borrow_due_date, return_date, extends_count)
+VALUES (6,7, 51, CURRENT_DATE - INTERVAL '57 days', CURRENT_DATE - INTERVAL '1 day', NULL, 2) ON CONFLICT (borrow_id) DO NOTHING;;
 
 
 SELECT SETVAL('borrows_borrow_id_seq', (SELECT MAX(borrow_id) FROM borrows));
