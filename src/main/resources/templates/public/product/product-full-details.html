@@ -41,11 +41,11 @@
             <div class="mb-2"><strong>Description:</strong>
               <span class="text-muted small" th:text="${productInfoDTO.description}">—</span></div>
             <div class="mb-2" th:if="${productInfoDTO.productLinkToEmedia}">
-              <strong>Product Link (eMedia):</strong>
+              <strong>Link to Overdrive:</strong>
               <a th:href="${productInfoDTO.productLinkToEmedia}"
-                 th:text="${productInfoDTO.productLinkToEmedia}"
                  class="text-muted small text-decoration-underline"
                  target="_blank" rel="noopener noreferrer">
+                Access to the title is available here.
               </a>
             </div>
           </div>
