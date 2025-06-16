@@ -4,7 +4,8 @@ VALUES (1, 'Author'),
        (2, 'Co-Author'),
        (3, 'Editor'),
        (4, 'Director'),
-       (5, 'Game Designer')
+       (5, 'Game Designer'),
+       (6, 'Producer')
 ON CONFLICT (creator_role_id) DO NOTHING;
 SELECT SETVAL('creator_roles_creator_role_id_seq', (SELECT MAX(creator_role_id) FROM creator_roles));
 
@@ -53,18 +54,18 @@ SELECT SETVAL('languages_language_id_seq', (SELECT MAX(language_id) FROM languag
 -- Products with photos
 INSERT INTO products (product_id, product_type_id, product_link_to_emedia, title, release_year, photo, description)
 VALUES (1, 1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1', 'Harry Potter discovers on his eleventh birthday that he is a wizard. He begins his magical education at Hogwarts School of Witchcraft and Wizardry and learns about his mysterious past. Along the way, he uncovers a secret about a powerful stone hidden in the school.'),
-       (2, 2, 'https://ebooks.voebb.de/hp1', 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1', 'Harry Potter discovers on his eleventh birthday that he is a wizard. He begins his magical education at Hogwarts School of Witchcraft and Wizardry and learns about his mysterious past. Along the way, he uncovers a secret about a powerful stone hidden in the school.'),
+       (2, 2, 'https://voebb.overdrive.com/media/F24FDF1F-44E8-4A66-AD0F-626B8C737FBC', 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1', 'Harry Potter discovers on his eleventh birthday that he is a wizard. He begins his magical education at Hogwarts School of Witchcraft and Wizardry and learns about his mysterious past. Along the way, he uncovers a secret about a powerful stone hidden in the school.'),
        (3, 1, NULL, 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'During his second year at Hogwarts, Harry investigates a series of mysterious attacks on students. He discovers an ancient legend about the Chamber of Secrets and faces a terrifying monster. Secrets from the school’s dark past come to light.'),
-       (4, 2, 'https://ebooks.voebb.de/hp2', 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'During his second year at Hogwarts, Harry investigates a series of mysterious attacks on students. He discovers an ancient legend about the Chamber of Secrets and faces a terrifying monster. Secrets from the school’s dark past come to light.'),
+       (4, 2, 'https://voebb.overdrive.com/media/7FE055D8-E6DE-4CB0-B278-3C7E39CA28FB', 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'During his second year at Hogwarts, Harry investigates a series of mysterious attacks on students. He discovers an ancient legend about the Chamber of Secrets and faces a terrifying monster. Secrets from the school’s dark past come to light.'),
        (5, 1, NULL, 'Harry Potter and the Prisoner of Azkaban', '1999', 'photo_url_3', 'Harry learns that Sirius Black, a dangerous escaped convict, may be after him. As he unravels the truth, Harry discovers shocking secrets about his family and the night his parents died. The story deepens Harry’s connection to his past.'),
-       (6, 2, 'https://ebooks.voebb.de/hp3', 'Harry Potter and the Goblet of Fire', '2000', 'photo_url_4', 'Harry is unexpectedly entered into the deadly Triwizard Tournament, where he faces three life-threatening challenges. As the tournament unfolds, dark forces re-emerge and Voldemort returns to power. The wizarding world is changed forever.'),
+       (6, 2, 'https://voebb.overdrive.com/media/F786C81C-6E96-44AD-8D98-55DBE5F8584A', 'Harry Potter and the Goblet of Fire', '2000', 'photo_url_4', 'Harry is unexpectedly entered into the deadly Triwizard Tournament, where he faces three life-threatening challenges. As the tournament unfolds, dark forces re-emerge and Voldemort returns to power. The wizarding world is changed forever.'),
        (7, 1, NULL, 'Harry Potter and the Order of the Phoenix', '2003', 'photo_url_5', 'With the Ministry of Magic refusing to believe in Voldemort’s return, Harry creates a student group to prepare for the dangers ahead. He struggles with visions tied to the Dark Lord and feels increasingly isolated. The battle for truth and unity begins.'),
        (13, 4, NULL, 'Monopoly', '1935', 'photo_url_13', 'Monopoly is the iconic board game of buying, trading, and developing properties to build wealth. Players compete to bankrupt their opponents through strategy and chance. It''s one of the most played and recognizable games in the world.')
 ON CONFLICT (product_id) DO NOTHING;
 
 -- Products without photos
 INSERT INTO products (product_id, product_type_id, product_link_to_emedia, title, release_year, description)
-VALUES (8, 2, 'https://ebooks.voebb.de/hp4', 'Harry Potter and the Half-Blood Prince', '2005', 'In his sixth year, Harry explores Voldemort’s past to uncover the key to his destruction. He finds a mysterious potion book marked ''Property of the Half-Blood Prince.'' As dark events unfold, tragedy strikes at Hogwarts.'),
+VALUES (8, 2, 'https://voebb.overdrive.com/media/FDA4ADE7-6E9D-41D1-BE2D-84483A482462', 'Harry Potter and the Half-Blood Prince', '2005', 'In his sixth year, Harry explores Voldemort’s past to uncover the key to his destruction. He finds a mysterious potion book marked ''Property of the Half-Blood Prince.'' As dark events unfold, tragedy strikes at Hogwarts.'),
        (9, 1, NULL, 'Harry Potter and the Deathly Hallows', '2007', 'Harry, Ron, and Hermione leave Hogwarts to hunt down Voldemort’s Horcruxes. Their journey is filled with danger, sacrifice, and revelations. The final battle at Hogwarts decides the fate of the wizarding world.'),
        (10, 1, NULL, 'Harry Potter and the Cursed Child', '2016', 'Set nineteen years later, Harry is now a father and Ministry of Magic official. His son Albus struggles with living in his father’s shadow and changes the past with a time-turner. Together they face the unintended consequences of altering time.'),
        (11, 1, NULL, 'Fantastic Beasts and Where to Find Them', '2001', 'This magical guidebook by Newt Scamander details the magical creatures of the wizarding world. It includes descriptions, habitats, and classifications of beasts from dragons to nifflers. A fun and imaginative companion to the Harry Potter series.'),
@@ -92,23 +93,44 @@ INSERT INTO creators (creator_id, creator_first_name, creator_last_name)
 VALUES (1, 'J. K.', 'Rowling'),
        (2, 'John', 'Tiffany'),
        (3, 'Jack', 'Thorne'),
-       (4, 'Elizabeth', 'Magie')
+       (4, 'Elizabeth', 'Magie'),
+       (5, 'Lana', 'Wachowski'),
+       (6, 'Lilly', 'Wachowski'),
+       (7, 'Joel', 'Silver'),
+       (8, 'Charles', 'Darrow')
 ON CONFLICT (creator_id) DO NOTHING;
 SELECT SETVAL('creators_creator_id_seq', (SELECT MAX(creator_id) FROM creators));
 
 -- Join table (same Creator ->  multiple  Roles; same Product -> multiple Creators)
 INSERT INTO creator_product_relation (creator_id, product_id, creator_role_id)
 VALUES
-    -- Rowling on both books, different roles
-    (1, 10, 1), -- AUTHOR on Cursed Child   (already there)
-    (1, 11, 2), -- CO_AUTHOR on Fantastic Beasts
+    -- J.K. Rowling: Author of all books except where noted
+    (1, 1, 1),
+    (1, 2, 1),
+    (1, 3, 1),
+    (1, 4, 1),
+    (1, 5, 1),
+    (1, 6, 1),
+    (1, 7, 1),
+    (1, 8, 1),
+    (1, 9, 1),
+    (1, 10, 1), -- Author of Cursed Child
+    (1, 11, 2), -- Co-Author of Fantastic Beasts
 
-    -- Cursed Child still has two co-authors
-    (2, 10, 2), -- Tiffany  CO_AUTHOR
-    (3, 10, 2), -- Thorne   CO_AUTHOR
+    --  Cursed Child Co-Authors
+    (2, 10, 2), -- John Tiffany
+    (3, 10, 2), -- Jack Thorne
 
-    (4, 13, 5)
-ON CONFLICT(creator_id, product_id, creator_role_id) DO NOTHING;
+    --  Monopoly: Game Designer
+    (4, 13, 5),
+    (8, 13, 5),
+
+    -- The Matrix (1999): Directors and Producer
+    (5, 12, 4), -- Lana Wachowski - Director
+    (6, 12, 4), -- Lilly Wachowski - Director
+    (7, 12, 6) -- Joel Silver - Producer
+ON CONFLICT (creator_id, product_id, creator_role_id) DO NOTHING;
+
 
 --  Clients ─────────────────────────────────────────────────
 -- Test password is 12345678
@@ -170,16 +192,114 @@ SELECT SETVAL('countries_country_id_seq', (SELECT MAX(country_id) FROM countries
 
 -- Join table (product linked to countries)
 INSERT INTO country_relation (product_id, country_id)
-VALUES (1, 1), -- Philosopher's Stone published in the UK
-       (1, 2), -- ... and in the US
-       (10, 1), -- Cursed Child in the UK
-       (11, 2);
--- Fantastic Beasts in the US
+VALUES
+--  Harry Potter and the Philosopher's Stone (Book & eMedia)
+(1, 1), -- UK
+(1, 2), -- US
+(2, 1), -- UK
+(2, 2), -- US
+
+--  Chamber of Secrets
+(3, 1), -- UK
+(3, 2), -- US
+(4, 1), -- UK
+(4, 2), -- US
+
+--  Prisoner of Azkaban
+(5, 1),
+(5, 2),
+
+--  Goblet of Fire
+(6, 1),
+(6, 2),
+
+--  Order of the Phoenix
+(7, 1),
+(7, 2),
+
+--  Half-Blood Prince
+(8, 1),
+(8, 2),
+
+--  Deathly Hallows
+(9, 1),
+(9, 2),
+
+--  Cursed Child (play)
+(10, 1), -- UK (original production)
+(10, 2), -- US (Broadway)
+
+--  Fantastic Beasts and Where to Find Them
+(11, 2), -- US release first
+(11, 1), -- UK secondary
+
+--  The Matrix
+(12, 2), -- US
+(12, 4), -- Germany (notable release)
+(12, 9), -- Japan (very popular)
+
+--  Monopoly
+(13, 2), -- US (created by Charles Darrow/Elizabeth Magie)
+(13, 1);
+-- UK edition exists
+
 
 -- Join table (product linked to languages)
 INSERT INTO language_relation (product_id, language_id)
-VALUES (1, 1),
-       (1, 2);
+VALUES
+--  Harry Potter and the Philosopher's Stone (Book & eBook)
+(1, 1),  -- English
+(1, 2),  -- German
+(2, 1),
+(2, 2),
+
+--  Chamber of Secrets
+(3, 1),
+(3, 2),
+(4, 1),
+(4, 2),
+
+--  Prisoner of Azkaban
+(5, 1),
+(5, 2),
+
+--  Goblet of Fire
+(6, 1),
+(6, 2),
+
+--  Order of the Phoenix
+(7, 1),
+(7, 2),
+
+--  Half-Blood Prince
+(8, 1),
+(8, 2),
+
+--  Deathly Hallows
+(9, 1),
+(9, 2),
+
+--  Cursed Child (play)
+(10, 1),
+(10, 2),
+
+--  Fantastic Beasts
+(11, 1),
+(11, 2),
+
+-- The Matrix (film)
+(12, 1),  -- English
+(12, 2),  -- German
+(12, 5),  -- Japanese
+(12, 6),  -- French
+(12, 8),  -- Russian
+
+-- Monopoly
+(13, 1),  -- English
+(13, 2),  -- German
+(13, 6),  -- French
+(13, 7);  -- Spanish
+
 
 -- Libraries ─────────────────────────────────────────────────
 INSERT INTO libraries (
