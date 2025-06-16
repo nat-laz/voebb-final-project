@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{public/public-layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{public/public-layout}">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>VÖBB | Libraries </title>
@@ -11,32 +11,78 @@
 <main layout:fragment="content">
     <div class="container text-center mt-4 mb-4">
         <h2 class="text-center">Our Libraries</h2>
-
+        
         <div class="accordion" id="accordionExample">
-            <div class="accordion-item" th:each="entry : ${libraries}">
-                <h2 class="accordion-header" th:id="'heading__' + ${entry.key}">
+            <div class="accordion-item" th:each="editLibraryDTO : ${librariesInfo}">
+                <h2 class="accordion-header" th:id="'heading__' + ${editLibraryDTO.id}">
                     <button class="accordion-button collapsed"
-                            type="button"
                             data-bs-toggle="collapse"
-                            th:data-bs-target="'#collapse__' + ${entry.key}"
-                            th:aria-controls="'collapse__' + ${entry.key}"
-                            th:text="${entry.value}">
+                            th:aria-controls="'collapse__' + ${editLibraryDTO.id}"
+                            th:data-bs-target="'#collapse__' + ${editLibraryDTO.id}"
+                            th:text="${editLibraryDTO.name}"
+                            type="button">
                     </button>
                 </h2>
                 <div class="accordion-collapse collapse"
-                     th:id="'collapse__' + ${entry.key}"
-                     th:attr="aria-labelledby='heading__' + ${entry.key}"
-                     data-bs-parent="#accordionExample">
+                     data-bs-parent="#accordionExample"
+                     th:attr="aria-labelledby='heading__' + ${editLibraryDTO.id}"
+                     th:id="'collapse__' + ${editLibraryDTO.id}">
                     <div class="accordion-body">
-                        <p>Check When We're Open</p>
-                        <a th:href="@{/libraries/{id}(id=${entry.key})}">
-                            Open details
-                        </a>
+                        <p th:text="${editLibraryDTO.description}"></p>
+                        
+                        <dl class="row text-start">
+                            <dt class="col-sm-3">Postcode:</dt>
+                            <dd class="col-sm-9" th:text="${editLibraryDTO.postcode}">12345</dd>
+                            
+                            <dt class="col-sm-3">City:</dt>
+                            <dd class="col-sm-9" th:text="${editLibraryDTO.city}">Berlin</dd>
+                            
+                            <dt class="col-sm-3">District:</dt>
+                            <dd class="col-sm-9" th:text="${editLibraryDTO.district}">Mitte</dd>
+                            
+                            <dt class="col-sm-3">Street:</dt>
+                            <dd class="col-sm-9" th:text="${editLibraryDTO.street}">Alexanderplatz</dd>
+                            
+                            <dt class="col-sm-3">House Number:</dt>
+                            <dd class="col-sm-9" th:text="${editLibraryDTO.houseNumber}">5A</dd>
+                            
+                            <dt class="col-sm-3">OpenStreetMap:</dt>
+                            <dd class="col-sm-9">
+                                <a target="_blank" th:href="${editLibraryDTO.osmLink}">View on OSM</a>
+                            </dd>
+                        </dl>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash;
+            if (hash) {
+                const collapseEl = document.querySelector(hash);
+                if (collapseEl) {
+                    const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
+                    bsCollapse.show();
+                    
+                    setTimeout(() => {
+                        const rect = collapseEl.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        const elementTop = rect.top + scrollTop;
+                        const elementHeight = rect.height;
+                        const windowHeight = window.innerHeight;
+                        
+                        // Scroll so the element is centered
+                        const y = elementTop - (windowHeight / 2) + (elementHeight / 2);
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }, 300); // Wait for collapse animation
+                }
+            }
+        });
+    </script>
+
+
+
 </main>
 </body>
 </html>

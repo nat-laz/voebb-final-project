@@ -15,15 +15,9 @@ public class LibraryControllerWeb {
     private final LibraryService libraryService;
 
     @GetMapping
-    public String getIndexPage(){
+    public String getIndexPage(Model model){
+        model.addAttribute("librariesInfo", libraryService.getAllLibrariesInfo());
         return "public/library/index";
-    }
-
-    @GetMapping("/{id}")
-    public String getLibraryInfoPage(@PathVariable Long id,
-            Model model){
-        model.addAttribute("editLibraryDTO", libraryService.getLibraryById(id));
-        return "public/library/info";
     }
 
 }

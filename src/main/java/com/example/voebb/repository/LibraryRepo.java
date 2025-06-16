@@ -47,6 +47,22 @@ public interface LibraryRepo extends JpaRepository<Library, Long> {
     EditLibraryDTO getLibraryFullInfo(@Param("id") Long id);
 
     @Query("""
+               SELECT new com.example.voebb.model.dto.library.EditLibraryDTO(
+                   l.id,
+                   l.name,
+                   l.description,
+                   l.address.postcode,
+                   l.address.city,
+                   l.address.district,
+                   l.address.street,
+                   l.address.houseNr,
+                   l.address.osmLink
+               )
+               FROM Library l
+           """)
+    List<EditLibraryDTO> getLibrariesFullInfo();
+
+    @Query("""
                SELECT new com.example.voebb.model.dto.library.LibraryDTO(
                    l.id,
                    l.address.district,

@@ -106,7 +106,7 @@
             
             <td class="text-nowrap">
               <a th:text="${libraries[activity.libraryId]}"
-                 th:href="@{/libraries/{id}(id=${activity.libraryId})}"></a>
+                 th:href="@{/libraries#collapse__{id}(id=${activity.libraryId})}"></a>
             </td>
             
             <td th:text="${activity.startDate}"></td>

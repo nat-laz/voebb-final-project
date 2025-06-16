@@ -134,7 +134,7 @@
           </td>
           <td th:text="${locationAndItemStatusDTO.district}">District</td>
           <td>
-            <a th:href="@{/libraries/{id}(id=${locationAndItemStatusDTO.libraryId})}"
+            <a th:href="@{'/libraries#collapse__' + ${locationAndItemStatusDTO.libraryId}}"
                th:text="${locationAndItemStatusDTO.libraryName}">
               Library Name
             </a>
