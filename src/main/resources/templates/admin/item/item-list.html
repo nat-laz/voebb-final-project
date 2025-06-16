@@ -79,10 +79,10 @@
           <label for="libraryIdFilter" class="form-label">Library</label>
           <select id="libraryIdFilter" name="libraryId" class="form-select">
             <option value="" th:selected="${itemFilters.libraryId == null}">All Libraries</option>
-            <option th:each="library : ${libraries}"
-                    th:value="${library.id}"
-                    th:text="${library.name}"
-                    th:selected="${library.id == itemFilters.libraryId}">
+            <option th:each="entry : ${libraries}"
+                    th:value="${entry.key}"
+                    th:text="${entry.value}"
+                    th:selected="${entry.key == itemFilters.libraryId}">
             </option>
           </select>
         </div>
@@ -203,39 +203,74 @@
         <li class="page-item" th:classappend="${page.first} ? 'disabled'">
           <a class="page-link"
              th:href="@{/admin/items(
-             page=${page.number - 1},
-             itemId=${itemFilters.itemId},
-             statusId=${itemFilters.statusId},
-             libraryId=${itemFilters.libraryId},
-             productTypeId=${itemFilters.productTypeId}
+           page=${page.number - 1},
+           itemId=${itemFilters.itemId},
+           statusId=${itemFilters.statusId},
+           libraryId=${itemFilters.libraryId},
+           productTypeId=${itemFilters.productTypeId}
          )}">
             Previous
           </a>
         </li>
         
+        <li class="page-item" th:classappend="${page.number == 0} ? 'active'">
+          <a class="page-link"
+             th:href="@{/admin/items(
+           page=0,
+           itemId=${itemFilters.itemId},
+           statusId=${itemFilters.statusId},
+           libraryId=${itemFilters.libraryId},
+           productTypeId=${itemFilters.productTypeId}
+         )}">1</a>
+        </li>
+        
+        <li class="page-item disabled" th:if="${page.number > 2}">
+          <span class="page-link">…</span>
+        </li>
+        
         <li class="page-item"
-            th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+            th:each="i : ${#numbers.sequence(page.number - 1, page.number + 1)}"
+            th:if="${i > 0 and i < page.totalPages - 1}"
             th:classappend="${i == page.number} ? 'active'">
           <a class="page-link"
              th:href="@{/admin/items(
-             page=${i},
-             itemId=${itemFilters.itemId},
-             statusId=${itemFilters.statusId},
-             libraryId=${itemFilters.libraryId},
-             productTypeId=${itemFilters.productTypeId}
+           page=${i},
+           itemId=${itemFilters.itemId},
+           statusId=${itemFilters.statusId},
+           libraryId=${itemFilters.libraryId},
+           productTypeId=${itemFilters.productTypeId}
          )}"
              th:text="${i + 1}">
+          </a>
+        </li>
+        
+        <li class="page-item disabled" th:if="${page.number < page.totalPages - 3}">
+          <span class="page-link">…</span>
+        </li>
+        
+        <li class="page-item"
+            th:if="${page.totalPages > 1}"
+            th:classappend="${page.number == page.totalPages - 1} ? 'active'">
+          <a class="page-link"
+             th:href="@{/admin/items(
+           page=${page.totalPages - 1},
+           itemId=${itemFilters.itemId},
+           statusId=${itemFilters.statusId},
+           libraryId=${itemFilters.libraryId},
+           productTypeId=${itemFilters.productTypeId}
+         )}"
+             th:text="${page.totalPages}">
           </a>
         </li>
         
         <li class="page-item" th:classappend="${page.last} ? 'disabled'">
           <a class="page-link"
              th:href="@{/admin/items(
-             page=${page.number + 1},
-             itemId=${itemFilters.itemId},
-             statusId=${itemFilters.statusId},
-             libraryId=${itemFilters.libraryId},
-             productTypeId=${itemFilters.productTypeId}
+           page=${page.number + 1},
+           itemId=${itemFilters.itemId},
+           statusId=${itemFilters.statusId},
+           libraryId=${itemFilters.libraryId},
+           productTypeId=${itemFilters.productTypeId}
          )}">
             Next
           </a>

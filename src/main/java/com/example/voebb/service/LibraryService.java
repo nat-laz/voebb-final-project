@@ -15,6 +15,8 @@ public interface LibraryService {
 
     List<LibraryDTO> getAllLibraries();
 
+    List<EditLibraryDTO> getAllLibrariesInfo();
+
     List<String> getAllDistricts();
 
     Page<FullInfoLibraryDTO> getFilteredLibrariesAdmin(LibraryFilters filters, Pageable pageable);

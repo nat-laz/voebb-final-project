@@ -41,6 +41,11 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
+    public List<EditLibraryDTO> getAllLibrariesInfo() {
+        return libraryRepo.getLibrariesFullInfo();
+    }
+
+    @Override
     public List<String> getAllDistricts() {
         return libraryRepo.findAllDistricts();
     }
