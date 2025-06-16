@@ -4,7 +4,8 @@ VALUES (1, 'Author'),
        (2, 'Co-Author'),
        (3, 'Editor'),
        (4, 'Director'),
-       (5, 'Game Designer')
+       (5, 'Game Designer'),
+       (6, 'Producer')
 ON CONFLICT (creator_role_id) DO NOTHING;
 SELECT SETVAL('creator_roles_creator_role_id_seq', (SELECT MAX(creator_role_id) FROM creator_roles));
 
@@ -53,18 +54,18 @@ SELECT SETVAL('languages_language_id_seq', (SELECT MAX(language_id) FROM languag
 -- Products with photos
 INSERT INTO products (product_id, product_type_id, product_link_to_emedia, title, release_year, photo, description)
 VALUES (1, 1, NULL, 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1', 'First book of Harry Potter series'),
-       (2, 2, 'https://ebooks.voebb.de/hp1', 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1', 'First book of Harry Potter series'),
+       (2, 2, 'https://voebb.overdrive.com/media/F24FDF1F-44E8-4A66-AD0F-626B8C737FBC', 'Harry Potter and the Philosopher''s Stone', '1997', 'photo_url_1', 'First book of Harry Potter series'),
        (3, 1, NULL, 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'Second book in the series'),
-       (4, 2, 'https://ebooks.voebb.de/hp2', 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'Second book in the series'),
+       (4, 2, 'https://voebb.overdrive.com/media/7FE055D8-E6DE-4CB0-B278-3C7E39CA28FB', 'Harry Potter and the Chamber of Secrets', '1998', 'photo_url_2', 'Second book in the series'),
        (5, 1, NULL, 'Harry Potter and the Prisoner of Azkaban', '1999', 'photo_url_3', 'Third book in the series'),
-       (6, 2, 'https://ebooks.voebb.de/hp3', 'Harry Potter and the Goblet of Fire', '2000', 'photo_url_4', 'Fourth book in the series'),
+       (6, 2, 'https://voebb.overdrive.com/media/F786C81C-6E96-44AD-8D98-55DBE5F8584A', 'Harry Potter and the Goblet of Fire', '2000', 'photo_url_4', 'Fourth book in the series'),
        (7, 1, NULL, 'Harry Potter and the Order of the Phoenix', '2003', 'photo_url_5', 'Fifth book in the series'),
        (13, 4, NULL, 'Monopoly', '1935', 'photo_url_13', 'Holds the Guinness World Record for being played by the most people')
 ON CONFLICT (product_id) DO NOTHING;
 
 -- Products without photos
 INSERT INTO products (product_id, product_type_id, product_link_to_emedia, title, release_year, description)
-VALUES (8, 2, 'https://ebooks.voebb.de/hp4', 'Harry Potter and the Half-Blood Prince', '2005', 'Sixth book in the series'),
+VALUES (8, 2, 'https://voebb.overdrive.com/media/FDA4ADE7-6E9D-41D1-BE2D-84483A482462', 'Harry Potter and the Half-Blood Prince', '2005', 'Sixth book in the series'),
        (9, 1, NULL, 'Harry Potter and the Deathly Hallows', '2007', 'Final book in the series'),
        (10, 1, NULL, 'Harry Potter and the Cursed Child', '2016', 'Play based on Harry Potter universe'),
        (11, 1, NULL, 'Fantastic Beasts and Where to Find Them', '2001', 'A companion book to Harry Potter'),
@@ -92,23 +93,44 @@ INSERT INTO creators (creator_id, creator_first_name, creator_last_name)
 VALUES (1, 'J. K.', 'Rowling'),
        (2, 'John', 'Tiffany'),
        (3, 'Jack', 'Thorne'),
-       (4, 'Elizabeth', 'Magie')
+       (4, 'Elizabeth', 'Magie'),
+       (5, 'Lana', 'Wachowski'),
+       (6, 'Lilly', 'Wachowski'),
+       (7, 'Joel', 'Silver'),
+       (8, 'Charles', 'Darrow')
 ON CONFLICT (creator_id) DO NOTHING;
 SELECT SETVAL('creators_creator_id_seq', (SELECT MAX(creator_id) FROM creators));
 
 -- Join table (same Creator ->  multiple  Roles; same Product -> multiple Creators)
 INSERT INTO creator_product_relation (creator_id, product_id, creator_role_id)
 VALUES
-    -- Rowling on both books, different roles
-    (1, 10, 1), -- AUTHOR on Cursed Child   (already there)
-    (1, 11, 2), -- CO_AUTHOR on Fantastic Beasts
+    -- J.K. Rowling: Author of all books except where noted
+    (1, 1, 1),
+    (1, 2, 1),
+    (1, 3, 1),
+    (1, 4, 1),
+    (1, 5, 1),
+    (1, 6, 1),
+    (1, 7, 1),
+    (1, 8, 1),
+    (1, 9, 1),
+    (1, 10, 1), -- Author of Cursed Child
+    (1, 11, 2), -- Co-Author of Fantastic Beasts
 
-    -- Cursed Child still has two co-authors
-    (2, 10, 2), -- Tiffany  CO_AUTHOR
-    (3, 10, 2), -- Thorne   CO_AUTHOR
+    --  Cursed Child Co-Authors
+    (2, 10, 2), -- John Tiffany
+    (3, 10, 2), -- Jack Thorne
 
-    (4, 13, 5)
-ON CONFLICT(creator_id, product_id, creator_role_id) DO NOTHING;
+    --  Monopoly: Game Designer
+    (4, 13, 5),
+    (8, 13, 5),
+
+    -- The Matrix (1999): Directors and Producer
+    (5, 12, 4), -- Lana Wachowski - Director
+    (6, 12, 4), -- Lilly Wachowski - Director
+    (7, 12, 6) -- Joel Silver - Producer
+ON CONFLICT (creator_id, product_id, creator_role_id) DO NOTHING;
+
 
 --  Clients ─────────────────────────────────────────────────
 -- Test password is 12345678
@@ -169,16 +191,114 @@ SELECT SETVAL('countries_country_id_seq', (SELECT MAX(country_id) FROM countries
 
 -- Join table (product linked to countries)
 INSERT INTO country_relation (product_id, country_id)
-VALUES (1, 1), -- Philosopher's Stone published in the UK
-       (1, 2), -- ... and in the US
-       (10, 1), -- Cursed Child in the UK
-       (11, 2);
--- Fantastic Beasts in the US
+VALUES
+--  Harry Potter and the Philosopher's Stone (Book & eMedia)
+(1, 1), -- UK
+(1, 2), -- US
+(2, 1), -- UK
+(2, 2), -- US
+
+--  Chamber of Secrets
+(3, 1), -- UK
+(3, 2), -- US
+(4, 1), -- UK
+(4, 2), -- US
+
+--  Prisoner of Azkaban
+(5, 1),
+(5, 2),
+
+--  Goblet of Fire
+(6, 1),
+(6, 2),
+
+--  Order of the Phoenix
+(7, 1),
+(7, 2),
+
+--  Half-Blood Prince
+(8, 1),
+(8, 2),
+
+--  Deathly Hallows
+(9, 1),
+(9, 2),
+
+--  Cursed Child (play)
+(10, 1), -- UK (original production)
+(10, 2), -- US (Broadway)
+
+--  Fantastic Beasts and Where to Find Them
+(11, 2), -- US release first
+(11, 1), -- UK secondary
+
+--  The Matrix
+(12, 2), -- US
+(12, 4), -- Germany (notable release)
+(12, 9), -- Japan (very popular)
+
+--  Monopoly
+(13, 2), -- US (created by Charles Darrow/Elizabeth Magie)
+(13, 1);
+-- UK edition exists
+
 
 -- Join table (product linked to languages)
 INSERT INTO language_relation (product_id, language_id)
-VALUES (1, 1),
-       (1, 2);
+VALUES
+--  Harry Potter and the Philosopher's Stone (Book & eBook)
+(1, 1),  -- English
+(1, 2),  -- German
+(2, 1),
+(2, 2),
+
+--  Chamber of Secrets
+(3, 1),
+(3, 2),
+(4, 1),
+(4, 2),
+
+--  Prisoner of Azkaban
+(5, 1),
+(5, 2),
+
+--  Goblet of Fire
+(6, 1),
+(6, 2),
+
+--  Order of the Phoenix
+(7, 1),
+(7, 2),
+
+--  Half-Blood Prince
+(8, 1),
+(8, 2),
+
+--  Deathly Hallows
+(9, 1),
+(9, 2),
+
+--  Cursed Child (play)
+(10, 1),
+(10, 2),
+
+--  Fantastic Beasts
+(11, 1),
+(11, 2),
+
+-- The Matrix (film)
+(12, 1),  -- English
+(12, 2),  -- German
+(12, 5),  -- Japanese
+(12, 6),  -- French
+(12, 8),  -- Russian
+
+-- Monopoly
+(13, 1),  -- English
+(13, 2),  -- German
+(13, 6),  -- French
+(13, 7);  -- Spanish
+
 
 -- Libraries ─────────────────────────────────────────────────
 INSERT INTO libraries (library_id, library_name, library_description, address_city, address_district, address_postcode,
@@ -203,7 +323,7 @@ VALUES (1, 'Zentral- und Landesbibliothek Berlin (ZLB) - Amerika-Gedenkbibliothe
        (18, 'Bibliothek Tempelhof', 'Tempelhof district library providing a variety of reading materials and digital access.', 'Berlin', 'Tempelhof-Schöneberg', '12101', 'Tempelhofer Damm', '14', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.4000#map=16/52.4700/13.4000'),
        (19, 'Bibliothek Lichtenberg', 'Library in Lichtenberg district focused on providing local history materials and general collections.', 'Berlin', 'Lichtenberg', '10365', 'Frankfurter Allee', '232', 'https://www.openstreetmap.org/?mlat=52.5100&mlon=13.5200#map=16/52.5100/13.5200'),
        (20, 'Bibliothek Friedrichshain', 'Friedrichshain library offering extensive resources for education and entertainment.', 'Berlin', 'Friedrichshain-Kreuzberg', '10247', 'Boxhagener Straße', '60', 'https://www.openstreetmap.org/?mlat=52.5100&mlon=13.4600#map=16/52.5100/13.4600'),
-       (21, 'Bibliothek Reinickendorf','Reinickendorf library focused on children’s books and community programs.','Berlin', 'Reinickendorf', '13403', 'Oranienburger Straße', '20', 'https://www.openstreetmap.org/?mlat=52.6000&mlon=13.3200#map=16/52.6000/13.3200'),
+       (21, 'Bibliothek Reinickendorf', 'Reinickendorf library focused on children’s books and community programs.', 'Berlin', 'Reinickendorf', '13403', 'Oranienburger Straße', '20', 'https://www.openstreetmap.org/?mlat=52.6000&mlon=13.3200#map=16/52.6000/13.3200'),
        (22, 'Bibliothek Marzahn', 'Marzahn district library providing educational programs and diverse media.', 'Berlin', 'Marzahn-Hellersdorf', '12679', 'Alice-Salomon-Platz', '4', 'https://www.openstreetmap.org/?mlat=52.5600&mlon=13.5800#map=16/52.5600/13.5800'),
        (23, 'Bibliothek Charlottenburg', 'Library in Charlottenburg district offering a wide range of literature and digital collections.', 'Berlin', 'Charlottenburg-Wilmersdorf', '10585', 'Schloßstraße', '1', 'https://www.openstreetmap.org/?mlat=52.5000&mlon=13.2900#map=16/52.5000/13.2900'),
        (24, 'Bibliothek Köpenick Nord', 'Northern Köpenick branch with a focus on local culture and community engagement.', 'Berlin', 'Treptow-Köpenick', '12555', 'Kietzer Straße', '23', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.6000#map=16/52.4700/13.6000'),
@@ -224,7 +344,7 @@ VALUES (1, 'Zentral- und Landesbibliothek Berlin (ZLB) - Amerika-Gedenkbibliothe
        (39, 'Bibliothek Friedrichshain West', 'Western Friedrichshain branch with extensive literary and digital offerings.', 'Berlin', 'Friedrichshain-Kreuzberg', '10249', 'Boxhagener Platz', '5', 'https://www.openstreetmap.org/?mlat=52.5100&mlon=13.4600#map=16/52.5100/13.4600'),
        (40, 'Bibliothek Pankow West', 'Western Pankow library offering community-focused events and varied collections.', 'Berlin', 'Pankow', '13187', 'Schönhauser Allee', '180', 'https://www.openstreetmap.org/?mlat=52.5500&mlon=13.4300#map=16/52.5500/13.4300'),
        (41, 'Bibliothek Neukölln West', 'Western Neukölln branch with focus on youth programs and digital media.', 'Berlin', 'Neukölln', '12053', 'Karl-Marx-Straße', '160', 'https://www.openstreetmap.org/?mlat=52.4900&mlon=13.4300#map=16/52.4900/13.4300'),
-       (42, 'Bibliothek Reinickendorf West','Western Reinickendorf library offering quiet study spaces and community resources.','Berlin', 'Reinickendorf', '13409', 'Oranienburger Straße', '40', 'https://www.openstreetmap.org/?mlat=52.6000&mlon=13.3200#map=16/52.6000/13.3200'),
+       (42, 'Bibliothek Reinickendorf West', 'Western Reinickendorf library offering quiet study spaces and community resources.', 'Berlin', 'Reinickendorf', '13409', 'Oranienburger Straße', '40', 'https://www.openstreetmap.org/?mlat=52.6000&mlon=13.3200#map=16/52.6000/13.3200'),
        (43, 'Bibliothek Hohenschönhausen', 'Local library in Hohenschönhausen with a variety of books and digital media.', 'Berlin', 'Lichtenberg', '13057', 'Wartenberger Straße', '70', 'https://www.openstreetmap.org/?mlat=52.5700&mlon=13.5300#map=16/52.5700/13.5300'),
        (44, 'Bibliothek Friedrichshagen', 'Local library in Friedrichshagen, offering a peaceful reading environment and community programs.', 'Berlin', 'Treptow-Köpenick', '12587', 'Rahnsdorfer Straße', '3', 'https://www.openstreetmap.org/?mlat=52.4800&mlon=13.6300#map=16/52.4800/13.6300'),
        (45, 'Bibliothek Alt-Treptow', 'Neighborhood library in Alt-Treptow with a broad selection of literature and digital offerings.', 'Berlin', 'Friedrichshain-Kreuzberg', '12435', 'Plesser Straße', '14', 'https://www.openstreetmap.org/?mlat=52.4600&mlon=13.5600#map=16/52.4600/13.5600'),
@@ -238,35 +358,35 @@ VALUES (1, 'Zentral- und Landesbibliothek Berlin (ZLB) - Amerika-Gedenkbibliothe
        (53, 'Bibliothek Tempelhof West', 'Western Tempelhof branch known for its rich collection of fiction and non-fiction books.', 'Berlin', 'Tempelhof-Schöneberg', '12101', 'Friedrich-Wilhelm-Straße', '15', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.3700#map=16/52.4700/13.3700'),
        (54, 'Bibliothek Treptow West', 'Western Treptow library focusing on local history and educational workshops.', 'Berlin', 'Treptow-Köpenick', '12435', 'Alt-Treptow', '7', 'https://www.openstreetmap.org/?mlat=52.4600&mlon=13.5500#map=16/52.4600/13.5500'),
        (55, 'Bibliothek Neukölln Süd', 'Southern Neukölln branch offering a broad selection of books and multimedia for all ages.', 'Berlin', 'Neukölln', '12057', 'Rudower Straße', '50', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.4500#map=16/52.4700/13.4500'),
-       (56, 'Bibliothek Kreuzberg Süd', 'Southern Kreuzberg library with a vibrant cultural program and multilingual collections.','Berlin', 'Friedrichshain-Kreuzberg', '10997', 'Adalbertstraße', '20', 'https://www.openstreetmap.org/?mlat=52.5000&mlon=13.4200#map=16/52.5000/13.4200'),
-       (57, 'Bibliothek Lichtenberg Süd ','Southern Lichtenberg branch providing community services and a large children’s section. ','Berlin', 'Lichtenberg', '10365', 'Frankfurter Allee', '123', 'https://www.openstreetmap.org/?mlat=52.5100&mlon=13.5200#map=16/52.5100/13.5200' ),
-       (58, 'Bibliothek Hellersdorf Süd ','Southern Hellersdorf library offering modern media and quiet reading rooms.','Berlin', 'Marzahn-Hellersdorf', '12629', 'Hellersdorfer Straße', '44', 'https://www.openstreetmap.org/?mlat=52.5600&mlon=13.6200#map=16/52.5600/13.6200' ),
-       (59, 'Bibliothek Reinickendorf Süd','Southern Reinickendorf branch focused on youth programs and digital collections.','Berlin', 'Reinickendorf', '13409', 'Residenzstraße', '12', 'https://www.openstreetmap.org/?mlat=52.5900&mlon=13.3100#map=16/52.5900/13.3100' ),
-       (60, 'Bibliothek Spandau Süd','Southern Spandau library offering a comprehensive selection of media and cultural events.','Berlin', 'Spandau', '13585', 'Altstadt Spandau', '38', 'https://www.openstreetmap.org/?mlat=52.5400&mlon=13.1900#map=16/52.5400/13.1900' ),
-       (61, 'Bibliothek Pankow Süd','Southern Pankow branch with a focus on educational support and multimedia collections.','Berlin', 'Pankow', '13187', 'Fröbelstraße', '8', 'https://www.openstreetmap.org/?mlat=52.5400&mlon=13.4200#map=16/52.5400/13.4200' ),
-       (62, 'Bibliothek Wedding Süd','Southern Wedding library providing various learning materials and community programs.','Berlin', 'Mitte', '13347', 'Seestraße', '45', 'https://www.openstreetmap.org/?mlat=52.5500&mlon=13.3500#map=16/52.5500/13.3500' ),
-       (63, 'Bibliothek Friedrichshain Süd','Southern Friedrichshain branch featuring modern media and community workshops.','Berlin', 'Friedrichshain-Kreuzberg', '10245', 'Samariterstraße', '12', 'https://www.openstreetmap.org/?mlat=52.5100&mlon=13.4600#map=16/52.5100/13.4600' ),
-       (64, 'Bibliothek Schöneberg Ost','Eastern Schöneberg branch with a focus on local history and cultural events.','Berlin', 'Tempelhof-Schöneberg', '10827', 'Akazienstraße', '19', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.3500#map=16/52.4700/13.3500' ),
-       (65, 'Bibliothek Charlottenburg Ost','Eastern Charlottenburg library offering a wide range of literature and digital media.','Berlin', 'Charlottenburg-Wilmersdorf', '10585', 'Kantstraße', '50', 'https://www.openstreetmap.org/?mlat=52.5000&mlon=13.3000#map=16/52.5000/13.3000' ),
-       (66, 'Bibliothek Marzahn Ost','Eastern Marzahn branch focused on family-friendly services and community engagement.','Berlin', 'Marzahn-Hellersdorf', '12679', 'Allee der Kosmonauten', '15', 'https://www.openstreetmap.org/?mlat=52.5700&mlon=13.6100#map=16/52.5700/13.6100' ),
-       (67, 'Bibliothek Neukölln Ost','Eastern Neukölln library offering multilingual collections and cultural programs.','Berlin', 'Neukölln', '12051', 'Karl-Marx-Straße', '105', 'https://www.openstreetmap.org/?mlat=52.4900&mlon=13.4300#map=16/52.4900/13.4300' ),
-       (68, 'Bibliothek Treptow Ost','Eastern Treptow library providing access to educational resources and digital media.','Berlin', 'Treptow-Köpenick', '12435', 'Neue Krugallee', '70', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.5600#map=16/52.4700/13.5600' ),
-       (69, 'Bibliothek Tempelhof Ost','Eastern Tempelhof branch with a broad collection of literature and community activities.','Berlin', 'Tempelhof-Schöneberg', '12101', 'Tempelhofer Damm', '44', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.3900#map=16/52.4700/13.3900' ),
-       (70, 'Bibliothek Lichtenberg Ost','Eastern Lichtenberg library focused on children’s literature and local history.','Berlin', 'Lichtenberg', '10367', 'Roedernallee', '22', 'https://www.openstreetmap.org/?mlat=52.5200&mlon=13.5200#map=16/52.5200/13.5200' ),
-       (71, 'Bibliothek Hohenschönhausen Ost','Eastern Hohenschönhausen branch offering diverse media collections and study spaces.','Berlin', 'Lichtenberg', '13057', 'Wartenberger Straße', '80', 'https://www.openstreetmap.org/?mlat=52.5700&mlon=13.5300#map=16/52.5700/13.5300' ),
-       (72, 'Bibliothek Friedrichshagen Ost','Eastern Friedrichshagen library with a focus on peaceful reading areas and community programs.','Berlin', 'Treptow-Köpenick', '12587', 'Rahnsdorfer Straße', '8', 'https://www.openstreetmap.org/?mlat=52.4800&mlon=13.6300#map=16/52.4800/13.6300' ),
-       (73, 'Bibliothek Alt-Treptow Ost','Eastern Alt-Treptow library providing a rich selection of books and digital media.','Berlin', 'Friedrichshain-Kreuzberg', '12435', 'Plesser Straße', '22', 'https://www.openstreetmap.org/?mlat=52.4600&mlon=13.5600#map=16/52.4600/13.5600' ),
-       (74, 'Bibliothek Wedding Ost','Eastern Wedding library with community-oriented programs and diverse media collections.','Berlin', 'Mitte', '13347', 'Rehberge', '25', 'https://www.openstreetmap.org/?mlat=52.5500&mlon=13.3500#map=16/52.5500/13.3500' ),
-       (75, 'Bibliothek Spandau Ost','Eastern Spandau library focused on cultural events and educational resources.','Berlin', 'Spandau', '13597', 'Carl-Schurz-Straße', '42', 'https://www.openstreetmap.org/?mlat=52.5400&mlon=13.2000#map=16/52.5400/13.2000' ),
-       (76, 'Bibliothek Reinickendorf Nord Ost','Northern Reinickendorf branch specializing in community education and digital access.','Berlin', 'Reinickendorf', '13405', 'Residenzstraße', '78', 'https://www.openstreetmap.org/?mlat=52.5800&mlon=13.3200#map=16/52.5800/13.3200' ),
-       (77, 'Bibliothek Rudow Ost','Rudow neighborhood library with a wide array of books, media, and community events.','Berlin', 'Neukölln', '12357', 'Johannisthaler Chaussee', '210', 'https://www.openstreetmap.org/?mlat=52.4300&mlon=13.4400#map=16/52.4300/13.4400' ),
-       (78, 'Bibliothek Lankwitz Ost','Lankwitz branch known for its welcoming atmosphere and diverse media collection.','Berlin', 'Steglitz-Zehlendorf', '12247', 'Lankwitzer Straße', '18', 'https://www.openstreetmap.org/?mlat=52.4500&mlon=13.3200#map=16/52.4500/13.3200' ),
-       (79, 'Bibliothek Wilmersdorf Nord','Northern Wilmersdorf library offering a wide selection of literature and digital media.','Berlin', 'Charlottenburg-Wilmersdorf', '10715', 'Berliner Straße', '48', 'https://www.openstreetmap.org/?mlat=52.4900&mlon=13.2900#map=16/52.4900/13.2900' ),
-       (80, 'Bibliothek Neukölln Nord','Northern Neukölln branch focused on youth programs and community engagement.','Berlin', 'Neukölln', '12051', 'Neuköllner Straße', '33', 'https://www.openstreetmap.org/?mlat=52.4900&mlon=13.4300#map=16/52.4900/13.4300' ),
-       (81, 'Bibliothek Mitte Nord','Northern Mitte library with a broad range of books and cultural activities.','Berlin', 'Mitte', '10115', 'Alexanderplatz', '7', 'https://www.openstreetmap.org/?mlat=52.5200&mlon=13.4050#map=16/52.5200/13.4050' ),
-       (82, 'Bibliothek Friedrichshain Nord','Northern Friedrichshain library providing community workshops and diverse media.','Berlin', 'Friedrichshain-Kreuzberg', '10243', 'Boxhagener Straße', '25', 'https://www.openstreetmap.org/?mlat=52.5100&mlon=13.4500#map=16/52.5100/13.4500' ),
-       (83, 'Bibliothek Treptow Nord','Northern Treptow library offering educational resources and quiet study areas.','Berlin', 'Treptow-Köpenick', '12435', 'Sternstraße', '40', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.5400#map=16/52.4700/13.5400' ),
-       (84, 'Bibliothek Zehlendorf Nord','Northern Zehlendorf branch focused on literature for all ages and community events.','Berlin', 'Steglitz-Zehlendorf', '14163', 'Argentinische Allee', '35', 'https://www.openstreetmap.org/?mlat=52.4400&mlon=13.2700#map=16/52.4400/13.2700')
+       (56, 'Bibliothek Kreuzberg Süd', 'Southern Kreuzberg library with a vibrant cultural program and multilingual collections.', 'Berlin', 'Friedrichshain-Kreuzberg', '10997', 'Adalbertstraße', '20', 'https://www.openstreetmap.org/?mlat=52.5000&mlon=13.4200#map=16/52.5000/13.4200'),
+       (57, 'Bibliothek Lichtenberg Süd ', 'Southern Lichtenberg branch providing community services and a large children’s section. ', 'Berlin', 'Lichtenberg', '10365', 'Frankfurter Allee', '123', 'https://www.openstreetmap.org/?mlat=52.5100&mlon=13.5200#map=16/52.5100/13.5200'),
+       (58, 'Bibliothek Hellersdorf Süd ', 'Southern Hellersdorf library offering modern media and quiet reading rooms.', 'Berlin', 'Marzahn-Hellersdorf', '12629', 'Hellersdorfer Straße', '44', 'https://www.openstreetmap.org/?mlat=52.5600&mlon=13.6200#map=16/52.5600/13.6200'),
+       (59, 'Bibliothek Reinickendorf Süd', 'Southern Reinickendorf branch focused on youth programs and digital collections.', 'Berlin', 'Reinickendorf', '13409', 'Residenzstraße', '12', 'https://www.openstreetmap.org/?mlat=52.5900&mlon=13.3100#map=16/52.5900/13.3100'),
+       (60, 'Bibliothek Spandau Süd', 'Southern Spandau library offering a comprehensive selection of media and cultural events.', 'Berlin', 'Spandau', '13585', 'Altstadt Spandau', '38', 'https://www.openstreetmap.org/?mlat=52.5400&mlon=13.1900#map=16/52.5400/13.1900'),
+       (61, 'Bibliothek Pankow Süd', 'Southern Pankow branch with a focus on educational support and multimedia collections.', 'Berlin', 'Pankow', '13187', 'Fröbelstraße', '8', 'https://www.openstreetmap.org/?mlat=52.5400&mlon=13.4200#map=16/52.5400/13.4200'),
+       (62, 'Bibliothek Wedding Süd', 'Southern Wedding library providing various learning materials and community programs.', 'Berlin', 'Mitte', '13347', 'Seestraße', '45', 'https://www.openstreetmap.org/?mlat=52.5500&mlon=13.3500#map=16/52.5500/13.3500'),
+       (63, 'Bibliothek Friedrichshain Süd', 'Southern Friedrichshain branch featuring modern media and community workshops.', 'Berlin', 'Friedrichshain-Kreuzberg', '10245', 'Samariterstraße', '12', 'https://www.openstreetmap.org/?mlat=52.5100&mlon=13.4600#map=16/52.5100/13.4600'),
+       (64, 'Bibliothek Schöneberg Ost', 'Eastern Schöneberg branch with a focus on local history and cultural events.', 'Berlin', 'Tempelhof-Schöneberg', '10827', 'Akazienstraße', '19', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.3500#map=16/52.4700/13.3500'),
+       (65, 'Bibliothek Charlottenburg Ost', 'Eastern Charlottenburg library offering a wide range of literature and digital media.', 'Berlin', 'Charlottenburg-Wilmersdorf', '10585', 'Kantstraße', '50', 'https://www.openstreetmap.org/?mlat=52.5000&mlon=13.3000#map=16/52.5000/13.3000'),
+       (66, 'Bibliothek Marzahn Ost', 'Eastern Marzahn branch focused on family-friendly services and community engagement.', 'Berlin', 'Marzahn-Hellersdorf', '12679', 'Allee der Kosmonauten', '15', 'https://www.openstreetmap.org/?mlat=52.5700&mlon=13.6100#map=16/52.5700/13.6100'),
+       (67, 'Bibliothek Neukölln Ost', 'Eastern Neukölln library offering multilingual collections and cultural programs.', 'Berlin', 'Neukölln', '12051', 'Karl-Marx-Straße', '105', 'https://www.openstreetmap.org/?mlat=52.4900&mlon=13.4300#map=16/52.4900/13.4300'),
+       (68, 'Bibliothek Treptow Ost', 'Eastern Treptow library providing access to educational resources and digital media.', 'Berlin', 'Treptow-Köpenick', '12435', 'Neue Krugallee', '70', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.5600#map=16/52.4700/13.5600'),
+       (69, 'Bibliothek Tempelhof Ost', 'Eastern Tempelhof branch with a broad collection of literature and community activities.', 'Berlin', 'Tempelhof-Schöneberg', '12101', 'Tempelhofer Damm', '44', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.3900#map=16/52.4700/13.3900'),
+       (70, 'Bibliothek Lichtenberg Ost', 'Eastern Lichtenberg library focused on children’s literature and local history.', 'Berlin', 'Lichtenberg', '10367', 'Roedernallee', '22', 'https://www.openstreetmap.org/?mlat=52.5200&mlon=13.5200#map=16/52.5200/13.5200'),
+       (71, 'Bibliothek Hohenschönhausen Ost', 'Eastern Hohenschönhausen branch offering diverse media collections and study spaces.', 'Berlin', 'Lichtenberg', '13057', 'Wartenberger Straße', '80', 'https://www.openstreetmap.org/?mlat=52.5700&mlon=13.5300#map=16/52.5700/13.5300'),
+       (72, 'Bibliothek Friedrichshagen Ost', 'Eastern Friedrichshagen library with a focus on peaceful reading areas and community programs.', 'Berlin', 'Treptow-Köpenick', '12587', 'Rahnsdorfer Straße', '8', 'https://www.openstreetmap.org/?mlat=52.4800&mlon=13.6300#map=16/52.4800/13.6300'),
+       (73, 'Bibliothek Alt-Treptow Ost', 'Eastern Alt-Treptow library providing a rich selection of books and digital media.', 'Berlin', 'Friedrichshain-Kreuzberg', '12435', 'Plesser Straße', '22', 'https://www.openstreetmap.org/?mlat=52.4600&mlon=13.5600#map=16/52.4600/13.5600'),
+       (74, 'Bibliothek Wedding Ost', 'Eastern Wedding library with community-oriented programs and diverse media collections.', 'Berlin', 'Mitte', '13347', 'Rehberge', '25', 'https://www.openstreetmap.org/?mlat=52.5500&mlon=13.3500#map=16/52.5500/13.3500'),
+       (75, 'Bibliothek Spandau Ost', 'Eastern Spandau library focused on cultural events and educational resources.', 'Berlin', 'Spandau', '13597', 'Carl-Schurz-Straße', '42', 'https://www.openstreetmap.org/?mlat=52.5400&mlon=13.2000#map=16/52.5400/13.2000'),
+       (76, 'Bibliothek Reinickendorf Nord Ost', 'Northern Reinickendorf branch specializing in community education and digital access.', 'Berlin', 'Reinickendorf', '13405', 'Residenzstraße', '78', 'https://www.openstreetmap.org/?mlat=52.5800&mlon=13.3200#map=16/52.5800/13.3200'),
+       (77, 'Bibliothek Rudow Ost', 'Rudow neighborhood library with a wide array of books, media, and community events.', 'Berlin', 'Neukölln', '12357', 'Johannisthaler Chaussee', '210', 'https://www.openstreetmap.org/?mlat=52.4300&mlon=13.4400#map=16/52.4300/13.4400'),
+       (78, 'Bibliothek Lankwitz Ost', 'Lankwitz branch known for its welcoming atmosphere and diverse media collection.', 'Berlin', 'Steglitz-Zehlendorf', '12247', 'Lankwitzer Straße', '18', 'https://www.openstreetmap.org/?mlat=52.4500&mlon=13.3200#map=16/52.4500/13.3200'),
+       (79, 'Bibliothek Wilmersdorf Nord', 'Northern Wilmersdorf library offering a wide selection of literature and digital media.', 'Berlin', 'Charlottenburg-Wilmersdorf', '10715', 'Berliner Straße', '48', 'https://www.openstreetmap.org/?mlat=52.4900&mlon=13.2900#map=16/52.4900/13.2900'),
+       (80, 'Bibliothek Neukölln Nord', 'Northern Neukölln branch focused on youth programs and community engagement.', 'Berlin', 'Neukölln', '12051', 'Neuköllner Straße', '33', 'https://www.openstreetmap.org/?mlat=52.4900&mlon=13.4300#map=16/52.4900/13.4300'),
+       (81, 'Bibliothek Mitte Nord', 'Northern Mitte library with a broad range of books and cultural activities.', 'Berlin', 'Mitte', '10115', 'Alexanderplatz', '7', 'https://www.openstreetmap.org/?mlat=52.5200&mlon=13.4050#map=16/52.5200/13.4050'),
+       (82, 'Bibliothek Friedrichshain Nord', 'Northern Friedrichshain library providing community workshops and diverse media.', 'Berlin', 'Friedrichshain-Kreuzberg', '10243', 'Boxhagener Straße', '25', 'https://www.openstreetmap.org/?mlat=52.5100&mlon=13.4500#map=16/52.5100/13.4500'),
+       (83, 'Bibliothek Treptow Nord', 'Northern Treptow library offering educational resources and quiet study areas.', 'Berlin', 'Treptow-Köpenick', '12435', 'Sternstraße', '40', 'https://www.openstreetmap.org/?mlat=52.4700&mlon=13.5400#map=16/52.4700/13.5400'),
+       (84, 'Bibliothek Zehlendorf Nord', 'Northern Zehlendorf branch focused on literature for all ages and community events.', 'Berlin', 'Steglitz-Zehlendorf', '14163', 'Argentinische Allee', '35', 'https://www.openstreetmap.org/?mlat=52.4400&mlon=13.2700#map=16/52.4400/13.2700')
 ON CONFLICT (library_id) DO NOTHING;
 SELECT SETVAL('libraries_library_id_seq', (SELECT MAX(library_id) FROM libraries));
 
