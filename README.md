@@ -187,7 +187,7 @@ The app will be running at `http://localhost:8080`.
 
 
 
-## Documentation
+## Documentation [WIP]
 
 The full endpoint reference is organized in the [`docs/`](./docs) folder:
 
