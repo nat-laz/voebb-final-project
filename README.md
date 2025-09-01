@@ -23,9 +23,8 @@ access and functionality.
 2. [Technologies Used](#tools-&-technologies-used)
 3. [System Architecture Overview](#system-architecture-overview)
 4. [Setup and Installation](#setup-and-installation)
-5. [Documentation](#documentation)
-6. [Developer Team](#project-developer-team)
-7. [Contributing](#contributing)
+5. [Developer Team](#project-developer-team)
+6. [Contributing](#contributing)
 
 ## Feature Set
 
@@ -186,21 +185,10 @@ mvn spring-boot:run
 The app will be running at `http://localhost:8080`.
 
 
-
-## Documentation [WIP]
-
-The full endpoint reference is organized in the [`docs/`](./docs) folder:
-
-- **[api-endpoints.md](src/main/resources/docs/api-endpoints.md)** — REST Endpoints for AJAX calls, used internally by the admin panel to dynamically fetch or create data (creators/roles) without reloading the page.
-- **[admin-endpoints.md](.src/main/resources/docs/admin-endpoints.md)** — Admin panel routes for managing users, products, items, libraries, borrowings, and reservations.
-- **[public-endpoints.md](src/main/resources//docs/public-endpoints.md)** — Public site routes (home, search, product details, user profile).
-
-
 ## Project Developer Team
 
 [Mitali Soti](https://github.com/mitalisoti), [Alex Bruch](https://github.com/bruch-alex), [Natalie Lazarev](https://github.com/nat-laz), [Marc Stiehm](https://github.com/Rikupp17)
 
 ## Contributing
 
-We welcome contributions to this project! Whether it's bug fixes, feature additions, or documentation improvements, your
-help is appreciated.
+We welcome contributions to this project! Whether it's bug fixes, or feature additions your help is appreciated.
